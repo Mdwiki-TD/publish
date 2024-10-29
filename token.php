@@ -32,7 +32,10 @@ $access = get_access_from_db($user);
 
 if ($access == null) {
     $cxtoken = ['error' => ['code' => 'no access', 'info' => 'no access'], 'username' => $user];
-    // exit(1);
+    print(json_encode($cxtoken, JSON_PRETTY_PRINT));
+    // status code 403
+    header('HTTP/1.0 403 Forbidden');
+    exit(1);
 } else {
     $access_key = $access['access_key'];
     $access_secret = $access['access_secret'];
