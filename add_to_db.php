@@ -29,13 +29,13 @@ function retrieveCampaignCategories()
     return $camp_to_cats;
 }
 
-function find_exists($title, $lang, $user)
+function find_exists($title, $lang, $user, $target, $use_user_sql)
 {
     $query = <<<SQL
         SELECT 1 FROM (
-            SELECT 1 FROM pages WHERE title = ? AND lang = ? AND user = ?
+            SELECT 1 FROM pages WHERE title = ? AND lang = ? AND user = ? AND target != ""
             UNION
-            SELECT 1 FROM pages_users WHERE title = ? AND lang = ? AND user = ?
+            SELECT 1 FROM pages_users WHERE title = ? AND lang = ? AND user = ? AND target != ""
         ) AS combined
     SQL;
     // ---
@@ -46,23 +46,48 @@ function find_exists($title, $lang, $user)
     return count($result) > 0;
 }
 
+function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
+{
+    // ---
+    $table_name = $use_user_sql ? 'pages_users' : 'pages';
+    // ---
+    $query = <<<SQL
+        SELECT * FROM $table_name WHERE title = ? AND lang = ? AND user = ?
+    SQL;
+    // ---
+    $result = fetch_query($query, [$title, $lang, $user]);
+    // ---
+    // today date like: 2024-08-21
+    $today = date("Y-m-d");
+    // ---
+    if (count($result) > 0) {
+        $query = <<<SQL
+            UPDATE $table_name SET target = ?, pupdate = ?
+            WHERE title = ? AND lang = ? AND user = ? AND target = ""
+        SQL;
+        // ---
+        $params = [$target, $today, $title, $lang, $user];
+        // ---
+        execute_query($query, $params);
+    }
+    // ---
+    return count($result) > 0;
+}
+
 function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target)
 {
     global $Words_table;
     // ---
+    $use_user_sql = false;
+    // ---
     if (empty($user) || empty($title) || empty($lang)) {
-        return;
+        return $use_user_sql;
     }
     // ---
-    $exists = find_exists($title, $lang, $user);
-    // ---
-    if ($exists) {
-        return;
-    }
+    // today date like: 2024-08-21
+    $today = date("Y-m-d");
     // ---
     $word = $Words_table[$title] ?? 0;
-    // ---
-    $use_user_sql = false;
     // ---
     $target = str_replace("_", " ", $target);
     $user   = str_replace("_", " ", $user);
@@ -74,12 +99,15 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target)
     if (strpos($target, $user_t) !== false) {
         $use_user_sql = true;
         if ($user == "Mr. Ibrahem") {
-            return;
+            return $use_user_sql;
         }
     }
     // ---
-    // today date like: 2024-08-21
-    $today = date("Y-m-d");
+    $exists = find_exists_or_update($title, $lang, $user, $target, $use_user_sql);
+    // ---
+    if ($exists) {
+        return $use_user_sql;
+    }
     // ---
     $query_user = <<<SQL
         INSERT INTO pages_users (title, lang, user, pupdate, target, add_date)
