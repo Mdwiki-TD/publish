@@ -10,7 +10,7 @@ use function Publish\MdCat\Add_MdWiki_Category;
 
 function get_cats()
 {
-    $url = "https://www.wikidata.org/w/rest.php/wikibase/v0/entities/items/Q107014860/sitelinks";
+    $url = "https://www.wikidata.org/w/rest.php/wikibase/v1/entities/items/Q107014860/sitelinks";
     // ---
     $json = file_get_contents($url);
     // ---
