@@ -3,7 +3,7 @@
 header('Content-Type: application/json; charset=utf-8');
 header("Access-Control-Allow-Origin: *");
 
-include_once __DIR__ . '/../Translation_Dashboard/vendor_load.php';
+include_once __DIR__ . '/../auth/vendor_load.php';
 
 include_once __DIR__ . '/config.php';
 include_once __DIR__ . '/helps.php';
