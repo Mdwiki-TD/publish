@@ -13,8 +13,8 @@ use function Publish\MdwikiSql\fetch_query;
 use function Publish\MdwikiSql\execute_query;
 
 try {
-    $file = file_get_contents(__DIR__ . "/../Translation_Dashboard/Tables/jsons/words.json");
-    // $file = file_get_contents("https://mdwiki.toolforge.org/Translation_Dashboard/Tables/jsons/words.json");
+    $file = file_get_contents(__DIR__ . "/../td/Tables/jsons/words.json");
+    // $file = file_get_contents("https://mdwiki.toolforge.org/td/Tables/jsons/words.json");
     $Words_table = json_decode($file, true);
 } catch (\Exception $e) {
     $Words_table = [];
