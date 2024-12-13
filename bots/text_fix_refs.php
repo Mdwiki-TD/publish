@@ -128,7 +128,7 @@ function remove_Duplicate_refs(string $text): string
         // ---
         $cite_newtext = "<ref $cite_attrs />";
         // ---
-        echo "\n$cite_newtext";
+        // echo "\n$cite_newtext";
         // ---
         if (isset($refs[$cite_attrs])) {
             // ---
