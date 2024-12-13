@@ -15,5 +15,6 @@ include_once __DIR__ . '/add_to_db.php';
 include_once __DIR__ . '/get_token.php';
 include_once __DIR__ . '/helps.php';
 include_once __DIR__ . '/bots/md_cat.php';
+include_once __DIR__ . '/bots/text_fix_refs.php';
 include_once __DIR__ . '/bots/text_fix.php';
 include_once __DIR__ . '/bots/wd.php';
