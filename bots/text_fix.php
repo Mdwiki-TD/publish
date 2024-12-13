@@ -10,6 +10,7 @@ use function Publish\TextFix\DoChangesToText;
 
 use function Publish\Helps\pub_test_print;
 use function Publish\MdCat\Add_MdWiki_Category;
+use function Publish\TextFix\DelDuplicateRefs\remove_Duplicate_refs;
 
 const TRADUCIDO_REF_PATTERN = '/\{\{\s*Traducido\s*ref\s*\|/';
 const ENLACES_EXTERNOS_PATTERN = '/==\s*Enlaces\s+externos\s*==/i';
@@ -66,6 +67,8 @@ function DoChangesToText($sourcetitle, $text, $lang, $revid)
     if (!empty($cat)) {
         $text .= "\n$cat\n";
     }
+    // ---
+    $text = remove_Duplicate_refs($text);
     // ---
     return $text;
 }
