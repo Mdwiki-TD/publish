@@ -68,7 +68,11 @@ function DoChangesToText($sourcetitle, $text, $lang, $revid)
         $text .= "\n$cat\n";
     }
     // ---
-    $text = remove_Duplicate_refs($text);
+    $text_d = remove_Duplicate_refs($text);
+    // ---
+    if (!empty($text_d)) {
+        $text = $text_d;
+    }
     // ---
     return $text;
 }
