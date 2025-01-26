@@ -18,7 +18,8 @@ const ENLACES_EXTERNOS_PATTERN = '/==\s*Enlaces\s+externos\s*==/i';
 function sw_fixes($text)
 {
     // ---
-
+    // find == Marejeleo == replace by == Marejeo ==
+    $text = preg_replace('/==\s*Marejeleo\s*==/i', '== Marejeo ==', $text);
     // ---
     return $text;
 }
