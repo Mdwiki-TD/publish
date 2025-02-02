@@ -54,6 +54,7 @@ class ParserCitations
     {
         // preg_match_all("/<ref\s*([^>\/]*)>(.*?)<\/ref>|<ref\s*([^>\/]*)\/>/is", $string, $matches);  // coderabbitai
         preg_match_all("/<ref([^\/>]*?)>(.+?)<\/ref>/is", $string, $matches);
+
         return $matches;
     }
     public function parse(): void

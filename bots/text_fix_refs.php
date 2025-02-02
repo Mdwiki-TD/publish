@@ -12,33 +12,16 @@ use function Publish\TextFix\DelDuplicateRefs\remove_Duplicate_refs;
 
 use function Publish\TextFix\Citation\getCitations;
 
-
-function get_html_attribute_value(string $text, string $param): string
-{
-    if (empty($text)) {
-        return '';
-    }
-
-    // Case-insensitive regular expression for attribute extraction
-    $pattern = sprintf('/(?i)%s\s*=\s*[\'"]?(?P<%s>[^\'" >]+)[\'"]?/', $param, $param);
-    $match = preg_match($pattern, $text, $matches);
-
-    if ($match) {
-        return $matches[$param];
-    }
-
-    return '';
-}
 function remove_Duplicate_refs(string $text): string
 {
     // ---
     $new_text = $text;
     // ---
+    $refs_to_check = [];
+    // ---
     $refs = [];
     // ---
     $citations = getCitations($text);
-    // ---
-    $new_text = $text;
     // ---
     $numb = 0;
     // ---
@@ -59,15 +42,26 @@ function remove_Duplicate_refs(string $text): string
         // ---
         $cite_newtext = "<ref $cite_attrs />";
         // ---
-        // echo "\n$cite_newtext";
+        // echo "\ncite_newtext: ($cite_newtext)\n";
         // ---
         if (isset($refs[$cite_attrs])) {
             // ---
             $new_text = str_replace($cite_text, $cite_newtext, $new_text);
         } else {
-            $refs[$cite_attrs] = $cite_newtext;
+            $refs_to_check[$cite_newtext] = $cite_text;
+            // ---
+            $refs[$cite_attrs] = $cite_contents;
         };
     }
+    // ---
+    foreach ($refs_to_check as $key => $value) {
+        if (strpos($new_text, $value) === false) {
+            $pattern = '/' . preg_quote($key, '/') . '/';
+            $new_text = preg_replace($pattern, $value, $new_text, 1);
+        }
+    }
+    // ---
+    // echo count($citations);
     // ---
     return $new_text;
 }

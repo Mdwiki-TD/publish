@@ -8,7 +8,7 @@ use function Publish\TextFix\DoChangesToText;
 
 */
 
-use function Publish\Helps\pub_test_print;
+// use function Publish\Helps\pub_test_print;
 use function Publish\MdCat\Add_MdWiki_Category;
 use function Publish\TextFix\DelDuplicateRefs\remove_Duplicate_refs;
 
@@ -30,7 +30,7 @@ function es_section($sourcetitle, $text, $revid)
     // if text has /\{\{\s*Traducido ref\s*\|/ then return text
     preg_match('/\{\{\s*Traducido\s*ref\s*\|/', $text, $ma);
     if (!empty($ma)) {
-        pub_test_print("return text;");
+        // pub_test_print("return text;");
         return $text;
     }
     // ---
