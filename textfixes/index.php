@@ -23,17 +23,12 @@ include_once __DIR__ . '/include.php';
 
 use function Publish\TextFix\DoChangesToText;
 
-$lang     = $_POST['target'] ?? '';
-$text     = $_POST['text'] ?? '';
-$revid    = $_POST['revid'] ?? '';
-$sourcetitle = $_POST['sourcetitle'] ?? '';
-$title    = $_POST['title'] ?? '';
-
-// تأكد من أن جميع المتغيرات مُعرفة مسبقاً، مثلاً عن طريق استقبالها عبر $_POST
 $lang         = isset($_POST['lang']) ? trim($_POST['lang']) : '';
 $text         = isset($_POST['text']) ? trim($_POST['text']) : '';
 $revid        = isset($_POST['revid']) ? trim($_POST['revid']) : '';
 $sourcetitle  = isset($_POST['sourcetitle']) ? trim($_POST['sourcetitle']) : '';
+$title  = isset($_POST['title']) ? trim($_POST['title']) : '';
+
 echo "
     <body>
         <div id='maindiv' class='container'>

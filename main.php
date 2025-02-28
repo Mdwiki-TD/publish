@@ -111,7 +111,11 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $access_secret = $access['access_secret'];
 
     // $text = fix_wikirefs($text, $lang);
-    $text = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
+    $newtext = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
+
+    if (!empty($text)) {
+        $text = $newtext;
+    }
 
     $apiParams["text"] = $text;
 
