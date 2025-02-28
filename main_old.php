@@ -135,7 +135,7 @@ if ($access == null) {
     $access_secret = $access['access_secret'];
     // ---
     // $text = fix_wikirefs($text, $lang);
-    $text = DoChangesToText($sourcetitle, $text, $lang, $revid);
+    $text = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
     // ---
     $apiParams["text"] = $text;
     // ---
