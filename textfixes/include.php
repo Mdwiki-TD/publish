@@ -8,4 +8,4 @@ if (isset($_REQUEST['test'])) {
 include_once __DIR__ . '/Citation.php';
 include_once __DIR__ . '/md_cat.php';
 include_once __DIR__ . '/text_fix_refs.php';
-include_once __DIR__ . '/include.php';
+include_once __DIR__ . '/text_fix.php';
