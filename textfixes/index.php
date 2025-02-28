@@ -15,7 +15,11 @@
 
 <?php
 
-include_once __DIR__ . '/textfixes/include.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+include_once __DIR__ . '/include.php';
 
 use function Publish\TextFix\DoChangesToText;
 
@@ -90,9 +94,7 @@ if (empty($lang) || empty($text) || empty($revid) || empty($sourcetitle)) {
     // $new_text = htmlspecialchars($new_text, ENT_QUOTES, 'UTF-8');
     echo <<<HTML
     <h2>New Text: </h2>
-        <textarea name="new_text" rows="15" cols="140">
-            $new_text
-        </textarea>
+        <textarea name="new_text" rows="15" cols="140">$new_text</textarea>
     HTML;
 }
 // ---

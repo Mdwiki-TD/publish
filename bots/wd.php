@@ -113,8 +113,12 @@ function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $
     $title_info = GetTitleInfo($targettitle, $lang);
 
     $ns = $title_info['namespace']['id'] ?? '';
-    if ($ns !== 0 && $ns !== "0") {
-        return ['error' => 'Cannot create link for namespace: ' . $ns, 'nserror'=> true, 'qid' => $qid];
+
+    // $targettitle has : in
+    $has_in_it = strpos($targettitle, ':');
+
+    if ($ns !== 0 && $ns !== "0" && $has_in_it !== false) {
+        return ['error' => 'Cannot create link for namespace: ' . $ns, 'nserror' => true, 'qid' => $qid];
     }
 
     // "title":"Not found."
