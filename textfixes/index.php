@@ -87,9 +87,12 @@ if (empty($lang) || empty($text) || empty($revid) || empty($sourcetitle)) {
 } else {
     // استدعاء الدالة التي تجري التعديلات على النص
     $new_text = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
+    // $new_text = htmlspecialchars($new_text, ENT_QUOTES, 'UTF-8');
     echo <<<HTML
     <h2>New Text: </h2>
-        <textarea name="new_text" rows="15" cols="140">$new_text</textarea>
+        <textarea name="new_text" rows="15" cols="140">
+            $new_text
+        </textarea>
     HTML;
 }
 // ---
