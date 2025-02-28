@@ -12,9 +12,6 @@ use function Publish\TextFix\DoChangesToText;
 use function Publish\MdCat\Add_MdWiki_Category;
 use function Publish\TextFix\DelDuplicateRefs\remove_Duplicate_refs;
 
-const TRADUCIDO_REF_PATTERN = '/\{\{\s*Traducido\s*ref\s*\|/';
-const ENLACES_EXTERNOS_PATTERN = '/==\s*Enlaces\s+externos\s*==/i';
-
 function sw_fixes($text)
 {
     // ---
@@ -52,7 +49,7 @@ function es_section($sourcetitle, $text, $revid)
     return $text;
 }
 
-function DoChangesToText($sourcetitle, $text, $lang, $revid)
+function DoChangesToText($sourcetitle, $title, $text, $lang, $revid)
 {
     // ---
     if ($lang == 'es') {

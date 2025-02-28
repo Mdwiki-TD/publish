@@ -1,14 +1,4 @@
 <?php
-if (isset($_REQUEST['test'])) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-};
-try {
-    header('Content-Type: application/json');
-} catch (Exception $e) {
-    echo "";
-}
 
 include_once __DIR__ . '/include.php';
 
@@ -20,20 +10,8 @@ use function Publish\AddToDb\retrieveCampaignCategories;
 use function Publish\WD\LinkToWikidata;
 use function Publish\TextFix\DoChangesToText;
 
-/*
-$t_Params = [
-    'title' => $title->getPrefixedDBkey(),
-    'text' => $wikitext,
-    'user' => $user_name,
-    'summary' => $summary,
-    'target' => $params['to'],
-    'sourcetitle' => $params['sourcetitle'],
-];
-*/
-
 function get_revid($sourcetitle)
 {
-    // ---
     // read all_pages_revids.json file
     try {
         $json = json_decode(file_get_contents(__DIR__ . '/all_pages_revids.json'), true);
@@ -42,7 +20,6 @@ function get_revid($sourcetitle)
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
     }
-    // ---
     return "";
 }
 
@@ -65,123 +42,164 @@ function to_do($tab, $dir)
     }
 }
 
-$sourcetitle = $_REQUEST['sourcetitle'] ?? '';
-$title    = $_REQUEST['title'] ?? '';
-$user     = $_REQUEST['user'] ?? '';
-
-$specialUsers = [
-    "Mr. Ibrahem 1" => "Mr. Ibrahem",
-    "Admin" => "Mr. Ibrahem"
-];
-$user = $specialUsers[$user] ?? $user;
-
-$lang     = $_REQUEST['target'] ?? '';
-$text     = $_REQUEST['text'] ?? '';
-$campaign = $_REQUEST['campaign'] ?? '';
-
-$summary  = $_REQUEST['summary'] ?? '';
-$revid    = $_REQUEST['revid'] ?? '';
-
-$revid    = get_revid($sourcetitle);
-
-$user = str_replace("_", " ", $user);
-$title = str_replace("_", " ", $title);
-
-$hashtag = "#mdwikicx";
-
-if (strpos($title, "Mr. Ibrahem") !== false && $user == "Mr. Ibrahem") {
-    $hashtag = "";
+function formatTitle($title)
+{
+    return str_replace("_", " ", $title);
 }
 
-$summary  = make_summary($revid, $sourcetitle, $lang, $hashtag);
-
-$access = get_access_from_db($user);
-
-$tab = [
-    'title' => $title,
-    'summary' => $summary,
-    'lang' => $lang,
-    'user' => $user,
-    'campaign' => $campaign,
-    'result' => "",
-    'edit' => [],
-    'sourcetitle' => $sourcetitle
-
-];
-// ---
-$to_do_dir = "to_do";
-// ---
-$apiParams = [
-    'action' => 'edit',
-    'title' => $title,
-    // 'section' => 'new',
-    'summary' => $summary,
-    'text' => $text,
-    'format' => 'json',
-];
-// ---
-// wpCaptchaId, wpCaptchaWord
-if (isset($_REQUEST['wpCaptchaId']) && isset($_REQUEST['wpCaptchaWord'])) {
-    $apiParams['wpCaptchaId'] = $_REQUEST['wpCaptchaId'];
-    $apiParams['wpCaptchaWord'] = $_REQUEST['wpCaptchaWord'];
+function formatUser($user)
+{
+    $specialUsers = [
+        "Mr. Ibrahem 1" => "Mr. Ibrahem",
+        "Admin" => "Mr. Ibrahem"
+    ];
+    $user = $specialUsers[$user] ?? $user;
+    return str_replace("_", " ", $user);
 }
-// ---
-if ($access == null) {
-    $ee = ['code' => 'noaccess', 'info' => 'noaccess'];
-    $editit = ['error' => $ee, 'edit' => ['error' => $ee, 'username' => $user], 'username' => $user];
+
+function determineHashtag($title, $user)
+{
+    $hashtag = "#mdwikicx";
+
+    if (strpos($title, "Mr. Ibrahem") !== false && $user == "Mr. Ibrahem") {
+        $hashtag = "";
+    }
+    return $hashtag;
+}
+
+function prepareApiParams($title, $summary, $text, $request)
+{
+    $apiParams = [
+        'action' => 'edit',
+        'title' => $title,
+        // 'section' => 'new',
+        'summary' => $summary,
+        'text' => $text,
+        'format' => 'json',
+    ];
+
+    // wpCaptchaId, wpCaptchaWord
+    if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
+        $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
+        $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
+    }
+    return $apiParams;
+}
+
+function handleNoAccess($user, $tab)
+{
+    $error = ['code' => 'noaccess', 'info' => 'noaccess'];
+    $editit = ['error' => $error, 'edit' => ['error' => $error, 'username' => $user], 'username' => $user];
     $to_do_dir = "errors";
-} else {
+    // ---
+    $tab['edit'] = $editit;
+    to_do($tab, $to_do_dir);
+
+    pub_test_print("\n<br>");
+    pub_test_print("\n<br>");
+
+    print(json_encode($editit, JSON_PRETTY_PRINT));
+
+    // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
+}
+
+function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $user, $title, $summary, $request, $tab)
+{
+    $apiParams = prepareApiParams($title, $summary, $text, $request);
+
     $access_key = $access['access_key'];
     $access_secret = $access['access_secret'];
-    // ---
+
     // $text = fix_wikirefs($text, $lang);
-    $text = DoChangesToText($sourcetitle, $text, $lang, $revid);
-    // ---
+    $text = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
+
     $apiParams["text"] = $text;
-    // ---
+
     $editit = publish_do_edit($apiParams, $lang, $access_key, $access_secret);
-    // ---
+
     $Success = $editit['edit']['result'] ?? '';
-    // ---
+
     $tab['result'] = $Success;
-    // ---
+
     if ($Success === 'Success') {
-        // ---
-        $camp_to_cat = retrieveCampaignCategories();
-        $cat         = $camp_to_cat[$campaign] ?? '';
-        // ---
-        try {
-            $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title);
-            // ---
-            $editit['LinkToWikidata'] = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
-            // ---
-            if (isset($editit['LinkToWikidata']['error']) && !isset($editit['LinkToWikidata']['nserror'])) {
-                $tab3 = [
-                    'error' => $editit['LinkToWikidata']['error'],
-                    'qid' => $editit['LinkToWikidata']['qid'] ?? "",
-                    'title' => $title,
-                    'sourcetitle' => $sourcetitle,
-                    'lang' => $lang,
-                    'username' => $user
-                ];
-                to_do($tab3, 'wd_errors');
-            }
-            // ---
-        } catch (Exception $e) {
-            pub_test_print($e->getMessage());
-        }
-        // ---
+        $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $editit, $access_key, $access_secret);
     } else {
         $to_do_dir = "errors";
     }
+
+    $tab['edit'] = $editit;
+    to_do($tab, $to_do_dir);
+
+    pub_test_print("\n<br>");
+    pub_test_print("\n<br>");
+
+    print(json_encode($editit, JSON_PRETTY_PRINT));
+
+    // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
 }
 
-$tab['edit'] = $editit;
-to_do($tab, $to_do_dir);
+function handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $editit, $access_key, $access_secret)
+{
+    $camp_to_cat = retrieveCampaignCategories();
+    $cat = $camp_to_cat[$campaign] ?? '';
+    $LinkToWikidata = [];
 
-pub_test_print("\n<br>");
-pub_test_print("\n<br>");
+    try {
+        $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title);
 
-print(json_encode($editit, JSON_PRETTY_PRINT));
+        $LinkToWikidata = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
 
-// file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
+        if (isset($LinkToWikidata['error']) && !isset($LinkToWikidata['nserror'])) {
+            $tab3 = [
+                'error' => $LinkToWikidata['error'],
+                'qid' => $LinkToWikidata['qid'] ?? "",
+                'title' => $title,
+                'sourcetitle' => $sourcetitle,
+                'lang' => $lang,
+                'username' => $user
+            ];
+            to_do($tab3, 'wd_errors');
+        }
+    } catch (Exception $e) {
+        pub_test_print($e->getMessage());
+    }
+    return $LinkToWikidata;
+}
+
+function start($request)
+{
+    $sourcetitle = $request['sourcetitle'] ?? '';
+    $title = formatTitle($request['title'] ?? '');
+    $user = formatUser($request['user'] ?? '');
+    $lang = $request['target'] ?? '';
+    $text = $request['text'] ?? '';
+    $campaign = $request['campaign'] ?? '';
+    $summary = $request['summary'] ?? '';
+
+    // $revid = $request['revid'] ?? '';
+    $revid = get_revid($sourcetitle);
+    $hashtag = determineHashtag($title, $user);
+    $summary = make_summary($revid, $sourcetitle, $lang, $hashtag);
+
+    $access = get_access_from_db($user);
+
+    $tab = [
+        'title' => $title,
+        'summary' => $summary,
+        'lang' => $lang,
+        'user' => $user,
+        'campaign' => $campaign,
+        'result' => "",
+        'edit' => [],
+        'sourcetitle' => $sourcetitle
+    ];
+
+    if ($access == null) {
+        handleNoAccess($user, $tab);
+    } else {
+        processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $user, $title, $summary, $request, $tab);
+    }
+}
+
+
+start($_REQUEST);
