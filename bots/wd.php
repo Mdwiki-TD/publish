@@ -140,13 +140,14 @@ function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $
     $qid = $qids[0]['qid'] ?? '';
 
     $title_info = GetTitleInfo($targettitle, $lang);
+    // { "pageid": 5049507, "ns": 2, "title": "利用者:Mr. Ibrahem/オランザピン/サミドルファン" }
 
-    $ns = $title_info['namespace']['id'] ?? $title_info['ns'] ?? '';
+    $ns = $title_info['ns'] ?? '';
 
     // $targettitle has : in
     $has_in_it = strpos($targettitle, ':');
 
-    if ($ns !== 0 && $ns !== "0" && $has_in_it !== false) {
+    if (($ns !== 0 && $ns !== "0" && $ns !== "") || ($has_in_it !== false && $ns === "")) {
         return ['error' => 'Cannot create link for namespace:' . $ns, 'nserror' => true, 'qid' => $qid];
     }
 
