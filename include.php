@@ -16,4 +16,10 @@ include_once __DIR__ . '/add_to_db.php';
 include_once __DIR__ . '/get_token.php';
 include_once __DIR__ . '/textfixes/include.php';
 include_once __DIR__ . '/bots/wd.php';
-include_once __DIR__ . '/fix_refs_repo/index.php';
+
+$fix_refs_file = __DIR__ . '/fix_refs/index.php';
+if (file_exists($fix_refs_file)) {
+    include_once $fix_refs_file;
+} else {
+    include_once __DIR__ . '/../fix_refs/index.php';
+}

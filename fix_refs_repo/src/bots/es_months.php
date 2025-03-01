@@ -23,7 +23,7 @@ $es_months_tab = [
     "July" => "julio",
     "August" => "agosto",
     "September" => "septiembre",
-    "October" => "ctubre",
+    "October" => "octubre",
     "November" => "noviembre",
     "December" => "diciembre",
 ];
