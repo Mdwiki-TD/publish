@@ -120,13 +120,16 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $access_secret = $access['access_secret'];
 
     // $text = fix_wikirefs($text, $lang);
+    $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
+    /*
     if ($user == "Mr. Ibrahem") {
         $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
     } else {
         $newtext = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
     }
+    */
 
-    if (!empty($text)) {
+    if (!empty($newtext)) {
         $text = $newtext;
     }
 
