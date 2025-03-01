@@ -9,6 +9,7 @@ use function Publish\AddToDb\InsertPageTarget;
 use function Publish\AddToDb\retrieveCampaignCategories;
 use function Publish\WD\LinkToWikidata;
 use function Publish\TextFix\DoChangesToText;
+use function WpRefs\FixPage\DoChangesToText1;
 
 function get_revid($sourcetitle)
 {
@@ -119,7 +120,11 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $access_secret = $access['access_secret'];
 
     // $text = fix_wikirefs($text, $lang);
-    $newtext = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
+    if ($user == "Mr. Ibrahem") {
+        $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
+    } else {
+        $newtext = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
+    }
 
     if (!empty($text)) {
         $text = $newtext;
