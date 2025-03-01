@@ -28,7 +28,7 @@ function fix_page($text, $title, $move_dots, $infobox, $add_en_lang, $lang, $sou
     // ---
     // print_s("fix page: $title, move_dots:$move_dots, expend_infobox:$infobox");
     // ---
-    if ($infobox) {
+    if ($infobox || $lang === "es") {
         echo_test("Expend_Infobox\n");
         $text = Expend_Infobox($text, $title, "");
     }
