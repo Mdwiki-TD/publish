@@ -23,7 +23,7 @@ function json_load_file($filename)
 $fixwikirefs = "I:/mdwiki/mdwiki/confs/fixwikirefs.json";
 // ---
 if (!file_exists($fixwikirefs)) {
-    $fixwikirefs = "/mnt/nfs/labstore-secondary-tools-project/mdwiki/confs/fixwikirefs.json";
+    $fixwikirefs = __DIR__ . "/../../../confs/fixwikirefs.json";
 }
 // ---
 $setting = [];
