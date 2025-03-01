@@ -17,9 +17,9 @@ include_once __DIR__ . '/get_token.php';
 include_once __DIR__ . '/textfixes/include.php';
 include_once __DIR__ . '/bots/wd.php';
 
-$fix_refs_file = __DIR__ . '/fix_refs/index.php';
+$fix_refs_file = __DIR__ . '/fix_refs/work.php';
 if (file_exists($fix_refs_file)) {
     include_once $fix_refs_file;
 } else {
-    include_once __DIR__ . '/../fix_refs/index.php';
+    include_once __DIR__ . '/../fix_refs/work.php';
 }
