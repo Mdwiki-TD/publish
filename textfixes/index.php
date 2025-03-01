@@ -46,12 +46,20 @@ if (empty($lang) || empty($text) || empty($revid) || empty($sourcetitle)) {
         <form action='index.php' method='POST'>
             <div class='container'>
                 <div class='row'>
-                    <div class='col-md-2'>
+                    <div class='col-md-3'>
                         <div class='input-group mb-3'>
                             <div class='input-group-prepend'>
                                 <span class='input-group-text'>Langcode</span>
                             </div>
-                            <input class='form-control' type='text' name='lang' id='lang' value='fr' required />
+                            <input class='form-control' type='text' name='lang' id='lang' value='es' required />
+                        </div>
+                    </div>
+                    <div class='col-md-3'>
+                        <div class='input-group mb-3'>
+                            <div class='input-group-prepend'>
+                                <span class='input-group-text'>title</span>
+                            </div>
+                            <input class='form-control' type='text' id='title' name='title' value='Enantato_de_noretisterona' />
                         </div>
                     </div>
                     <div class='col-md-3'>
@@ -59,7 +67,7 @@ if (empty($lang) || empty($text) || empty($revid) || empty($sourcetitle)) {
                             <div class='input-group-prepend'>
                                 <span class='input-group-text'>sourcetitle</span>
                             </div>
-                            <input class='form-control' type='text' id='sourcetitle' name='sourcetitle' value='test' required />
+                            <input class='form-control' type='text' id='sourcetitle' name='sourcetitle' value='Norethisterone enanthate' required />
                         </div>
                     </div>
                     <div class='col-md-3'>
@@ -67,18 +75,20 @@ if (empty($lang) || empty($text) || empty($revid) || empty($sourcetitle)) {
                             <div class='input-group-prepend'>
                                 <span class='input-group-text'>revid</span>
                             </div>
-                            <input class='form-control' type='text' id='revid' name='revid' value='000' required />
+                            <input class='form-control' type='text' id='revid' name='revid' value='1440525' required />
                         </div>
                     </div>
-                    <div class='col-md-2'>
+                </div>
+                <div class='row'>
+                    <div class='col-md-3'>
                         <div class='input-group mb-3'>
                             <div class='input-group-prepend'>
                                 <span class='input-group-text'>test</span>
                             </div>
-                            <input class='form-control' type='text' id='test' name='test' value='' />
+                            <input class='form-control' type='text' id='test' name='test' value='1' />
                         </div>
                     </div>
-                    <div class='col-md-2'>
+                    <div class='col-md-3'>
                         <h4 class='aligncenter'>
                             <input class='btn btn-outline-primary' type='submit' value='start'>
                         </h4>
@@ -95,8 +105,9 @@ if (empty($lang) || empty($text) || empty($revid) || empty($sourcetitle)) {
     // استدعاء الدالة التي تجري التعديلات على النص
     $new_text = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
     // $new_text = htmlspecialchars($new_text, ENT_QUOTES, 'UTF-8');
+    $no_changes = trim($new_text) === trim($text);
     echo <<<HTML
-    <h2>New Text: </h2>
+    <h2>New Text: (no_changes: $no_changes)</h2>
         <textarea name="new_text" rows="15" cols="140">$new_text</textarea>
     HTML;
 }

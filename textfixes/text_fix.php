@@ -62,8 +62,8 @@ function DoChangesToText($sourcetitle, $title, $text, $lang, $revid)
     // ---
     $cat = Add_MdWiki_Category($lang);
     // ---
-    if (!empty($cat)) {
-        $text .= "\n$cat\n";
+    if (!empty($cat) && strpos($text, $cat) === false && strpos($text, "[[Category:Translated from MDWiki]]") === false) {
+        $text .= "\n[[$cat]]\n";
     }
     // ---
     $text_d = remove_Duplicate_refs($text);
