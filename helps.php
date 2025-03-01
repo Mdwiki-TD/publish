@@ -16,6 +16,8 @@ use Defuse\Crypto\Crypto;
 use function Publish\MdwikiSql\execute_query;
 use function Publish\MdwikiSql\fetch_query;
 
+$usr_agent = 'WikiProjectMed Translation Dashboard/1.0 (https://mdwiki.toolforge.org/; tools.mdwiki@toolforge.org)';
+
 function pub_test_print($s)
 {
     //---
@@ -53,14 +55,14 @@ function encode_value($value)
 
 function get_url_curl(string $url): string
 {
-    // global $usr_agent;
+    global $usr_agent;
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     // curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
     // curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
 
-    // curl_setopt($ch, CURLOPT_USERAGENT, $usr_agent);
+    curl_setopt($ch, CURLOPT_USERAGENT, $usr_agent);
 
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -131,5 +133,4 @@ function del_access_from_db($user)
     SQL;
 
     $result = execute_query($query, [$user]);
-
 }

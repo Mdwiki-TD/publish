@@ -46,7 +46,7 @@ if (empty($lang) || empty($text) || empty($revid) || empty($sourcetitle)) {
         <form action='index.php' method='POST'>
             <div class='container'>
                 <div class='row'>
-                    <div class='col-md-3'>
+                    <div class='col-md-2'>
                         <div class='input-group mb-3'>
                             <div class='input-group-prepend'>
                                 <span class='input-group-text'>Langcode</span>
@@ -70,7 +70,15 @@ if (empty($lang) || empty($text) || empty($revid) || empty($sourcetitle)) {
                             <input class='form-control' type='text' id='revid' name='revid' value='000' required />
                         </div>
                     </div>
-                    <div class='col-md-3'>
+                    <div class='col-md-2'>
+                        <div class='input-group mb-3'>
+                            <div class='input-group-prepend'>
+                                <span class='input-group-text'>test</span>
+                            </div>
+                            <input class='form-control' type='text' id='test' name='test' value='' />
+                        </div>
+                    </div>
+                    <div class='col-md-2'>
                         <h4 class='aligncenter'>
                             <input class='btn btn-outline-primary' type='submit' value='start'>
                         </h4>
