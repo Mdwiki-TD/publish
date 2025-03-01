@@ -16,3 +16,4 @@ include_once __DIR__ . '/add_to_db.php';
 include_once __DIR__ . '/get_token.php';
 include_once __DIR__ . '/textfixes/include.php';
 include_once __DIR__ . '/bots/wd.php';
+include_once __DIR__ . '/fix_refs_repo/index.php';
