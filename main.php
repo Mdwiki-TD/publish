@@ -140,9 +140,11 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $Success = $editit['edit']['result'] ?? '';
 
     $tab['result'] = $Success;
+    $to_do_dir = "";
 
     if ($Success === 'Success') {
         $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $editit, $access_key, $access_secret);
+        $to_do_dir = "success";
     } else {
         $to_do_dir = "errors";
     }
