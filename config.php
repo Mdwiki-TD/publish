@@ -4,14 +4,18 @@ include_once __DIR__ . '/../auth/vendor_load.php';
 //---
 use Defuse\Crypto\Key;
 //---
-// get the root path from __FILE__ , split before public_html
-// split the file path on the public_html directory
-$pathParts = explode('public_html', __FILE__);
-// the root path is the first part of the split file path
-$ROOT_PATH = $pathParts[0];
+$inifile = 'I:/mdwiki/mdwiki/confs/OAuthConfig.ini';
 //---
-$inifile = $ROOT_PATH . '/confs/OAuthConfig.ini';
-//---
+if (!file_exists($inifile)) {
+    // get the root path from __FILE__ , split before public_html
+    // split the file path on the public_html directory
+    $pathParts = explode('public_html', __FILE__);
+    // the root path is the first part of the split file path
+    $ROOT_PATH = $pathParts[0];
+    //---
+    $inifile = $ROOT_PATH . '/confs/OAuthConfig.ini';
+    //---
+}
 $ini = parse_ini_file($inifile);
 //---
 if ($ini === false) {
