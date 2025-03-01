@@ -15,6 +15,7 @@ class Template
         $this->name_strip = trim(str_replace('_', ' ', $name));
         $this->parameters = $parameters;
         $this->templateText = $templateText;
+        $this->template = "";
     }
     public function getTemplateText(): string
     {

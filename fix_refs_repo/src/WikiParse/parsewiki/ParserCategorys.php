@@ -1,4 +1,5 @@
 <?php
+
 namespace WikiConnect\ParseWiki;
 
 class ParserCategorys
@@ -6,15 +7,17 @@ class ParserCategorys
     private array $categorys;
     private string $namespace;
     private string $text;
-    public function __construct(string $text, string $namespace = "") {
+    public function __construct(string $text, string $namespace = "")
+    {
         $this->text = $text;
         $this->namespace = $namespace == "" ? "Category" : $namespace;
         $this->categorys = array();
         $this->parse();
     }
-    public function parse() : void
+    public function parse(): void
     {
-        if (preg_match_all("\[\[\s*".$this->namespace."\s*\:([^\]\]]+?)\]\]", $this->text, $matches)) {
+        $categories = array();
+        if (preg_match_all("\[\[\s*" . $this->namespace . "\s*\:([^\]\]]+?)\]\]", $this->text, $matches)) {
             foreach ($matches[1] as $nil => $mvalue) {
                 $bleh = explode("|", $mvalue);
                 $category = trim(array_shift($bleh));
@@ -27,7 +30,8 @@ class ParserCategorys
             $this->categorys = $categories;
         }
     }
-    public function getCategorys() : array {
-       return $this->categorys;
+    public function getCategorys(): array
+    {
+        return $this->categorys;
     }
 }
