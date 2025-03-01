@@ -38,14 +38,14 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
 
 function to_do($tab, $dir)
 {
-    $main_dir = __DIR__ . "/../publish_reports";
-    if (!is_dir($main_dir . "/$dir")) {
-        mkdir($main_dir . "/$dir", 0755, true);
+    $main_dir = __DIR__ . "/../publish_reports/" . $dir;
+    if (!is_dir($main_dir)) {
+        mkdir($main_dir, 0755, true);
     }
     try {
         // dump $tab to file in folder to_do
-        $file_name = $main_dir . "/$dir/" . rand(0, 999999999) . '.json';
-        file_put_contents($file_name, json_encode($tab, JSON_PRETTY_PRINT));
+        $file_name = $main_dir . "/$dir" . "_" . rand(0, 999999999) . ".json";
+        file_put_contents($file_name, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
     }
