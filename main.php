@@ -20,6 +20,13 @@ function get_revid($sourcetitle)
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
     }
+    try {
+        $json = json_decode(file_get_contents(__DIR__ . '/../all_pages_revids.json'), true);
+        $revid = $json[$sourcetitle] ?? "";
+        return $revid;
+    } catch (Exception $e) {
+        pub_test_print($e->getMessage());
+    }
     return "";
 }
 
@@ -30,12 +37,13 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
 
 function to_do($tab, $dir)
 {
-    if (!is_dir(__DIR__ . "/$dir")) {
-        mkdir(__DIR__ . "/$dir", 0755, true);
+    $main_dir = __DIR__ . "/../publish_reports";
+    if (!is_dir($main_dir . "/$dir")) {
+        mkdir($main_dir . "/$dir", 0755, true);
     }
     try {
         // dump $tab to file in folder to_do
-        $file_name = __DIR__ . "/$dir/" . rand(0, 999999999) . '.json';
+        $file_name = $main_dir . "/$dir/" . rand(0, 999999999) . '.json';
         file_put_contents($file_name, json_encode($tab, JSON_PRETTY_PRINT));
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
@@ -111,7 +119,11 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $access_secret = $access['access_secret'];
 
     // $text = fix_wikirefs($text, $lang);
-    $text = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
+    $newtext = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
+
+    if (!empty($text)) {
+        $text = $newtext;
+    }
 
     $apiParams["text"] = $text;
 
