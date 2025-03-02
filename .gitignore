@@ -3,4 +3,5 @@ all_pages_revids.json
 .github/workflows/snorkell-auto-documentation.yml
 *.txt
 /fix_refs_repo1
-/publish_reports
+/publish_reports/**/*.json
+publish_reports/index2.php
