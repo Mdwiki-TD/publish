@@ -38,14 +38,14 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
 
 function to_do($tab, $dir)
 {
-    $main_dir = __DIR__ . "/../publish_reports";
-    if (!is_dir($main_dir . "/$dir")) {
-        mkdir($main_dir . "/$dir", 0755, true);
+    $main_dir = __DIR__ . "/../publish_reports/" . $dir;
+    if (!is_dir($main_dir)) {
+        mkdir($main_dir, 0755, true);
     }
     try {
         // dump $tab to file in folder to_do
-        $file_name = $main_dir . "/$dir/" . rand(0, 999999999) . '.json';
-        file_put_contents($file_name, json_encode($tab, JSON_PRETTY_PRINT));
+        $file_name = $main_dir . "/$dir" . "_" . rand(0, 999999999) . ".json";
+        file_put_contents($file_name, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
     }
@@ -53,7 +53,10 @@ function to_do($tab, $dir)
 
 function formatTitle($title)
 {
-    return str_replace("_", " ", $title);
+    $title = str_replace("_", " ", $title);
+    // replace Mr. Ibrahem 1/ by Mr. Ibrahem/
+    $title = str_replace("Mr. Ibrahem 1/", "Mr. Ibrahem/", $title);
+    return $title;
 }
 
 function formatUser($user)
@@ -120,13 +123,16 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $access_secret = $access['access_secret'];
 
     // $text = fix_wikirefs($text, $lang);
+    $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
+    /*
     if ($user == "Mr. Ibrahem") {
         $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
     } else {
         $newtext = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
     }
+    */
 
-    if (!empty($text)) {
+    if (!empty($newtext)) {
         $text = $newtext;
     }
 
@@ -137,9 +143,11 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $Success = $editit['edit']['result'] ?? '';
 
     $tab['result'] = $Success;
+    $to_do_dir = "";
 
     if ($Success === 'Success') {
         $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $editit, $access_key, $access_secret);
+        $to_do_dir = "success";
     } else {
         $to_do_dir = "errors";
     }
@@ -163,7 +171,6 @@ function handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $ed
 
     try {
         $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title);
-
         $LinkToWikidata = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
 
         if (isset($LinkToWikidata['error']) && !isset($LinkToWikidata['nserror'])) {
