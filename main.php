@@ -168,7 +168,6 @@ function handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $ed
 
     try {
         $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title);
-
         $LinkToWikidata = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
 
         if (isset($LinkToWikidata['error']) && !isset($LinkToWikidata['nserror'])) {
