@@ -53,7 +53,10 @@ function to_do($tab, $dir)
 
 function formatTitle($title)
 {
-    return str_replace("_", " ", $title);
+    $title = str_replace("_", " ", $title);
+    // replace Mr. Ibrahem 1/ by Mr. Ibrahem/
+    $title = str_replace("Mr. Ibrahem 1/", "Mr. Ibrahem/", $title);
+    return $title;
 }
 
 function formatUser($user)
