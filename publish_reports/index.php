@@ -66,7 +66,7 @@ function make_ul($dir)
     $json_files = glob(__DIR__ . '/' . $dir . '/*.json');
     foreach ($json_files as $json_file) {
         $name = basename($json_file);
-        $url = $dir . '/' . $name;
+        $url = rawurlencode($dir) . '/' . rawurlencode($name);
         // ---
         $date = date('Y-m-d H:i', filemtime($json_file));
         // ---
