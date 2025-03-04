@@ -128,6 +128,7 @@ function getAccessCredentials($user, $access_key, $access_secret)
     // ---
     return [$access_key, $access_secret];
 }
+
 function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $access_secret)
 {
     $credentials = getAccessCredentials($user, $access_key, $access_secret);
@@ -145,11 +146,11 @@ function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $
     $ns = $title_info['ns'] ?? '';
 
     // $targettitle has : in
-    $has_in_it = strpos($targettitle, ':');
+    // $has_in_it = strpos($targettitle, ':');
 
-    if (($ns !== 0 && $ns !== "0" && $ns !== "") || ($has_in_it !== false && $ns === "")) {
-        return ['error' => 'Cannot create link for namespace:' . $ns, 'nserror' => true, 'qid' => $qid];
-    }
+    // if (($ns !== 0 && $ns !== "0" && $ns !== "") || ($has_in_it !== false && $ns === "")) {
+    //     return ['error' => 'Cannot create link for namespace:' . $ns, 'nserror' => true, 'qid' => $qid];
+    // }
 
     // "title":"Not found."
     $not_found = $title_info['title'] ?? "";
