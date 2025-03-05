@@ -64,6 +64,12 @@ function make_ul($dir)
 {
     $text = "<ol>";
     $json_files = glob(__DIR__ . '/' . $dir . '/*.json');
+    // ---
+    // sort by date
+    usort($json_files, function ($a, $b) {
+        return filemtime($b) - filemtime($a);
+    });
+    // ---
     foreach ($json_files as $json_file) {
         $name = basename($json_file);
         $url = rawurlencode($dir) . '/' . rawurlencode($name);
