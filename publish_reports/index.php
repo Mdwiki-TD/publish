@@ -54,7 +54,7 @@ function card($title, $text)
                 <h3>$title</h3>
             </div>
             <div class="card-body">
-                <div class="row row-cols-3">
+                <div class="row row-cols-auto row-cols-md-3">
                     $text
                 </div>
             </div>
