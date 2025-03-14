@@ -115,6 +115,22 @@ function handleNoAccess($user, $tab)
     // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
 }
 
+function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle)
+{
+    // ---
+    $camp_to_cat = retrieveCampaignCategories();
+    $cat = $camp_to_cat[$campaign] ?? '';
+    $to_users_table = false;
+    // ---
+    // if $wd_result has "abusefilter-warning-39" then $to_users_table = true
+    if (strpos(json_encode($wd_result), "abusefilter-warning-39") !== false) {
+        $to_users_table = true;
+    }
+    // ---
+    $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title, $to_users_table);
+    // ---
+    return $is_user_page;
+}
 function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $user, $title, $summary, $request, $tab)
 {
     $apiParams = prepareApiParams($title, $summary, $text, $request);
@@ -122,15 +138,7 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $access_key = $access['access_key'];
     $access_secret = $access['access_secret'];
 
-    // $text = fix_wikirefs($text, $lang);
     $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
-    /*
-    if ($user == "Mr. Ibrahem") {
-        $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
-    } else {
-        $newtext = DoChangesToText($sourcetitle, $title, $text, $lang, $revid);
-    }
-    */
 
     if (!empty($newtext)) {
         $text = $newtext;
@@ -146,7 +154,10 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $to_do_dir = "";
 
     if ($Success === 'Success') {
-        $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $editit, $access_key, $access_secret);
+        $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
+        // ---
+        $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle);
+        // ---
         $to_do_dir = "success";
     } else {
         $to_do_dir = "errors";
@@ -163,23 +174,12 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
 }
 
-function handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $editit, $access_key, $access_secret)
+function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret)
 {
-    $camp_to_cat = retrieveCampaignCategories();
-    $cat = $camp_to_cat[$campaign] ?? '';
     $LinkTowd = [];
 
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
-        // ---
-        $to_users_table = false;
-        // ---
-        // if $LinkTowd has "abusefilter-warning-39" then $to_users_table = true
-        if (strpos(json_encode($LinkTowd), "abusefilter-warning-39") !== false) {
-            $to_users_table = true;
-        }
-        // ---
-        $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title, $to_users_table);
         // ---
         if (isset($LinkTowd['error'])) {
             $tab3 = [
