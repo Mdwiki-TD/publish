@@ -45,7 +45,7 @@ echo <<<HTML
     <main id="body">
         <div id="maindiv" class="container">
 HTML;
-// ------------
+
 function card($title, $text)
 {
     echo <<<HTML
@@ -73,16 +73,25 @@ function make_ul($dir)
         return filemtime($b) - filemtime($a);
     });
     // ---
+    $today = date('Y-m-d');
+    // ---
     foreach ($json_files as $json_file) {
         $name = basename($json_file);
         $url = rawurlencode($dir) . '/' . rawurlencode($name);
         // ---
         $date = date('Y-m-d H:i', filemtime($json_file));
         // ---
+        $date_line = "$date";
+        // ---
+        if (date('Y-m-d', filemtime($json_file)) === $today) {
+            // $date_line = "<span style='color:green;'>$date</span>";
+            $date_line .= "<span class='badge text-bg-primary'>Today</span>";
+        }
+        // ---
         // $text .= "<li><a href='$url'>$name</a> ($date)</li>";
         // ---
         $text .= <<<HTML
-            <div class="col"><a href='$url'>$name</a> ($date)</div>
+            <div class="col"><a href='$url'>$name</a> ($date_line)</div>
         HTML;
     }
     // $text .= '</ol>';
