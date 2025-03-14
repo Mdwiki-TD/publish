@@ -74,7 +74,7 @@ function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
     return count($result) > 0;
 }
 
-function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target)
+function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, $to_users_table)
 {
     global $Words_table;
     // ---
@@ -98,9 +98,9 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target)
     // if target contains user
     if (strpos($target, $user_t) !== false) {
         $use_user_sql = true;
-        if ($user == "Mr. Ibrahem") {
-            return $use_user_sql;
-        }
+        // if ($user == "Mr. Ibrahem") return $use_user_sql;
+    } else {
+        $use_user_sql = $to_users_table;
     }
     // ---
     $exists = find_exists_or_update($title, $lang, $user, $target, $use_user_sql);
@@ -110,15 +110,15 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target)
     }
     // ---
     $query_user = <<<SQL
-        INSERT INTO pages_users (title, lang, user, pupdate, target, add_date)
-        SELECT ?, ?, ?, ?, ?, now()
+        INSERT INTO pages_users (title, lang, user, pupdate, target)
+        SELECT ?, ?, ?, ?, ?
     SQL;
     // ---
     $query_user_params = [$title, $lang, $user, $today, $target];
     // ---
     $query = <<<SQL
-        INSERT INTO pages (title, word, translate_type, cat, lang, date, user, pupdate, target, add_date)
-        SELECT ?, ?, ?, ?, ?, now(), ?, ?, ?, now()
+        INSERT INTO pages (title, word, translate_type, cat, lang, user, pupdate, target)
+        SELECT ?, ?, ?, ?, ?, ?, ?, ?
     SQL;
     // ---
     $params = [
