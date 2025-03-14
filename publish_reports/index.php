@@ -54,7 +54,9 @@ function card($title, $text)
                 <h3>$title</h3>
             </div>
             <div class="card-body">
-                $text
+                <div class="row row-cols-3">
+                    $text
+                </div>
             </div>
         </div>
     HTML;
@@ -62,7 +64,8 @@ function card($title, $text)
 
 function make_ul($dir)
 {
-    $text = "<ol>";
+    // $text = "<ol>";
+    $text = "";
     $json_files = glob(__DIR__ . '/' . $dir . '/*.json');
     // ---
     // sort by date
@@ -76,13 +79,13 @@ function make_ul($dir)
         // ---
         $date = date('Y-m-d H:i', filemtime($json_file));
         // ---
+        // $text .= "<li><a href='$url'>$name</a> ($date)</li>";
+        // ---
         $text .= <<<HTML
-            <li>
-                <a href='$url'>$name</a> ($date)
-            </li>
+            <div class="col"><a href='$url'>$name</a> ($date)</div>
         HTML;
     }
-    $text .= '</ol>';
+    // $text .= '</ol>';
     return $text;
 }
 
