@@ -98,7 +98,7 @@ function LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_se
     // ---
     $response = post_params($apiParams, $https_domain, $access_key, $access_secret);
     // ---
-    $Result = json_decode($response, true);
+    $Result = json_decode($response, true) ?? [];
     // ---
     // if (isset($Result->error)) {
     if (isset($Result['error'])) {
@@ -129,7 +129,7 @@ function getAccessCredentials($user, $access_key, $access_secret)
     return [$access_key, $access_secret];
 }
 
-function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $access_secret)
+function LinkToWikidata_old($sourcetitle, $lang, $user, $targettitle, $access_key, $access_secret)
 {
     $credentials = getAccessCredentials($user, $access_key, $access_secret);
     if ($credentials === null) {
@@ -161,6 +161,27 @@ function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $
     if ($not_found === 'Not found.') {
         return ['error' => 'Target page not found: ' . $targettitle, 'qid' => $qid];
     }
+
+    $link_result = LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_secret);
+
+    if (isset($link_result['success']) && $link_result['success']) {
+        pub_test_print("success: true");
+        return ['result' => "success", 'qid' => $qid];
+    }
+
+    return $link_result;
+}
+
+function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $access_secret)
+{
+    $credentials = getAccessCredentials($user, $access_key, $access_secret);
+    if ($credentials === null) {
+        return ['error' => 'Access credentials not found for user: ' . $user, 'qid' => ""];
+    }
+    list($access_key, $access_secret) = $credentials;
+
+    $qids = GetQidForMdtitle($sourcetitle);
+    $qid = $qids[0]['qid'] ?? '';
 
     $link_result = LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_secret);
 

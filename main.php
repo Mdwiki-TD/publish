@@ -167,16 +167,24 @@ function handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $ed
 {
     $camp_to_cat = retrieveCampaignCategories();
     $cat = $camp_to_cat[$campaign] ?? '';
-    $LinkToWikidata = [];
+    $LinkTowd = [];
 
     try {
-        $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title);
-        $LinkToWikidata = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
-
-        if (isset($LinkToWikidata['error']) && !isset($LinkToWikidata['nserror'])) {
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
+        // ---
+        $to_users_table = false;
+        // ---
+        // if $LinkTowd has "abusefilter-warning-39" then $to_users_table = true
+        if (strpos(json_encode($LinkTowd), "abusefilter-warning-39") !== false) {
+            $to_users_table = true;
+        }
+        // ---
+        $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title, $to_users_table);
+        // ---
+        if (isset($LinkTowd['error'])) {
             $tab3 = [
-                'error' => $LinkToWikidata['error'],
-                'qid' => $LinkToWikidata['qid'] ?? "",
+                'error' => $LinkTowd['error'],
+                'qid' => $LinkTowd['qid'] ?? "",
                 'title' => $title,
                 'sourcetitle' => $sourcetitle,
                 'lang' => $lang,
@@ -187,7 +195,7 @@ function handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $ed
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
     }
-    return $LinkToWikidata;
+    return $LinkTowd;
 }
 
 function start($request)
