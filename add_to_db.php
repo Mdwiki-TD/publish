@@ -59,7 +59,7 @@ function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
     // ---
     if (count($result) > 0) {
         $query = <<<SQL
-            UPDATE $table_name SET target = ?, pupdate = now()
+            UPDATE $table_name SET target = ?, pupdate = DATE(NOW())
             WHERE title = ? AND lang = ? AND user = ? AND target = ""
         SQL;
         // ---
@@ -113,14 +113,14 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     // ---
     $query_user = <<<SQL
         INSERT INTO pages_users (title, lang, user, target)
-        SELECT ?, ?, ?, now(), ?
+        SELECT ?, ?, ?, DATE(NOW()), ?
     SQL;
     // ---
     $query_user_params = [$title, $lang, $user, $target];
     // ---
     $query = <<<SQL
         INSERT INTO pages (title, word, translate_type, cat, lang, user, pupdate, target)
-        SELECT ?, ?, ?, ?, ?, ?, now(), ?
+        SELECT ?, ?, ?, ?, ?, ?, DATE(NOW()), ?
     SQL;
     // ---
     $params = [
