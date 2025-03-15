@@ -83,6 +83,7 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     ];
     // ---
     if (empty($user) || empty($title) || empty($lang)) {
+        $tab['one_empty'] = ['title' => $title, 'lang' => $lang, 'user' => $user];
         return $tab;
     }
     // ---
