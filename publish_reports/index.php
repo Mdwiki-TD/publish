@@ -81,17 +81,17 @@ function make_ul($dir)
         // ---
         $date = date('Y-m-d H:i', filemtime($json_file));
         // ---
-        $date_line = "$date";
+        $date_line = "($date) ";
         // ---
         if (date('Y-m-d', filemtime($json_file)) === $today) {
             // $date_line = "<span style='color:green;'>$date</span>";
-            $date_line .= "<span class='badge text-bg-primary'>Today</span>";
+            $date_line .= " <span class='badge text-bg-primary'>Today</span>";
         }
         // ---
         // $text .= "<li><a href='$url'>$name</a> ($date)</li>";
         // ---
         $text .= <<<HTML
-            <div class="col"><a href='$url'>$name</a> ($date_line)</div>
+            <div class="col"><a href='$url'>$name</a> $date_line</div>
         HTML;
     }
     // $text .= '</ol>';
