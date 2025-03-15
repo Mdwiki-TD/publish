@@ -88,10 +88,10 @@ function make_ul($dir)
             $date_line .= " <span class='badge text-bg-primary'>Today</span>";
         }
         // ---
-        // $text .= "<li><a href='$url'>$name</a> ($date)</li>";
+        // $text .= "<li><a target="_blank" href='$url'>$name</a> ($date)</li>";
         // ---
         $text .= <<<HTML
-            <div class="col"><a href='$url'>$name</a> $date_line</div>
+            <div class="col"><a target="_blank" href='$url'>$name</a> $date_line</div>
         HTML;
     }
     // $text .= '</ol>';
