@@ -77,8 +77,13 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     // ---
     $use_user_sql = false;
     // ---
+    $tab = [
+        'use_user_sql' => $use_user_sql,
+        'to_users_table' => $to_users_table,
+    ];
+    // ---
     if (empty($user) || empty($title) || empty($lang)) {
-        return $use_user_sql;
+        return $tab;
     }
     // ---
     $word = $Words_table[$title] ?? 0;
@@ -95,6 +100,7 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
         // if target contains user
         if (strpos($target, $user_t) !== false) {
             $use_user_sql = true;
+            $tab['use_user_sql'] = $use_user_sql;
             // if ($user == "Mr. Ibrahem") return $use_user_sql;
         }
     }
@@ -102,7 +108,8 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     $exists = find_exists_or_update($title, $lang, $user, $target, $use_user_sql);
     // ---
     if ($exists) {
-        return "already_in";
+        $tab['exists'] = "already_in";
+        return $tab;
     }
     // ---
     $query_user = <<<SQL
@@ -132,7 +139,8 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     if (!empty($test)) {
         echo "<br>$query<br>";
     }
+    // ---
     execute_query($query, $params = $params);
     // ---
-    return $use_user_sql;
+    return $tab;
 }
