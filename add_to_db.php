@@ -57,16 +57,13 @@ function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
     // ---
     $result = fetch_query($query, [$title, $lang, $user]);
     // ---
-    // today date like: 2024-08-21
-    $today = date("Y-m-d");
-    // ---
     if (count($result) > 0) {
         $query = <<<SQL
-            UPDATE $table_name SET target = ?, pupdate = ?
+            UPDATE $table_name SET target = ?, pupdate = DATE(NOW())
             WHERE title = ? AND lang = ? AND user = ? AND target = ""
         SQL;
         // ---
-        $params = [$target, $today, $title, $lang, $user];
+        $params = [$target, $title, $lang, $user];
         // ---
         execute_query($query, $params);
     }
@@ -80,56 +77,61 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     // ---
     $use_user_sql = false;
     // ---
-    if (empty($user) || empty($title) || empty($lang)) {
-        return $use_user_sql;
-    }
+    $tab = [
+        'use_user_sql' => $use_user_sql,
+        'to_users_table' => $to_users_table,
+    ];
     // ---
-    // today date like: 2024-08-21
-    $today = date("Y-m-d");
+    if (empty($user) || empty($title) || empty($lang)) {
+        $tab['one_empty'] = ['title' => $title, 'lang' => $lang, 'user' => $user];
+        return $tab;
+    }
     // ---
     $word = $Words_table[$title] ?? 0;
     // ---
     $target = str_replace("_", " ", $target);
     $user   = str_replace("_", " ", $user);
     // ---
-    $user_t = str_replace("User:", "", $user);
-    $user_t = str_replace("user:", "", $user_t);
-    // ---
-    // if target contains user
-    if (strpos($target, $user_t) !== false) {
-        $use_user_sql = true;
-        // if ($user == "Mr. Ibrahem") return $use_user_sql;
+    if ($to_users_table) {
+        $tab['use_user_sql'] = $to_users_table;
     } else {
-        $use_user_sql = $to_users_table;
+        $user_t = str_replace("User:", "", $user);
+        $user_t = str_replace("user:", "", $user_t);
+        // ---
+        // if target contains user
+        if (strpos($target, $user_t) !== false) {
+            $tab['use_user_sql'] = true;
+            // if ($user == "Mr. Ibrahem") return $tab;
+        }
     }
     // ---
-    $exists = find_exists_or_update($title, $lang, $user, $target, $use_user_sql);
+    $exists = find_exists_or_update($title, $lang, $user, $target, $tab['use_user_sql']);
     // ---
     if ($exists) {
-        return $use_user_sql;
+        $tab['exists'] = "already_in";
+        return $tab;
     }
     // ---
     $query_user = <<<SQL
-        INSERT INTO pages_users (title, lang, user, pupdate, target)
-        SELECT ?, ?, ?, ?, ?
+        INSERT INTO pages_users (title, lang, user, target)
+        SELECT ?, ?, ?, DATE(NOW()), ?
     SQL;
     // ---
-    $query_user_params = [$title, $lang, $user, $today, $target];
+    $query_user_params = [$title, $lang, $user, $target];
     // ---
     $query = <<<SQL
         INSERT INTO pages (title, word, translate_type, cat, lang, user, pupdate, target)
-        SELECT ?, ?, ?, ?, ?, ?, ?, ?
+        SELECT ?, ?, ?, ?, ?, ?, DATE(NOW()), ?
     SQL;
     // ---
     $params = [
         $title, $word, $tr_type, $cat, $lang,
         $user,
-        $today,
         $target
     ];
     // ---
     // if $title has $user in it then use $query_user else use $query
-    if ($use_user_sql) {
+    if ($tab['use_user_sql']) {
         $query = $query_user;
         $params = $query_user_params;
     }
@@ -137,7 +139,8 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     if (!empty($test)) {
         echo "<br>$query<br>";
     }
+    // ---
     execute_query($query, $params = $params);
     // ---
-    return $use_user_sql;
+    return $tab;
 }
