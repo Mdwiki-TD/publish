@@ -114,7 +114,7 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     }
     // ---
     $query_user = <<<SQL
-        INSERT INTO pages_users (title, lang, user, target)
+        INSERT INTO pages_users (title, lang, user, pupdate, target)
         SELECT ?, ?, ?, DATE(NOW()), ?
     SQL;
     // ---
