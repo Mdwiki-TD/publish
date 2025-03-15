@@ -80,6 +80,7 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     $tab = [
         'use_user_sql' => $use_user_sql,
         'to_users_table' => $to_users_table,
+        // 'one_empty' => [],
     ];
     // ---
     if (empty($user) || empty($title) || empty($lang)) {
@@ -141,6 +142,10 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     }
     // ---
     execute_query($query, $params = $params);
+    // ---
+    $tab['execute_query'] = true;
+    $tab['query'] = $query;
+    $tab['query_params'] = $params;
     // ---
     return $tab;
 }
