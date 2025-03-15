@@ -45,7 +45,7 @@ echo <<<HTML
     <main id="body">
         <div id="maindiv" class="container">
 HTML;
-// ------------
+
 function card($title, $text)
 {
     echo <<<HTML
@@ -54,7 +54,9 @@ function card($title, $text)
                 <h3>$title</h3>
             </div>
             <div class="card-body">
-                $text
+                <div class="row row-cols-auto row-cols-md-3">
+                    $text
+                </div>
             </div>
         </div>
     HTML;
@@ -62,7 +64,8 @@ function card($title, $text)
 
 function make_ul($dir)
 {
-    $text = "<ol>";
+    // $text = "<ol>";
+    $text = "";
     $json_files = glob(__DIR__ . '/' . $dir . '/*.json');
     // ---
     // sort by date
@@ -70,19 +73,28 @@ function make_ul($dir)
         return filemtime($b) - filemtime($a);
     });
     // ---
+    $today = date('Y-m-d');
+    // ---
     foreach ($json_files as $json_file) {
         $name = basename($json_file);
         $url = rawurlencode($dir) . '/' . rawurlencode($name);
         // ---
         $date = date('Y-m-d H:i', filemtime($json_file));
         // ---
+        $date_line = "($date) ";
+        // ---
+        if (date('Y-m-d', filemtime($json_file)) === $today) {
+            // $date_line = "<span style='color:green;'>$date</span>";
+            $date_line .= " <span class='badge text-bg-primary'>Today</span>";
+        }
+        // ---
+        // $text .= "<li><a target="_blank" href='$url'>$name</a> ($date)</li>";
+        // ---
         $text .= <<<HTML
-            <li>
-                <a href='$url'>$name</a> ($date)
-            </li>
+            <div class="col"><a target="_blank" href='$url'>$name</a> $date_line</div>
         HTML;
     }
-    $text .= '</ol>';
+    // $text .= '</ol>';
     return $text;
 }
 
