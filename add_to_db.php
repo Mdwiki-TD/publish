@@ -92,20 +92,19 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     $user   = str_replace("_", " ", $user);
     // ---
     if ($to_users_table) {
-        $use_user_sql = $to_users_table;
+        $tab['use_user_sql'] = $to_users_table;
     } else {
         $user_t = str_replace("User:", "", $user);
         $user_t = str_replace("user:", "", $user_t);
         // ---
         // if target contains user
         if (strpos($target, $user_t) !== false) {
-            $use_user_sql = true;
-            $tab['use_user_sql'] = $use_user_sql;
-            // if ($user == "Mr. Ibrahem") return $use_user_sql;
+            $tab['use_user_sql'] = true;
+            // if ($user == "Mr. Ibrahem") return $tab;
         }
     }
     // ---
-    $exists = find_exists_or_update($title, $lang, $user, $target, $use_user_sql);
+    $exists = find_exists_or_update($title, $lang, $user, $target, $tab['use_user_sql']);
     // ---
     if ($exists) {
         $tab['exists'] = "already_in";
@@ -131,7 +130,7 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     ];
     // ---
     // if $title has $user in it then use $query_user else use $query
-    if ($use_user_sql) {
+    if ($tab['use_user_sql']) {
         $query = $query_user;
         $params = $query_user_params;
     }
