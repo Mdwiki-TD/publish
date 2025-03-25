@@ -129,61 +129,20 @@ function getAccessCredentials($user, $access_key, $access_secret)
     return [$access_key, $access_secret];
 }
 
-function LinkToWikidata_old($sourcetitle, $lang, $user, $targettitle, $access_key, $access_secret)
-{
-    $credentials = getAccessCredentials($user, $access_key, $access_secret);
-    if ($credentials === null) {
-        return ['error' => 'Access credentials not found for user: ' . $user, 'qid' => ""];
-    }
-    list($access_key, $access_secret) = $credentials;
-
-    $qids = GetQidForMdtitle($sourcetitle);
-    $qid = $qids[0]['qid'] ?? '';
-
-    $title_info = GetTitleInfo($targettitle, $lang);
-    // { "pageid": 5049507, "ns": 2, "title": "利用者:Mr. Ibrahem/オランザピン/サミドルファン" }
-
-    $ns = $title_info['ns'] ?? '';
-
-    // $targettitle has : in
-    // $has_in_it = strpos($targettitle, ':');
-
-    // if (($ns !== 0 && $ns !== "0" && $ns !== "") || ($has_in_it !== false && $ns === "")) {
-    //     return ['error' => 'Cannot create link for namespace:' . $ns, 'nserror' => true, 'qid' => $qid];
-    // }
-
-    // "title":"Not found."
-    $not_found = $title_info['title'] ?? "";
-    pub_test_print("ns: ($ns), not_found: ($not_found)");
-    pub_test_print(json_encode($title_info));
-
-    $not_found = $title_info['title'] ?? '';
-    if ($not_found === 'Not found.') {
-        return ['error' => 'Target page not found: ' . $targettitle, 'qid' => $qid];
-    }
-
-    $link_result = LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_secret);
-
-    if (isset($link_result['success']) && $link_result['success']) {
-        pub_test_print("success: true");
-        return ['result' => "success", 'qid' => $qid];
-    }
-
-    return $link_result;
-}
-
 function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $access_secret)
 {
-    $credentials = getAccessCredentials($user, $access_key, $access_secret);
-    if ($credentials === null) {
-        return ['error' => 'Access credentials not found for user: ' . $user, 'qid' => ""];
-    }
-    list($access_key, $access_secret) = $credentials;
-
     $qids = GetQidForMdtitle($sourcetitle);
     $qid = $qids[0]['qid'] ?? '';
 
-    $link_result = LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_secret);
+    $credentials = getAccessCredentials($user, $access_key, $access_secret);
+    if ($credentials === null) {
+        return ['error' => 'Access credentials not found for user: ' . $user, 'qid' => $qid];
+    }
+    list($access_key, $access_secret) = $credentials;
+
+    $link_result = LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_secret) ?? [];
+
+    $link_result["qid"] = $qid;
 
     if (isset($link_result['success']) && $link_result['success']) {
         pub_test_print("success: true");
