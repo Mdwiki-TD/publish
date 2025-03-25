@@ -60,7 +60,7 @@ function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
     if (count($result) > 0) {
         $query = <<<SQL
             UPDATE $table_name SET target = ?, pupdate = DATE(NOW())
-            WHERE title = ? AND lang = ? AND user = ? AND target = ""
+            WHERE title = ? AND lang = ? AND user = ? AND (target = "" OR target IS NULL)
         SQL;
         // ---
         $params = [$target, $title, $lang, $user];
