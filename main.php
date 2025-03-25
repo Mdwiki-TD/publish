@@ -179,7 +179,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
     $LinkTowd = [];
 
     try {
-        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
         // ---
         if (isset($LinkTowd['error'])) {
             $tab3 = [
