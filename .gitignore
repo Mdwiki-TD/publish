@@ -5,3 +5,7 @@ all_pages_revids.json
 /fix_refs_repo1
 /publish_reports/**/*.json
 publish_reports/index2.php
+main copy.php
+/publish_reports/reports
+publish_reports/_index.php
+/reports

@@ -18,8 +18,12 @@ include_once __DIR__ . '/textfixes/include.php';
 include_once __DIR__ . '/bots/wd.php';
 
 $fix_refs_file = __DIR__ . '/fix_refs/work.php';
+$fix_refs_file2 = __DIR__ . '/../fix_refs_repo/work.php';
+
 if (file_exists($fix_refs_file)) {
     include_once $fix_refs_file;
+} elseif (file_exists($fix_refs_file2)) {
+    include_once $fix_refs_file2;
 } else {
     include_once __DIR__ . '/../fix_refs/work.php';
 }

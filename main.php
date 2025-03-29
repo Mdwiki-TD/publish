@@ -11,18 +11,20 @@ use function Publish\WD\LinkToWikidata;
 use function Publish\TextFix\DoChangesToText;
 use function WpRefs\FixPage\DoChangesToText1;
 
+$rand_id = rand(0, 999999999);
+
+$main_dir = check_dirs($rand_id);
+
+
 function get_revid($sourcetitle)
 {
     // read all_pages_revids.json file
+    $revids_file = __DIR__ . '/all_pages_revids.json';
+    // ---
+    if (!file_exists($revids_file)) $revids_file = __DIR__ . '/../all_pages_revids.json';
+    // ---
     try {
-        $json = json_decode(file_get_contents(__DIR__ . '/all_pages_revids.json'), true);
-        $revid = $json[$sourcetitle] ?? "";
-        return $revid;
-    } catch (Exception $e) {
-        pub_test_print($e->getMessage());
-    }
-    try {
-        $json = json_decode(file_get_contents(__DIR__ . '/../all_pages_revids.json'), true);
+        $json = json_decode(file_get_contents($revids_file), true);
         $revid = $json[$sourcetitle] ?? "";
         return $revid;
     } catch (Exception $e) {
@@ -36,16 +38,48 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
     return "Created by translating the page [[:mdwiki:Special:Redirect/revision/$revid|$sourcetitle]] to:$to $hashtag";
 }
 
-function to_do($tab, $dir)
+function check_dirs($rand_id)
 {
-    $main_dir = __DIR__ . "/../publish_reports/" . $dir;
-    if (!is_dir($main_dir)) {
-        mkdir($main_dir, 0755, true);
+    $publish_reports = "I:/mdwiki/publish-repo/publish_reports/reports/";
+    // ---
+    if (!is_dir($publish_reports)) {
+        $publish_reports = __DIR__ . "/../publish_reports/reports/";
     }
+    // ---
+    if (!is_dir($publish_reports)) {
+        mkdir($publish_reports, 0755, true);
+    }
+    // ---
+    $year_dir = $publish_reports . date("Y");
+    // ---
+    if (!is_dir($year_dir)) {
+        mkdir($year_dir, 0755, true);
+    }
+    // ---
+    $month_dir = $year_dir . "/" . date("m");
+    // ---
+    if (!is_dir($month_dir)) {
+        mkdir($month_dir, 0755, true);
+    }
+    // ---
+    $main1_dir = $month_dir . "/" . $rand_id;
+    // ---
+    if (!is_dir($main1_dir)) {
+        mkdir($main1_dir, 0755, true);
+    }
+    // ---
+    return $main1_dir;
+}
+
+function to_do($tab, $file_name)
+{
+    global $main_dir;
+    // ---
     try {
         // dump $tab to file in folder to_do
-        $file_name = $main_dir . "/$dir" . "_" . rand(0, 999999999) . ".json";
-        file_put_contents($file_name, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        $file_j = $main_dir . "/$file_name.json";
+        // ---
+        file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
     }
@@ -102,10 +136,10 @@ function handleNoAccess($user, $tab)
 {
     $error = ['code' => 'noaccess', 'info' => 'noaccess'];
     $editit = ['error' => $error, 'edit' => ['error' => $error, 'username' => $user], 'username' => $user];
-    $to_do_dir = "errors";
+    $to_do_file = "errors";
     // ---
     $tab['edit'] = $editit;
-    to_do($tab, $to_do_dir);
+    to_do($tab, $to_do_file);
 
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
@@ -151,20 +185,20 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $Success = $editit['edit']['result'] ?? '';
 
     $tab['result'] = $Success;
-    $to_do_dir = "";
+    $to_do_file = "";
 
     if ($Success === 'Success') {
         $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
         // ---
         $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle);
         // ---
-        $to_do_dir = "success";
+        $to_do_file = "success";
     } else {
-        $to_do_dir = "errors";
+        $to_do_file = "errors";
     }
 
     $tab['edit'] = $editit;
-    to_do($tab, $to_do_dir);
+    to_do($tab, $to_do_file);
 
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
