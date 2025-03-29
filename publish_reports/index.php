@@ -171,8 +171,9 @@ function make_reports($year, $month)
         return "<p></p>";
     }
 
-    $reports = scandir($month_dir);
     $report_links = '';
+
+    $reports = scandir($month_dir);
 
     // sort by date
     usort($reports, function ($a, $b) {
@@ -211,11 +212,14 @@ function make_reports($year, $month)
         // ---
         $ul .= "</ul>";
         // ---
+        $dir_title = $report;
+        $dir_title = date('m-d H:i', filemtime($report_dir));
+        // ---
         $report_links .= <<<HTML
             <div class="card px-0 m-1">
                 <div class="card-header">
-                    <span class="card-title h3">
-                        $report
+                    <span class="card-title h5">
+                        $dir_title
                     </span>
                     <div style="float: right">
                         $suff
