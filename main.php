@@ -42,7 +42,11 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
 
 function check_dirs($rand_id)
 {
-    $publish_reports = __DIR__ . "/publish_reports/reports/";
+    $publish_reports = "I:/mdwiki/publish-repo/publish_reports/reports/";
+    // ---
+    if (!is_dir($publish_reports)) {
+        $publish_reports = __DIR__ . "/../publish_reports/reports/";
+    }
     // ---
     if (!is_dir($publish_reports)) {
         mkdir($publish_reports, 0755, true);
