@@ -200,7 +200,7 @@ function make_reports($year, $month)
             // ---
             $name = basename($json_file);
             // ---
-            $url = "reports/$year/$month/" . $report_dir . '/' . $name;
+            $url = "reports/$year/$month/" . $report . '/' . $name;
             // ---
             $ul .= <<<HTML
                 <li class="list-group-item">
