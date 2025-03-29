@@ -202,6 +202,7 @@ function make_months_nav($year, $month)
     $nav .= '</ul>';
     return $nav;
 }
+
 function make_reports($year, $month)
 {
     global $publish_reports;
