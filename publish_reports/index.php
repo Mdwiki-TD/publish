@@ -79,14 +79,18 @@ function add_badge($report_dir)
 {
     // ---
     $today = date('Y-m-d');
+    // $today = "2025";
+    // ---
+    $date = date('Y-m-d H:i', filemtime($report_dir));
     // ---
     // if $report_dir last changes is today then add badge
     if (date('Y-m-d', filemtime($report_dir)) === $today) {
         return " <span class='badge text-bg-primary'>Today</span>";
     };
     // ---
-    return "";
+    return "($date)";
 }
+
 function make_card_rows($title, $text, $suff)
 {
     return <<<HTML
@@ -123,9 +127,10 @@ function make_col($report_dir, $year, $month, $dir)
         // ---
         $url = "reports/$year/$month/" . $dir . '/' . $name;
         // ---
-        $date = date('Y-m-d H:i', filemtime($json_file));
+        $date_line = "";
         // ---
-        $date_line = "($date) ";
+        $date = date('Y-m-d H:i', filemtime($json_file));
+        // $date_line = "($date) ";
         // ---
         // $badge = add_badge($json_file);
         // if (!empty($badge)) $date_line .= $badge;
@@ -253,15 +258,16 @@ $months_nav = make_months_nav($year, $month);
 $m_reports = make_reports($year, $month);
 
 echo $years_nav;
-echo $months_nav;
+// echo $months_nav;
 
 echo <<<HTML
-    <div class="card">
-        <div class="card-body">
-            $m_reports
+        $months_nav
+        <div class="tab-content">
+            <div class="tab-pane fade show active pt-3">
+                $m_reports
+            </div>
         </div>
     </div>
-        </div>
     </main>
 </body>
 
