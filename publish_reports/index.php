@@ -25,33 +25,6 @@ if (isset($_REQUEST['test'])) {
     error_reporting(E_ALL);
 };
 
-echo <<<HTML
-<body>
-    <header class="mb-3 border-bottom">
-        <nav id="mainnav" class="navbar navbar-expand-lg shadow">
-            <div class="container-fluid" id="navbardiv">
-                <a class="navbar-brand mb-0 h1" href="/publish_reports" style="color:#0d6efd;">
-                    Publish Reports
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="collapsibleNavbar">
-                    <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav">
-                        <li class="nav-item col-4 col-lg-auto">
-                            <a class="nav-link py-2 px-0 px-lg-2" href="#">
-                                <span class="navtitles">Publish Reports</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <main id="body">
-        <div id="maindiv" class="container">
-HTML;
-
 $publish_reports = __DIR__ . "/reports/";
 
 function check_dirs()
@@ -176,8 +149,8 @@ function make_reports($year, $month)
     $reports = scandir($month_dir);
 
     // sort by date
-    usort($reports, function ($a, $b) {
-        return filemtime($b) - filemtime($a);
+    usort($reports, function ($a, $b) use ($month_dir) {
+        return filemtime($month_dir . "/$b") - filemtime($month_dir . "/$a");
     });
 
     foreach ($reports as $report) {
@@ -191,11 +164,6 @@ function make_reports($year, $month)
         // ---
         $ul = '<ul class="list-group">';
         $json_files = glob($report_dir . '/*.json');
-        // ---
-        // sort by date
-        usort($json_files, function ($a, $b) {
-            return filemtime($b) - filemtime($a);
-        });
         // ---
         foreach ($json_files as $json_file) {
             // ---
@@ -212,7 +180,7 @@ function make_reports($year, $month)
         // ---
         $ul .= "</ul>";
         // ---
-        $dir_title = $report;
+        // $dir_title = $report;
         $dir_title = date('m-d H:i', filemtime($report_dir));
         // ---
         $report_links .= <<<HTML
@@ -232,7 +200,7 @@ function make_reports($year, $month)
         HTML;
     }
 
-    $report_links = '<div class="row row-cols-5">' . $report_links . '</div>';
+    $report_links = '<div class="row row-cols-auto row-cols-md-5">' . $report_links . '</div>';
 
     return $report_links;
 }
@@ -247,17 +215,39 @@ $years_nav = make_years_nav($year);
 $months_nav = make_months_nav($year, $month);
 $m_reports = make_reports($year, $month);
 
-echo $years_nav;
-// echo $months_nav;
-
 echo <<<HTML
-        $months_nav
-        <div class="tab-content">
-            <div class="tab-pane fade show active pt-3">
-                $m_reports
+<body>
+    <header class="mb-3 border-bottom">
+        <nav id="mainnav" class="navbar navbar-expand-lg shadow">
+            <div class="container-fluid" id="navbardiv">
+                <a class="navbar-brand mb-0 h1" href="/publish_reports" style="color:#0d6efd;">
+                    Publish Reports
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav">
+                        <li class="nav-item col-4 col-lg-auto">
+                            <a class="nav-link py-2 px-0 px-lg-2" href="#">
+                                <span class="navtitles">Publish Reports</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            $years_nav
+            $months_nav
+            <div class="tab-content">
+                <div class="tab-pane fade show active pt-3">
+                    $m_reports
+                </div>
             </div>
         </div>
-    </div>
     </main>
 </body>
 
