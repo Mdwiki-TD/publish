@@ -12,8 +12,12 @@ include_once __DIR__ . '/include.php';
 use function Publish\MdwikiSql\fetch_query;
 use function Publish\MdwikiSql\execute_query;
 
+$word_file = "I:/mdwiki/mdwiki/public_html/td/Tables/jsons/words.json";
+if (!file_exists($word_file)) {
+    $word_file = __DIR__ . "/../td/Tables/jsons/words.json";
+}
 try {
-    $file = file_get_contents(__DIR__ . "/../td/Tables/jsons/words.json");
+    $file = file_get_contents($word_file);
     // $file = file_get_contents("https://mdwiki.toolforge.org/td/Tables/jsons/words.json");
     $Words_table = json_decode($file, true);
 } catch (\Exception $e) {

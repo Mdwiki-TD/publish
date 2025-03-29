@@ -19,15 +19,14 @@ $main_dir = check_dirs($rand_id);
 function get_revid($sourcetitle)
 {
     // read all_pages_revids.json file
+    $revids_file = __DIR__ . '/all_pages_revids.json';
+    // ---
+    if (!file_exists($revids_file)) $revids_file = __DIR__ . '/../all_pages_revids.json';
+    // ---
+    if (!file_exists($revids_file)) $revids_file = __DIR__ . '/../all_pages_revids.json';
+    // ---
     try {
-        $json = json_decode(file_get_contents(__DIR__ . '/all_pages_revids.json'), true);
-        $revid = $json[$sourcetitle] ?? "";
-        return $revid;
-    } catch (Exception $e) {
-        pub_test_print($e->getMessage());
-    }
-    try {
-        $json = json_decode(file_get_contents(__DIR__ . '/../all_pages_revids.json'), true);
+        $json = json_decode(file_get_contents($revids_file), true);
         $revid = $json[$sourcetitle] ?? "";
         return $revid;
     } catch (Exception $e) {
@@ -43,7 +42,7 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
 
 function check_dirs($rand_id)
 {
-    $publish_reports = __DIR__ . "/reports/";
+    $publish_reports = __DIR__ . "/publish_reports/reports/";
     // ---
     if (!is_dir($publish_reports)) {
         mkdir($publish_reports, 0755, true);
@@ -61,13 +60,13 @@ function check_dirs($rand_id)
         mkdir($month_dir, 0755, true);
     }
     // ---
-    $main_dir = $month_dir . "/" . $rand_id;
+    $main1_dir = $month_dir . "/" . $rand_id;
     // ---
-    if (!is_dir($main_dir)) {
-        mkdir($main_dir, 0755, true);
+    if (!is_dir($main1_dir)) {
+        mkdir($main1_dir, 0755, true);
     }
     // ---
-    return $main_dir;
+    return $main1_dir;
 }
 
 function to_do($tab, $file_name)
