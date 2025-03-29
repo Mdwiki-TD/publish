@@ -72,6 +72,7 @@ function check_dirs()
         mkdir($month_dir, 0755, true);
     }
 }
+
 function card($title, $text)
 {
     echo <<<HTML
@@ -130,23 +131,40 @@ $reports_dirs = scandir(__DIR__ . "/reports/");
 // ---
 $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 // ---
-// make years nav list with link= index.php?year=$year
-
-// ---
-foreach ($reports_dirs as $year_dir) {
+function make_years_nav($year)
+{
+    // make bootstrap5 years nav list with link= index.php?year=$year
     // ---
-    if ($year_dir === '.' || $year_dir === '..') {
-        continue;
+    $dirs = scandir(__DIR__ . "/reports/");
+    // ---
+    $nav = '<ul class="nav nav-pills">';
+    // ---
+    foreach ($dirs as $year_dir) {
+        // ---
+        if ($year_dir === '.' || $year_dir === '..') {
+            continue;
+        }
+        // ---
+        if (!is_dir(__DIR__ . "/reports/" . $year_dir)) {
+            continue;
+        }
+        // ---
+        $active = ($year_dir == $year) ? "active" : "";
+        $nav .= <<<HTML
+            <li class="nav-item">
+                <a class="nav-link $active" href="index.php?year=$year_dir">$year_dir</a>
+            </li>
+            HTML;
     }
     // ---
-    if (!is_dir(__DIR__ . "/reports/" . $year_dir)) {
-        continue;
-    }
+    $nav .= "</ul>";
     // ---
-    $ul = make_ul($year_dir);
-    // ---
-    card($year_dir, $ul);
+    return $nav;
 }
+
+$years_nav = make_years_nav($year);
+
+echo $years_nav;
 
 echo <<<HTML
         </div>
