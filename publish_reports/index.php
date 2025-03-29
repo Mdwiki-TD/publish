@@ -91,8 +91,13 @@ function make_card_rows($title, $text, $suff)
 {
     return <<<HTML
         <div class="card px-0 m-1">
-            <div class="card-header h3">
-                $title $suff
+            <div class="card-header">
+                <span class="card-title h3">
+                    $title
+                </span>
+                <div style="float: right">
+                    $suff
+                </div>
             </div>
             <div class="card-body">
                 $text
@@ -101,11 +106,11 @@ function make_card_rows($title, $text, $suff)
     HTML;
 }
 
-function make_col($dir)
+function make_col($report_dir, $year, $month, $dir)
 {
     // $text = "<ol>";
     $text = "";
-    $json_files = glob($dir . '/*.json');
+    $json_files = glob($report_dir . '/*.json');
     // ---
     // sort by date
     usort($json_files, function ($a, $b) {
@@ -116,7 +121,7 @@ function make_col($dir)
         // ---
         $name = basename($json_file);
         // ---
-        $url = rawurlencode($dir) . '/' . rawurlencode($name);
+        $url = "reports/$year/$month/" . $dir . '/' . $name;
         // ---
         $date = date('Y-m-d H:i', filemtime($json_file));
         // ---
@@ -225,7 +230,7 @@ function make_reports($year, $month)
         if (is_dir($report_dir)) {
             $suff = add_badge($report_dir);
             // ---
-            $ul = make_col($report_dir);
+            $ul = make_col($report_dir, $year, $month, $report);
             $card = make_card_rows($report, $ul, $suff);
 
             $report_links .= $card;
