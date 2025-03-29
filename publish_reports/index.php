@@ -91,58 +91,6 @@ function add_badge($report_dir)
     return "($date)";
 }
 
-function make_card_rows($title, $text, $suff)
-{
-    return <<<HTML
-        <div class="card px-0 m-1">
-            <div class="card-header">
-                <span class="card-title h3">
-                    $title
-                </span>
-                <div style="float: right">
-                    $suff
-                </div>
-            </div>
-            <div class="card-body">
-                $text
-            </div>
-        </div>
-    HTML;
-}
-
-function make_col($report_dir, $year, $month, $dir)
-{
-    // $text = "<ol>";
-    $text = "";
-    $json_files = glob($report_dir . '/*.json');
-    // ---
-    // sort by date
-    usort($json_files, function ($a, $b) {
-        return filemtime($b) - filemtime($a);
-    });
-    // ---
-    foreach ($json_files as $json_file) {
-        // ---
-        $name = basename($json_file);
-        // ---
-        $url = "reports/$year/$month/" . $dir . '/' . $name;
-        // ---
-        $date_line = "";
-        // ---
-        $date = date('Y-m-d H:i', filemtime($json_file));
-        // $date_line = "($date) ";
-        // ---
-        // $badge = add_badge($json_file);
-        // if (!empty($badge)) $date_line .= $badge;
-        // ---
-        $text .= <<<HTML
-            <div class="col"><a target="_blank" href='$url'>$name</a> $date_line</div>
-        HTML;
-    }
-    // $text .= '</ol>';
-    return $text;
-}
-
 function make_years_nav($year)
 {
     global $publish_reports;
@@ -224,25 +172,63 @@ function make_reports($year, $month)
     }
 
     $reports = scandir($month_dir);
-    $report_links = '<div class="row row-cols-auto row-cols-md-3">';
+    $report_links = '';
+
+    // sort by date
+    usort($reports, function ($a, $b) {
+        return filemtime($b) - filemtime($a);
+    });
 
     foreach ($reports as $report) {
-        if ($report === '.' || $report === '..') {
-            continue;
-        }
+        if ($report === '.' || $report === '..') continue;
+        // ---
         $report_dir = $month_dir . "/" . $report;
-
-        if (is_dir($report_dir)) {
-            $suff = add_badge($report_dir);
+        // ---
+        if (!is_dir($report_dir)) continue;
+        // ---
+        $suff = add_badge($report_dir);
+        // ---
+        $ul = '<ul class="list-group">';
+        $json_files = glob($report_dir . '/*.json');
+        // ---
+        // sort by date
+        usort($json_files, function ($a, $b) {
+            return filemtime($b) - filemtime($a);
+        });
+        // ---
+        foreach ($json_files as $json_file) {
             // ---
-            $ul = make_col($report_dir, $year, $month, $report);
-            $card = make_card_rows($report, $ul, $suff);
-
-            $report_links .= $card;
+            $name = basename($json_file);
+            // ---
+            $url = "reports/$year/$month/" . $report_dir . '/' . $name;
+            // ---
+            $ul .= <<<HTML
+                <li class="list-group-item">
+                    <a target="_blank" href='$url'>$name</a>
+                </li>
+            HTML;
         }
+        // ---
+        $ul .= "</ul>";
+        // ---
+        $report_links .= <<<HTML
+            <div class="card px-0 m-1">
+                <div class="card-header">
+                    <span class="card-title h3">
+                        $report
+                    </span>
+                    <div style="float: right">
+                        $suff
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    $ul
+                </div>
+            </div>
+        HTML;
     }
 
-    $report_links .= '</div>';
+    $report_links = '<div class="row row-cols-5">' . $report_links . '</div>';
 
     return $report_links;
 }
