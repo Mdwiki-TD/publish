@@ -133,11 +133,11 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 // ---
 function make_years_nav($year)
 {
-    // make bootstrap5 years nav list with link= index.php?year=$year
+    // make bootstrap5 tabs nav list with link= index.php?year=$year
     // ---
     $dirs = scandir(__DIR__ . "/reports/");
     // ---
-    $nav = '<ul class="nav nav-pills">';
+    $nav = '<ul class="nav nav-tabs">';
     // ---
     foreach ($dirs as $year_dir) {
         // ---
