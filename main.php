@@ -23,8 +23,6 @@ function get_revid($sourcetitle)
     // ---
     if (!file_exists($revids_file)) $revids_file = __DIR__ . '/../all_pages_revids.json';
     // ---
-    if (!file_exists($revids_file)) $revids_file = __DIR__ . '/../all_pages_revids.json';
-    // ---
     try {
         $json = json_decode(file_get_contents($revids_file), true);
         $revid = $json[$sourcetitle] ?? "";
