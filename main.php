@@ -13,6 +13,9 @@ use function WpRefs\FixPage\DoChangesToText1;
 
 $rand_id = rand(0, 999999999);
 
+$main_dir = check_dirs($rand_id);
+
+
 function get_revid($sourcetitle)
 {
     // read all_pages_revids.json file
@@ -38,7 +41,7 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
     return "Created by translating the page [[:mdwiki:Special:Redirect/revision/$revid|$sourcetitle]] to:$to $hashtag";
 }
 
-function check_dirs()
+function check_dirs($rand_id)
 {
     $publish_reports = __DIR__ . "/reports/";
     // ---
@@ -57,34 +60,24 @@ function check_dirs()
     if (!is_dir($month_dir)) {
         mkdir($month_dir, 0755, true);
     }
-}
-
-function to_do($tab, $file_name)
-{
-    global $rand_id;
-    // ---
-    $publish_reports = __DIR__ . "/../publish_reports/reports/";
-    // ---
-    $year_dir = $publish_reports . date("Y");
-    // ---
-    if (!is_dir($year_dir)) {
-        mkdir($year_dir, 0755, true);
-    }
-    // ---
-    $month_dir = $year_dir . "/" . date("m");
-    // ---
-    if (!is_dir($month_dir)) {
-        mkdir($month_dir, 0755, true);
-    }
     // ---
     $main_dir = $month_dir . "/" . $rand_id;
     // ---
     if (!is_dir($main_dir)) {
         mkdir($main_dir, 0755, true);
     }
+    // ---
+    return $main_dir;
+}
+
+function to_do($tab, $file_name)
+{
+    global $main_dir;
+    // ---
     try {
         // dump $tab to file in folder to_do
         $file_j = $main_dir . "/$file_name.json";
+        // ---
         file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
@@ -240,9 +233,6 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
 
 function start($request)
 {
-    // ---
-    check_dirs();
-    // ---
     $sourcetitle = $request['sourcetitle'] ?? '';
     $title = formatTitle($request['title'] ?? '');
     $user = formatUser($request['user'] ?? '');
