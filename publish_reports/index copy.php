@@ -19,12 +19,6 @@
 
 <?php
 
-if (isset($_REQUEST['test'])) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-};
-
 echo <<<HTML
 <body>
     <header class="mb-3 border-bottom">
@@ -52,26 +46,6 @@ echo <<<HTML
         <div id="maindiv" class="container">
 HTML;
 
-function check_dirs()
-{
-    $publish_reports = __DIR__ . "/reports/";
-    // ---
-    if (!is_dir($publish_reports)) {
-        mkdir($publish_reports, 0755, true);
-    }
-    // ---
-    $year_dir = $publish_reports . date("Y");
-    // ---
-    if (!is_dir($year_dir)) {
-        mkdir($year_dir, 0755, true);
-    }
-    // ---
-    $month_dir = $year_dir . "/" . date("m");
-    // ---
-    if (!is_dir($month_dir)) {
-        mkdir($month_dir, 0755, true);
-    }
-}
 function card($title, $text)
 {
     echo <<<HTML
@@ -124,30 +98,20 @@ function make_ul($dir)
     return $text;
 }
 
-check_dirs();
+$sub_dirs = scandir(__DIR__);
 
-$reports_dirs = scandir(__DIR__ . "/reports/");
-// ---
-$year = isset($_GET['year']) ? $_GET['year'] : date('Y');
-// ---
-// make years nav list with link= index.php?year=$year
-
-// ---
-foreach ($reports_dirs as $year_dir) {
-    // ---
-    if ($year_dir === '.' || $year_dir === '..') {
+foreach ($sub_dirs as $sub_dir) {
+    if ($sub_dir === '.' || $sub_dir === '..') {
         continue;
     }
-    // ---
-    if (!is_dir(__DIR__ . "/reports/" . $year_dir)) {
+    if (!is_dir(__DIR__ . '/' . $sub_dir)) {
         continue;
     }
-    // ---
-    $ul = make_ul($year_dir);
-    // ---
-    card($year_dir, $ul);
+    $ul = make_ul($sub_dir);
+    card($sub_dir, $ul);
 }
 
+// ------------
 echo <<<HTML
         </div>
     </main>
