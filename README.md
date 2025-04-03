@@ -42,4 +42,7 @@ The main functions in `main.php` include:
 - The script uses several helper functions from other included files, such as `fix_refs`, `DoChangesToText`, and `LinkToWikidata`.
 
 # License
-This project does not currently specify a license.
+# Diagram 
+```mermaid
+
+```
