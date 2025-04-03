@@ -71,5 +71,95 @@ This project is a PHP-based workflow designed to manage the final steps for publ
 
 ## Diagram 
 ```mermaid
+flowchart TD
+    %% Input Sources
+    A["Translated Wikitext Input"]:::input
+    B["all_pages_revids.json"]:::input
 
+    %% Front-End / Entry Points
+    subgraph "Front-End / Entry Points"
+        MP["main.php"]:::entrypoint
+        IP["index.php"]:::entrypoint
+        DEP["do_edit.php"]:::entrypoint
+    end
+
+    %% Configuration & Helpers
+    subgraph "Configuration & Helpers"
+        CP["config.php"]:::config
+        INC["include.php"]:::config
+        TP["token.php"]:::config
+        GT["get_token.php"]:::config
+        HP["helps.php"]:::config
+        TFINC["textfixes/include.php"]:::config
+    end
+
+    %% Text Pre-processing Modules
+    subgraph "Text Pre-processing Modules"
+        FR["fix_refs (Integration)"]:::processing
+        TF["Textfixes Modules (Citation, md_cat, text_fix, text_fix_refs, index.php)"]:::processing
+    end
+
+    %% API Preparation and External API
+    AP["API Preparation"]:::processing
+    subgraph "External API"
+        API["Wikipedia API"]:::external
+        WD["Wikidata Linking"]:::external
+    end
+
+    %% Auxiliary/Bot Services
+    subgraph "Auxiliary/Bot Services"
+        BOT["bots (bots/index.php, mdwiki_sql.php, wd.php)"]:::bot
+    end
+
+    %% Testing & Quality Assurance
+    subgraph "Testing & Quality Assurance"
+        TEST["tests (test.php)"]:::test
+    end
+
+    %% Data Flow Connections
+    A --> MP
+    B --> MP
+
+    CP --> MP
+    INC --> MP
+    TP --> MP
+    GT --> MP
+    HP --> MP
+    TFINC --> MP
+
+    MP -->|"DataTransformation"| FR
+    MP -->|"DataTransformation"| TF
+
+    FR -->|"ProcessedText"| AP
+    TF -->|"ProcessedText"| AP
+
+    AP -->|"APIRequest"| API
+    API -->|"SuccessfulEdit"| WD
+
+    MP -.->|"ErrorHandling"| BOT
+    MP -.->|"Validation"| TEST
+
+    %% Styles
+    classDef entrypoint fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef config fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef processing fill:#bfb,stroke:#333,stroke-width:2px;
+    classDef external fill:#ffe,stroke:#333,stroke-width:2px;
+    classDef bot fill:#fbb,stroke:#333,stroke-width:2px;
+    classDef test fill:#efc,stroke:#333,stroke-width:2px;
+    classDef input fill:#fcc,stroke:#333,stroke-width:2px;
+
+    %% Click Events for Component Mapping
+    click MP "https://github.com/mdwiki-td/publish/blob/main/main.php"
+    click IP "https://github.com/mdwiki-td/publish/blob/main/index.php"
+    click DEP "https://github.com/mdwiki-td/publish/blob/main/do_edit.php"
+    click FR "https://github.com/mdwiki-td/publish/tree/main/fix_refs"
+    click TF "https://github.com/mdwiki-td/publish/tree/main/textfixes"
+    click CP "https://github.com/mdwiki-td/publish/blob/main/config.php"
+    click INC "https://github.com/mdwiki-td/publish/blob/main/include.php"
+    click TP "https://github.com/mdwiki-td/publish/blob/main/token.php"
+    click GT "https://github.com/mdwiki-td/publish/blob/main/get_token.php"
+    click HP "https://github.com/mdwiki-td/publish/blob/main/helps.php"
+    click TFINC "https://github.com/mdwiki-td/publish/blob/main/textfixes/include.php"
+    click BOT "https://github.com/mdwiki-td/publish/tree/main/bots"
+    click TEST "https://github.com/mdwiki-td/publish/blob/main/tests/test.php"
 ```
