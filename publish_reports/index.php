@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<HTML lang=en dir=ltr data-bs-theme="light" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" dir="ltr" data-bs-theme="light" xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <meta name="robots" content="noindex">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WikiProjectMed Tools</title>
-    <link href='https://tools-static.wmflabs.org/cdnjs/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+    <link href='https://tools-static.wmflabs.org/cdnjs/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css' rel='stylesheet'>
     <script src='https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.7.0/jquery.min.js'></script>
     <script src='https://tools-static.wmflabs.org/cdnjs/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js'></script>
     <style>
@@ -19,86 +19,76 @@
 
 <?php
 
+// Enable error reporting for debugging
 if (isset($_REQUEST['test'])) {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
-};
+}
 
-$publish_reports = __DIR__ . "/reports/";
+// Constants
+define('PUBLISH_REPORTS_DIR', __DIR__ . '/reports/');
 
-function check_dirs()
+// Functions
+function ensureDirectoryExists($path)
 {
-    global $publish_reports;
-    // ---
-    if (!is_dir($publish_reports)) {
-        mkdir($publish_reports, 0755, true);
-    }
-    // ---
-    $year_dir = $publish_reports . date("Y");
-    // ---
-    if (!is_dir($year_dir)) {
-        mkdir($year_dir, 0755, true);
-    }
-    // ---
-    $month_dir = $year_dir . "/" . date("m");
-    // ---
-    if (!is_dir($month_dir)) {
-        mkdir($month_dir, 0755, true);
+    if (!is_dir($path)) {
+        mkdir($path, 0755, true);
     }
 }
 
-function add_badge($report_dir)
+function checkDirectories()
 {
-    // ---
+    ensureDirectoryExists(PUBLISH_REPORTS_DIR);
+    ensureDirectoryExists(getYearDirectory());
+    ensureDirectoryExists(getMonthDirectory());
+}
+
+function getYearDirectory()
+{
+    return PUBLISH_REPORTS_DIR . date('Y') . '/';
+}
+
+function getMonthDirectory()
+{
+    return getYearDirectory() . date('m') . '/';
+}
+
+function addBadge($directory)
+{
     $today = date('Y-m-d');
-    // $today = "2025";
-    // ---
-    $date = date('Y-m-d H:i', filemtime($report_dir));
-    // ---
-    // if $report_dir last changes is today then add badge
-    if (date('Y-m-d', filemtime($report_dir)) === $today) {
-        return " <span class='badge text-bg-primary'>Today</span>";
-    };
-    // ---
-    return "($date)";
+    $lastModified = date('Y-m-d', filemtime($directory));
+
+    return $today === $lastModified ? ' <span class="badge text-bg-primary">Today</span>' : " ($lastModified)";
 }
 
-function make_years_nav($year)
+function makeYearsNav($currentYear)
 {
-    global $publish_reports;
-    // make bootstrap5 tabs nav list with link= index.php?year=$year
-    // ---
-    $dirs = scandir($publish_reports);
-    // ---
+    $years = array_filter(scandir(PUBLISH_REPORTS_DIR), function ($item) {
+        return is_dir(PUBLISH_REPORTS_DIR . $item) && !in_array($item, ['.', '..']);
+    });
+
+    if (empty($years)) {
+        return '<p>No years available.</p>';
+    }
+
     $nav = '<ul class="nav nav-tabs">';
-    // ---
-    foreach ($dirs as $year_dir) {
-        // ---
-        if ($year_dir === '.' || $year_dir === '..') {
-            continue;
-        }
-        // ---
-        if (!is_dir($publish_reports . $year_dir)) {
-            continue;
-        }
-        // ---
-        $active = ($year_dir == $year) ? "active" : "";
+
+    foreach ($years as $year) {
+        $active = $year === $currentYear ? 'active' : '';
         $nav .= <<<HTML
-            <li class="nav-item">
-                <a class="nav-link $active" href="index.php?y=$year_dir">$year_dir</a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link $active" href="?y=$year">$year</a>
+                </li>
             HTML;
     }
-    // ---
-    $nav .= "</ul>";
-    // ---
+
+    $nav .= '</ul>';
     return $nav;
 }
 
-function make_months_nav($year, $month)
+function makeMonthsNav($currentYear, $currentMonth)
 {
-    global $publish_reports;
     $months = [
         1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
         5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
@@ -107,26 +97,23 @@ function make_months_nav($year, $month)
 
     $nav = '<ul class="nav nav-tabs">';
 
-    foreach ($months as $month_num => $month_name) {
-        // ---
-        $month_link = str_pad($month_num, 2, '0', STR_PAD_LEFT);
-        // ---
-        $active = ($month_num == $month || $month == $month_link) ? 'active' : '';
-        // ---
-        $month_dir = $publish_reports . "/$year/$month_link"; // Ensure 2 digit month.
-        // ---
-        if (is_dir($month_dir)) {
+    foreach ($months as $monthNum => $monthName) {
+        $monthLink = str_pad($monthNum, 2, '0', STR_PAD_LEFT);
+        $active = $monthNum == $currentMonth || $monthLink == $currentMonth ? 'active' : '';
+        $monthDir = PUBLISH_REPORTS_DIR . "$currentYear/$monthLink";
+
+        if (is_dir($monthDir)) {
             $nav .= <<<HTML
-                <li class="nav-item">
-                    <a class="nav-link $active" href="index.php?y=$year&m=$month_link">$month_name</a>
-                </li>
-            HTML;
+                    <li class="nav-item">
+                        <a class="nav-link $active" href="?y=$currentYear&m=$monthLink">$monthName</a>
+                    </li>
+                HTML;
         } else {
             $nav .= <<<HTML
-                <li class="nav-item">
-                    <span class="nav-link disabled">$month_name</span>
-                </li>
-            HTML;
+                    <li class="nav-item">
+                        <span class="nav-link disabled">$monthName</span>
+                    </li>
+                HTML;
         }
     }
 
@@ -134,95 +121,99 @@ function make_months_nav($year, $month)
     return $nav;
 }
 
-function make_reports($year, $month)
+function makeReports($year, $month)
 {
-    global $publish_reports;
+    $monthDir = PUBLISH_REPORTS_DIR . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
 
-    $month_dir = $publish_reports . "/$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
-
-    if (!is_dir($month_dir)) {
-        return "<p></p>";
+    if (!is_dir($monthDir)) {
+        return '<p>No reports available.</p>';
     }
 
-    $report_links = '';
+    $reportsByDate = [];
 
-    $reports = scandir($month_dir);
-
-    // sort by date
-    usort($reports, function ($a, $b) use ($month_dir) {
-        return filemtime($month_dir . "/$b") - filemtime($month_dir . "/$a");
-    });
-
-    foreach ($reports as $report) {
+    foreach (scandir($monthDir) as $report) {
         if ($report === '.' || $report === '..') continue;
-        // ---
-        $report_dir = $month_dir . "/" . $report;
-        // ---
-        if (!is_dir($report_dir)) continue;
-        // ---
-        $suff = add_badge($report_dir);
-        // ---
-        $ul = '<ul class="list-group">';
-        $json_files = glob($report_dir . '/*.json');
-        // ---
-        foreach ($json_files as $json_file) {
-            // ---
-            $name = basename($json_file);
-            // ---
-            $url = "reports/$year/$month/" . $report . '/' . $name;
-            // ---
-            $ul .= <<<HTML
-                <li class="list-group-item">
-                    <a target="_blank" href='$url'>$name</a>
-                </li>
-            HTML;
+        $reportDir = $monthDir . '/' . $report;
+
+        if (is_dir($reportDir)) {
+            $dateKey = date('Y-m-d', filemtime($reportDir));
+            $reportsByDate[$dateKey][] = $report;
         }
-        // ---
-        $ul .= "</ul>";
-        // ---
-        // $dir_title = $report;
-        $dir_title = date('m-d H:i', filemtime($report_dir));
-        // ---
-        $report_links .= <<<HTML
-            <div class="card px-0 m-1">
-                <div class="card-header">
-                    <span class="card-title h5">
-                        $dir_title
-                    </span>
-                    <div style="float: right">
-                        $suff
+    }
+
+    krsort($reportsByDate);
+
+    $reportLinks = '';
+
+    foreach ($reportsByDate as $date => $dailyReports) {
+        $dailyReportLinks = '';
+
+        foreach ($dailyReports as $report) {
+            $reportDir = $monthDir . '/' . $report;
+            $badge = addBadge($reportDir);
+            $time = date('H:i', filemtime($reportDir));
+            $jsonFiles = glob($reportDir . '/*.json');
+
+            $ul = '<ul class="list-group">';
+
+            foreach ($jsonFiles as $jsonFile) {
+                $name = basename($jsonFile);
+                $url = "reports/$year/$month/$report/$name";
+                $ul .= <<<HTML
+                        <li class="list-group-item">
+                            <a target="_blank" href="$url">$name</a>
+                        </li>
+                    HTML;
+            }
+
+            $ul .= '</ul>';
+
+            $dailyReportLinks .= <<<HTML
+                    <div class="col-md-3">
+                        <div class="card px-0 m-1">
+                            <div class="card-header">
+                                <span class="card-title h5">$time</span>
+                                <div style="float: right">$badge</div>
+                            </div>
+                            <div class="card-body p-0">$ul</div>
+                        </div>
+                    </div>
+                HTML;
+        }
+
+        $formattedDate = date('d M Y', strtotime($date));
+        $reportLinks .= <<<HTML
+                <div class="card px-0 m-1 mt-3">
+                    <div class="card-header bg-secondary text-white">
+                        <span class="card-title h4">$formattedDate</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">$dailyReportLinks</div>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    $ul
-                </div>
-            </div>
-        HTML;
+            HTML;
     }
 
-    $report_links = '<div class="row row-cols-auto row-cols-md-5">' . $report_links . '</div>';
-
-    return $report_links;
+    return $reportLinks;
 }
 
-check_dirs();
+// Main Logic
+checkDirectories();
 
-// ---
 $year = isset($_GET['y']) ? $_GET['y'] : date('Y');
 $month = isset($_GET['m']) ? $_GET['m'] : date('m');
 
-$years_nav = make_years_nav($year);
-$months_nav = make_months_nav($year, $month);
-$m_reports = make_reports($year, $month);
+$yearsNav = makeYearsNav($year);
+$monthsNav = makeMonthsNav($year, $month);
+$reports = makeReports($year, $month);
 
-echo <<<HTML
+?>
+
 <body>
     <header class="mb-3 border-bottom">
         <nav id="mainnav" class="navbar navbar-expand-lg shadow">
             <div class="container-fluid" id="navbardiv">
-                <a class="navbar-brand mb-0 h1" href="/publish_reports" style="color:#0d6efd;">
-                    Publish Reports
-                </a>
+                <a class="navbar-brand mb-0 h1" href="/publish_reports" style="color:#0d6efd;">Publish Reports</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -238,18 +229,19 @@ echo <<<HTML
             </div>
         </nav>
     </header>
+
     <main>
         <div class="container">
-            $years_nav
-            $months_nav
+            <?php echo $yearsNav; ?>
+            <?php echo $monthsNav; ?>
             <div class="tab-content">
                 <div class="tab-pane fade show active pt-3">
-                    $m_reports
+                    <?php echo $reports; ?>
                 </div>
             </div>
         </div>
     </main>
+
 </body>
 
 </html>
-HTML;
