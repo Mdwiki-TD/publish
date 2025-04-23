@@ -54,12 +54,12 @@ function getMonthDirectory()
     return getYearDirectory() . date('m') . '/';
 }
 
-function addBadge($directory)
+function addBadge($dir_date)
 {
-    $today = date('Y-m-d');
-    $lastModified = date('Y-m-d', filemtime($directory));
+    $today = date('d M Y');
+    $lastModified = date('d M Y', strtotime($dir_date));
 
-    return $today === $lastModified ? ' <span class="badge text-bg-primary">Today</span>' : " ($lastModified)";
+    return $today === $lastModified ? ' <span class="badge text-bg-warning" style="float: right">Today</span>' : "";
 }
 
 function makeYearsNav($currentYear)
@@ -126,6 +126,10 @@ function makeReports($year, $month)
     $monthDir = PUBLISH_REPORTS_DIR . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
 
     if (!is_dir($monthDir)) {
+        $monthDir = PUBLISH_REPORTS_DIR . "$year/01";
+    }
+
+    if (!is_dir($monthDir)) {
         return '<p>No reports available.</p>';
     }
 
@@ -154,14 +158,26 @@ function makeReports($year, $month)
 
         foreach ($dailyReports as $report) {
             $reportDir = $monthDir . '/' . $report;
-            $badge = addBadge($reportDir);
             $time = date('H:i', filemtime($reportDir));
             $jsonFiles = glob($reportDir . '/*.json');
-
+            // ---
+            $user = "";
+            $lang = "";
+            // ---
             $ul = '<ul class="list-group">';
-
+            // ---
             foreach ($jsonFiles as $jsonFile) {
+                // ---
                 $name = basename($jsonFile);
+                // ---
+                // if (empty($user) && $name == "success.json") {
+                if (empty($user)) {
+                    $json = json_decode(file_get_contents($jsonFile), true);
+                    $user = $json['user'] ?? '';
+                    $target_title = $json['title'] ?? '';
+                    $lang = $json['lang'] ?? '';
+                }
+                // ---
                 $url = "reports/$year/$month/$report/$name";
                 $ul .= <<<HTML
                         <li class="list-group-item">
@@ -169,15 +185,31 @@ function makeReports($year, $month)
                         </li>
                     HTML;
             }
-
+            // ---
+            if (!empty($lang) && !empty($target_title)) {
+                $lang = "<a href='https://$lang.wikipedia.org/wiki/$target_title' target='_blank'>$lang</a>";
+            }
+            // ---
+            $lang = $lang ? "$lang: " : "";
+            // ---
+            if (!$jsonFiles) {
+                $ul .= <<<HTML
+                    <li class="list-group-item">
+                        No files!
+                    </li>
+                HTML;
+            }
+            // ---
             $ul .= '</ul>';
 
             $dailyReportLinks .= <<<HTML
                     <div class="col-md-3">
                         <div class="card px-0 m-1">
                             <div class="card-header">
-                                <span class="card-title h5">$time</span>
-                                <div style="float: right">$badge</div>
+                                <span class="card-title h5">
+                                    $lang $user
+                                    <span class='badge text-bg-success' style='float: right'>$time</span>
+                                </span>
                             </div>
                             <div class="card-body p-0">$ul</div>
                         </div>
@@ -185,11 +217,14 @@ function makeReports($year, $month)
                 HTML;
         }
 
+        $badge = addBadge($date);
+
         $formattedDate = date('d M Y', strtotime($date));
         $reportLinks .= <<<HTML
                 <div class="card px-0 m-1 mt-3">
                     <div class="card-header bg-secondary text-white">
-                        <span class="card-title h4">$formattedDate</span>
+                        <span class="card-title h4">$formattedDate $badge</span>
+
                     </div>
                     <div class="card-body">
                         <div class="row">$dailyReportLinks</div>

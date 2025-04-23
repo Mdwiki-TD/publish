@@ -5,6 +5,7 @@ include_once __DIR__ . '/include.php';
 use function Publish\Helps\pub_test_print;
 use function Publish\DoEdit\publish_do_edit;
 use function Publish\AccessHelps\get_access_from_db;
+use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\AddToDb\InsertPageTarget;
 use function Publish\AddToDb\retrieveCampaignCategories;
 use function Publish\WD\LinkToWikidata;
@@ -247,8 +248,6 @@ function start($request)
     $hashtag = determineHashtag($title, $user);
     $summary = make_summary($revid, $sourcetitle, $lang, $hashtag);
 
-    $access = get_access_from_db($user);
-
     $tab = [
         'title' => $title,
         'summary' => $summary,
@@ -259,7 +258,12 @@ function start($request)
         'edit' => [],
         'sourcetitle' => $sourcetitle
     ];
-
+    // ---
+    $access = get_access_from_db_new($user);
+    // ---
+    if ($access === null) {
+        $access = get_access_from_db($user);
+    }
     // ---
     if ($access == null) {
         handleNoAccess($user, $tab);

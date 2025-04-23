@@ -11,6 +11,7 @@ include_once __DIR__ . '/../include.php';
 use function Publish\GetToken\post_params;
 use function Publish\MdwikiSql\fetch_query;
 use function Publish\AccessHelps\get_access_from_db;
+use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\Helps\pub_test_print;
 use function Publish\Helps\get_url_curl;
 
@@ -116,7 +117,11 @@ function LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_se
 function getAccessCredentials($user, $access_key, $access_secret)
 {
     if (!$access_key || !$access_secret) {
-        $access = get_access_from_db($user);
+        $access = get_access_from_db_new($user);
+        // ---
+        if ($access === null) {
+            $access = get_access_from_db($user);
+        }
         // ---
         if ($access === null) {
             pub_test_print("user = $user");
