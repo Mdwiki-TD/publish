@@ -6,8 +6,8 @@ Usage:
 include_once __DIR__ . '/../publish/helps.php';
 use function Publish\Helps\get_access_from_db;
 use function Publish\Helps\del_access_from_db;
-use function Publish\Helps\add_access_to_db;
 use function Publish\Helps\pub_test_print;
+use function Publish\Helps\encode_value;
 */
 
 include_once __DIR__ . '/include.php';
@@ -76,25 +76,6 @@ function get_url_curl(string $url): string
 
     return $output;
 }
-
-function add_access_to_db($user, $access_key, $access_secret)
-{
-    $t = [
-        trim($user),
-        encode_value($access_key),
-        encode_value($access_secret)
-    ];
-    //---
-    $query = <<<SQL
-        INSERT INTO access_keys (user_name, access_key, access_secret)
-        VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE
-            access_key = VALUES(access_key),
-            access_secret = VALUES(access_secret);
-    SQL;
-    //---
-    execute_query($query, $t);
-};
 
 function get_access_from_db($user)
 {
