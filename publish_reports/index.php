@@ -136,7 +136,7 @@ function makeReports($year, $month)
         $reportDir = $monthDir . '/' . $report;
 
         if (is_dir($reportDir)) {
-            $dateKey = date('Y-m-d', filemtime($reportDir));
+            $dateKey = date('Y-m-d H:i', filemtime($reportDir));
             $reportsByDate[$dateKey][] = $report;
         }
     }
