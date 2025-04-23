@@ -27,7 +27,7 @@ function get_access_from_db_new($user)
     SQL;
 
     // تنفيذ الاستعلام وتمرير اسم المستخدم كمعامل
-    $result = fetch_query($query, encode_value($user));
+    $result = fetch_query($query, [encode_value($user)]);
 
     // التحقق مما إذا كان قد تم العثور على نتائج
     if ($result) {
