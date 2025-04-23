@@ -4,7 +4,7 @@ include_once __DIR__ . '/include.php';
 
 use function Publish\Helps\pub_test_print;
 use function Publish\DoEdit\publish_do_edit;
-use function Publish\Helps\get_access_from_db;
+use function Publish\AccessHelps\get_access_from_db;
 use function Publish\AddToDb\InsertPageTarget;
 use function Publish\AddToDb\retrieveCampaignCategories;
 use function Publish\WD\LinkToWikidata;
@@ -260,6 +260,7 @@ function start($request)
         'sourcetitle' => $sourcetitle
     ];
 
+    // ---
     if ($access == null) {
         handleNoAccess($user, $tab);
     } else {
