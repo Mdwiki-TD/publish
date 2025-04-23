@@ -7,11 +7,12 @@ include_once __DIR__ . '/../auth/vendor_load.php';
 
 include_once __DIR__ . '/config.php';
 include_once __DIR__ . '/helps.php';
+include_once __DIR__ . '/access_helps.php';
 include_once __DIR__ . '/get_token.php';
 
 use function Publish\GetToken\get_cxtoken;
-use function Publish\Helps\get_access_from_db;
-use function Publish\Helps\del_access_from_db;
+use function Publish\AccessHelps\get_access_from_db;
+use function Publish\AccessHelps\del_access_from_db;
 
 $wiki    = $_GET['wiki'] ?? '';
 $user    = $_GET['user'] ?? '';
@@ -29,7 +30,7 @@ if (empty($wiki) || empty($user)) {
 }
 
 $access = get_access_from_db($user);
-
+// ---
 if ($access == null) {
     $cxtoken = ['error' => ['code' => 'no access', 'info' => 'no access'], 'username' => $user];
     print(json_encode($cxtoken, JSON_PRETTY_PRINT));

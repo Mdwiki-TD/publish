@@ -4,17 +4,14 @@ namespace Publish\Helps;
 /*
 Usage:
 include_once __DIR__ . '/../publish/helps.php';
-use function Publish\Helps\get_access_from_db;
-use function Publish\Helps\del_access_from_db;
-use function Publish\Helps\add_access_to_db;
 use function Publish\Helps\pub_test_print;
+use function Publish\Helps\encode_value;
+use function Publish\Helps\decode_value;
 */
 
 include_once __DIR__ . '/include.php';
 
 use Defuse\Crypto\Crypto;
-use function Publish\MdwikiSql\execute_query;
-use function Publish\MdwikiSql\fetch_query;
 
 $usr_agent = 'WikiProjectMed Translation Dashboard/1.0 (https://mdwiki.toolforge.org/; tools.mdwiki@toolforge.org)';
 
@@ -75,62 +72,4 @@ function get_url_curl(string $url): string
     curl_close($ch);
 
     return $output;
-}
-
-function add_access_to_db($user, $access_key, $access_secret)
-{
-    $t = [
-        trim($user),
-        encode_value($access_key),
-        encode_value($access_secret)
-    ];
-    //---
-    $query = <<<SQL
-        INSERT INTO access_keys (user_name, access_key, access_secret)
-        VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE
-            access_key = VALUES(access_key),
-            access_secret = VALUES(access_secret);
-    SQL;
-    //---
-    execute_query($query, $t);
-};
-
-function get_access_from_db($user)
-{
-    // تأكد من تنسيق اسم المستخدم
-    $user = trim($user);
-
-    // SQL للاستعلام عن access_key و access_secret بناءً على اسم المستخدم
-    $query = <<<SQL
-        SELECT access_key, access_secret
-        FROM access_keys
-        WHERE user_name = ?;
-    SQL;
-
-    // تنفيذ الاستعلام وتمرير اسم المستخدم كمعامل
-    $result = fetch_query($query, [$user]);
-
-    // التحقق مما إذا كان قد تم العثور على نتائج
-    if ($result) {
-        $result = $result[0];
-        return [
-            'access_key' => decode_value($result['access_key']),
-            'access_secret' => decode_value($result['access_secret'])
-        ];
-    } else {
-        // إذا لم يتم العثور على نتيجة، إرجاع null أو يمكنك تخصيص رد معين
-        return null;
-    }
-}
-
-function del_access_from_db($user)
-{
-    $user = trim($user);
-
-    $query = <<<SQL
-        DELETE FROM access_keys WHERE user_name = ?;
-    SQL;
-
-    $result = execute_query($query, [$user]);
 }

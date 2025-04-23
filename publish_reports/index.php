@@ -148,6 +148,10 @@ function makeReports($year, $month)
     foreach ($reportsByDate as $date => $dailyReports) {
         $dailyReportLinks = '';
 
+        usort($dailyReports, function ($a, $b) use ($monthDir) {
+            return filemtime($monthDir . '/' . $b) - filemtime($monthDir . '/' . $a);
+        });
+
         foreach ($dailyReports as $report) {
             $reportDir = $monthDir . '/' . $report;
             $badge = addBadge($reportDir);
