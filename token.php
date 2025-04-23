@@ -8,11 +8,14 @@ include_once __DIR__ . '/../auth/vendor_load.php';
 include_once __DIR__ . '/config.php';
 include_once __DIR__ . '/helps.php';
 include_once __DIR__ . '/access_helps.php';
+include_once __DIR__ . '/access_helps_new.php';
 include_once __DIR__ . '/get_token.php';
 
 use function Publish\GetToken\get_cxtoken;
 use function Publish\AccessHelps\get_access_from_db;
+use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\AccessHelps\del_access_from_db;
+use function Publish\AccessHelpsNew\del_access_from_db_new;
 
 $wiki    = $_GET['wiki'] ?? '';
 $user    = $_GET['user'] ?? '';
@@ -29,7 +32,11 @@ if (empty($wiki) || empty($user)) {
     exit(1);
 }
 
-$access = get_access_from_db($user);
+$access = get_access_from_db_new($user);
+// ---
+if ($access === null) {
+    $access = get_access_from_db($user);
+}
 // ---
 if ($access == null) {
     $cxtoken = ['error' => ['code' => 'no access', 'info' => 'no access'], 'username' => $user];
@@ -46,7 +53,10 @@ if ($access == null) {
 
 $err = $cxtoken['csrftoken_data']["error"]["code"] ?? null;
 if ($err == "mwoauth-invalid-authorization-invalid-user") {
+    // ---
+    del_access_from_db_new($user);
     del_access_from_db($user);
+    // ---
     $cxtoken["del_access"] = true;
 }
 
