@@ -136,7 +136,7 @@ function makeReports($year, $month)
         $reportDir = $monthDir . '/' . $report;
 
         if (is_dir($reportDir)) {
-            $dateKey = date('Y-m-d H:i', filemtime($reportDir));
+            $dateKey = date('Y-m-d', filemtime($reportDir));
             $reportsByDate[$dateKey][] = $report;
         }
     }
@@ -147,6 +147,10 @@ function makeReports($year, $month)
 
     foreach ($reportsByDate as $date => $dailyReports) {
         $dailyReportLinks = '';
+
+        usort($dailyReports, function ($a, $b) use ($monthDir) {
+            return filemtime($monthDir . '/' . $b) - filemtime($monthDir . '/' . $a);
+        });
 
         foreach ($dailyReports as $report) {
             $reportDir = $monthDir . '/' . $report;
