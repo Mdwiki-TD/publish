@@ -117,15 +117,10 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
         return $tab;
     }
     // ---
-    $query_user = <<<SQL
-        INSERT INTO pages_users (title, lang, user, pupdate, target)
-        SELECT ?, ?, ?, DATE(NOW()), ?
-    SQL;
-    // ---
-    $query_user_params = [$title, $lang, $user, $target];
+    $table_name = ($tab['use_user_sql']) ? 'pages_users' : 'pages';
     // ---
     $query = <<<SQL
-        INSERT INTO pages (title, word, translate_type, cat, lang, user, pupdate, target)
+        INSERT INTO $table_name (title, word, translate_type, cat, lang, user, pupdate, target)
         SELECT ?, ?, ?, ?, ?, ?, DATE(NOW()), ?
     SQL;
     // ---
@@ -134,12 +129,6 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
         $user,
         $target
     ];
-    // ---
-    // if $title has $user in it then use $query_user else use $query
-    if ($tab['use_user_sql']) {
-        $query = $query_user;
-        $params = $query_user_params;
-    }
     // ---
     if (!empty($test)) {
         echo "<br>$query<br>";
