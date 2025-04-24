@@ -34,7 +34,7 @@ function decode_value($value)
     try {
         $value = Crypto::decrypt($value, $cookie_key);
     } catch (\Exception $e) {
-        $value = $value;
+        $value = "";
     }
     return $value;
 }
@@ -45,7 +45,7 @@ function encode_value($value)
     try {
         $value = Crypto::encrypt($value, $cookie_key);
     } catch (\Exception $e) {
-        $value = $value;
+        $value = "";
     };
     return $value;
 }
