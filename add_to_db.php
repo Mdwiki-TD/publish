@@ -81,6 +81,10 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     // ---
     $use_user_sql = false;
     // ---
+    $title = str_replace("_", " ", $title);
+    $target = str_replace("_", " ", $target);
+    $user   = str_replace("_", " ", $user);
+    // ---
     $tab = [
         'use_user_sql' => $use_user_sql,
         'to_users_table' => $to_users_table,
@@ -93,9 +97,6 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     }
     // ---
     $word = $Words_table[$title] ?? 0;
-    // ---
-    $target = str_replace("_", " ", $target);
-    $user   = str_replace("_", " ", $user);
     // ---
     if ($to_users_table) {
         $tab['use_user_sql'] = $to_users_table;
