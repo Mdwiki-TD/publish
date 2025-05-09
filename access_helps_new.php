@@ -14,32 +14,63 @@ use function Publish\MdwikiSql\fetch_query;
 use function Publish\Helps\encode_value;
 use function Publish\Helps\decode_value;
 
+function get_user_id($user)
+{
+    //---
+    // Validate and sanitize username
+    $user = trim($user);
+    $query = "SELECT id, u_n FROM keys_new";
+
+    $result = fetch_query($query);
+
+    if (!$result) {
+        return null;
+    }
+    // ---
+    foreach ($result as $row) {
+        $user_id = $row['id'];
+        $user_db = decode_value($row['u_n'], 'decrypt');
+        if ($user_db == $user) {
+            return $user_id;
+        }
+    }
+    // ---
+    return null;
+};
+
 function get_access_from_db_new($user)
 {
-    // تأكد من تنسيق اسم المستخدم
+    // Validate and sanitize username
     $user = trim($user);
 
-    // SQL للاستعلام عن a_k و a_s بناءً على اسم المستخدم
+    // Query to get access_key and access_secret for the user
     $query = <<<SQL
         SELECT a_k, a_s
         FROM keys_new
-        WHERE u_n = ?;
+        WHERE id = ?
     SQL;
 
-    // تنفيذ الاستعلام وتمرير اسم المستخدم كمعامل
-    $result = fetch_query($query, [encode_value($user)]);
-
-    // التحقق مما إذا كان قد تم العثور على نتائج
-    if ($result) {
-        $result = $result[0];
-        return [
-            'access_key' => decode_value($result['a_k']),
-            'access_secret' => decode_value($result['a_s'])
-        ];
-    } else {
-        // إذا لم يتم العثور على نتيجة، إرجاع null أو يمكنك تخصيص رد معين
+    $user_id = get_user_id($user);
+    //---
+    if (!$user_id) {
         return null;
     }
+
+    // تنفيذ الاستعلام وتمرير اسم المستخدم كمعامل
+    $result = fetch_query($query, [$user_id]);
+
+    // التحقق مما إذا كان قد تم العثور على نتائج
+
+    if (!$result) {
+        return null;
+    }
+
+    $result = $result[0];
+    // ---
+    return [
+        'access_key' => decode_value($result['a_k'], $key_type = "decrypt"),
+        'access_secret' => decode_value($result['a_s'], $key_type = "decrypt")
+    ];
 }
 
 function del_access_from_db_new($user)
