@@ -28,22 +28,36 @@ function pub_test_print($s)
     }
 }
 
-function decode_value($value)
+function decode_value($value, $key_type = "cookie")
 {
-    global $cookie_key;
+    global $cookie_key, $decrypt_key;
+    // ---
+    if (empty(trim($value))) {
+        return "";
+    }
+    // ---
+    $use_key = ($key_type == "decrypt") ? $decrypt_key : $cookie_key;
+    // ---
     try {
-        $value = Crypto::decrypt($value, $cookie_key);
+        $value = Crypto::decrypt($value, $use_key);
     } catch (\Exception $e) {
         $value = "";
     }
     return $value;
 }
 
-function encode_value($value)
+function encode_value($value, $key_type = "cookie")
 {
-    global $cookie_key;
+    global $cookie_key, $decrypt_key;
+    // ---
+    $use_key = ($key_type == "decrypt") ? $decrypt_key : $cookie_key;
+    // ---
+    if (empty(trim($value))) {
+        return "";
+    }
+    // ---
     try {
-        $value = Crypto::encrypt($value, $cookie_key);
+        $value = Crypto::encrypt($value, $use_key);
     } catch (\Exception $e) {
         $value = "";
     };
