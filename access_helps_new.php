@@ -11,7 +11,7 @@ include_once __DIR__ . '/include.php';
 
 use function Publish\MdwikiSql\execute_query;
 use function Publish\MdwikiSql\fetch_query;
-use function Publish\Helps\encode_value;
+// use function Publish\Helps\encode_value;
 use function Publish\Helps\decode_value;
 
 $user_ids_cache = [];
