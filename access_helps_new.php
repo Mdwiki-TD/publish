@@ -14,11 +14,18 @@ use function Publish\MdwikiSql\fetch_query;
 use function Publish\Helps\encode_value;
 use function Publish\Helps\decode_value;
 
+$user_ids_cache = [];
+
 function get_user_id($user)
 {
     //---
     // Validate and sanitize username
     $user = trim($user);
+    //---
+    if (isset($user_ids_cache[$user])) {
+        return $user_ids_cache[$user];
+    }
+    //---
     $query = "SELECT id, u_n FROM keys_new";
 
     $result = fetch_query($query);
@@ -31,6 +38,7 @@ function get_user_id($user)
         $user_id = $row['id'];
         $user_db = decode_value($row['u_n'], 'decrypt');
         if ($user_db == $user) {
+            $user_ids_cache[$user] = $user_id;
             return $user_id;
         }
     }
