@@ -78,8 +78,14 @@ function del_access_from_db_new($user)
     $user = trim($user);
 
     $query = <<<SQL
-        DELETE FROM keys_new WHERE u_n = ?;
+        DELETE FROM keys_new WHERE id = ?
     SQL;
 
-    execute_query($query, [encode_value($user)]);
+    $user_id = get_user_id($user);
+    //---
+    if (!$user_id) {
+        return null;
+    }
+    //---
+    execute_query($query, [$user_id]);
 }
