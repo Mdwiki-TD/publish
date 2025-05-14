@@ -136,12 +136,13 @@ function prepareApiParams($title, $summary, $text, $request)
 function handleNoAccess($user, $tab)
 {
     $error = ['code' => 'noaccess', 'info' => 'noaccess'];
+    // ---
     $editit = ['error' => $error, 'edit' => ['error' => $error, 'username' => $user], 'username' => $user];
-    $to_do_file = "errors";
     // ---
     $tab['result_to_cx'] = $editit;
-    to_do($tab, $to_do_file);
-
+    // ---
+    to_do($tab, "noaccess");
+    // ---
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
 
@@ -218,27 +219,29 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
 function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret)
 {
     $LinkTowd = [];
-
+    // ---
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
         // ---
-        if (isset($LinkTowd['error'])) {
-            $tab3 = [
-                'error' => $LinkTowd['error'],
-                'qid' => $LinkTowd['qid'] ?? "",
-                'title' => $title,
-                'sourcetitle' => $sourcetitle,
-                'lang' => $lang,
-                'username' => $user
-            ];
-            // if str($LinkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
-            $file_name = strpos(json_encode($LinkTowd['error']), "Links to user pages") !== false ? 'wd_user_pages' : 'wd_errors';
-
-            to_do($tab3, $file_name);
-        }
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
     }
+    // ---
+    if (isset($LinkTowd['error'])) {
+        $tab3 = [
+            'error' => $LinkTowd['error'],
+            'qid' => $LinkTowd['qid'] ?? "",
+            'title' => $title,
+            'sourcetitle' => $sourcetitle,
+            'lang' => $lang,
+            'username' => $user
+        ];
+        // if str($LinkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
+        $file_name = strpos(json_encode($LinkTowd['error']), "Links to user pages") !== false ? 'wd_user_pages' : 'wd_errors';
+        // ---
+        to_do($tab3, $file_name);
+    }
+    // ---
     return $LinkTowd;
 }
 
