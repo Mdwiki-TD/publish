@@ -161,6 +161,10 @@ function makeReports($year, $month)
             $time = date('H:i', filemtime($reportDir));
             $jsonFiles = glob($reportDir . '/*.json');
             // ---
+            if (!$jsonFiles) {
+                continue;
+            }
+            // ---
             $user = "";
             $lang = "";
             // ---

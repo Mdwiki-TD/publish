@@ -12,3 +12,4 @@ publish_reports/_index.php
 test.php
 tx.php
 publish_reports/scan_and_rename.py
+publish_reports/rm.py
