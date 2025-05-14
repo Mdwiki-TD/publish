@@ -184,8 +184,10 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $editit = publish_do_edit($apiParams, $lang, $access_key, $access_secret);
 
     $Success = $editit['edit']['result'] ?? '';
+    $is_captcha = $editit['edit']['captcha'] ?? [];
 
     $tab['result'] = $Success;
+
     $to_do_file = "";
 
     if ($Success === 'Success') {
@@ -194,6 +196,10 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
         $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle);
         // ---
         $to_do_file = "success";
+        // ---
+    } else if ($is_captcha) {
+        $to_do_file = "captcha";
+        // ---
     } else {
         $to_do_file = "errors";
     }
