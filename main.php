@@ -139,7 +139,7 @@ function handleNoAccess($user, $tab)
     $editit = ['error' => $error, 'edit' => ['error' => $error, 'username' => $user], 'username' => $user];
     $to_do_file = "errors";
     // ---
-    $tab['edit'] = $editit;
+    $tab['result_to_cx'] = $editit;
     to_do($tab, $to_do_file);
 
     pub_test_print("\n<br>");
@@ -198,7 +198,7 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
         $to_do_file = "errors";
     }
 
-    $tab['edit'] = $editit;
+    $tab['result_to_cx'] = $editit;
     to_do($tab, $to_do_file);
 
     pub_test_print("\n<br>");
