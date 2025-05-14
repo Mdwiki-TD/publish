@@ -231,7 +231,10 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
                 'lang' => $lang,
                 'username' => $user
             ];
-            to_do($tab3, 'wd_errors');
+            // if str($LinkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
+            $file_name = strpos(json_encode($LinkTowd['error']), "Links to user pages") !== false ? 'wd_user_pages' : 'wd_errors';
+
+            to_do($tab3, $file_name);
         }
     } catch (Exception $e) {
         pub_test_print($e->getMessage());

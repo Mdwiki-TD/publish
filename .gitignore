@@ -10,3 +10,5 @@ main copy.php
 publish_reports/_index.php
 /reports
 test.php
+tx.php
+publish_reports/scan_and_rename.py
