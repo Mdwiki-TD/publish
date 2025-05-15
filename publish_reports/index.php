@@ -175,6 +175,8 @@ function makeMonthReports($year, $month)
     foreach ($reportsByDate as $date => $dailyReports) {
 
         $dailyReportLinks = '';
+        $count = 0;
+        // ---
         usort($dailyReports, function ($a, $b) use ($monthDir) {
             return filectime($monthDir . '/' . $b) - filectime($monthDir . '/' . $a);
         });
@@ -233,6 +235,8 @@ function makeMonthReports($year, $month)
             // ---
             $ul .= '</ul>';
             // ---
+            $count++;
+            // ---
             $dailyReportLinks .= <<<HTML
                     <div class="col-md-3 p-2">
                         <div class="card">
@@ -252,7 +256,7 @@ function makeMonthReports($year, $month)
         $MonthReportLinks .= <<<HTML
                 <div class="card px-0 m-1 mt-3">
                     <div class="card-header bg-secondary text-white">
-                        <span class="card-title h4">$formattedDate $todayBadge</span>
+                        <span class="card-title h4">$formattedDate ($count) $todayBadge</span>
 
                     </div>
                     <div class="card-body">
