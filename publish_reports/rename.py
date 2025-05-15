@@ -19,6 +19,7 @@ def get_time_of_changes(new_path):
     day_str = "01"
     # ---
     if not os.path.isdir(new_path):
+        print(f"{new_path} is not a directory")
         return day_str
     # ---
     for file_name in os.listdir(folder_path):
