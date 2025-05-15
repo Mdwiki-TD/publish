@@ -160,7 +160,7 @@ function makeReports($year, $month)
         $reportDir = $monthDir . '/' . $report;
 
         if (is_dir($reportDir)) {
-            $dateKey = date('Y-m-d', filemtime($reportDir));
+            $dateKey = date('Y-m-d', filectime($reportDir));
             $reportsByDate[$dateKey][] = $report;
         }
     }
@@ -173,7 +173,7 @@ function makeReports($year, $month)
         $dailyReportLinks = '';
 
         usort($dailyReports, function ($a, $b) use ($monthDir) {
-            return filemtime($monthDir . '/' . $b) - filemtime($monthDir . '/' . $a);
+            return filectime($monthDir . '/' . $b) - filectime($monthDir . '/' . $a);
         });
 
         $todayBadge = addTodayBadge($date);
@@ -187,7 +187,7 @@ function makeReports($year, $month)
                 continue;
             }
             // ---
-            $dir_time = filemtime($reportDir);
+            $dir_time = filectime($reportDir);
             // ---
             $time = add_time_badge($dir_time);
             // ---
