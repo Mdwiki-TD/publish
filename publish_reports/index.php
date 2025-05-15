@@ -231,11 +231,11 @@ function makeReports($year, $month)
             }
             // ---
             $ul .= '</ul>';
-
+            // ---
             $dailyReportLinks .= <<<HTML
-                    <div class="col-md-3">
-                        <div class="card px-0 m-1">
-                            <div class="card-header">
+                    <div class="col-md-3 p-2">
+                        <div class="card">
+                            <div class="card-header p-2">
                                 <span class="card-title h5">
                                     $lang $user
                                     <span class='badge text-bg-success' style='float: right'>$time</span>
@@ -255,7 +255,9 @@ function makeReports($year, $month)
 
                     </div>
                     <div class="card-body">
-                        <div class="row">$dailyReportLinks</div>
+                        <div class="row">
+                            $dailyReportLinks
+                        </div>
                     </div>
                 </div>
             HTML;
