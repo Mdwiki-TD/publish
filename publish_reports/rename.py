@@ -14,11 +14,39 @@ timestamp_pattern = re.compile(r'"newtimestamp"\s*:\s*"(\d{4}-\d{2}-\d{2}T\d{2}:
 # Iterate through all paths matching 2025/*/01
 
 
-def get_day_str(folder_name, day01_path, month_name="", again=True):
+def get_time_of_changes(new_path):
     # ---
     day_str = "01"
     # ---
-    folder_path = os.path.join(day01_path, folder_name)
+    if not os.path.isdir(new_path):
+        return day_str
+    # ---
+    for file_name in os.listdir(folder_path):
+        if not file_name.endswith('.json'):
+            continue
+
+        file_path = os.path.join(folder_path, file_name)
+
+        file_date = os.path.getmtime(file_path)
+        file_date = datetime.fromtimestamp(file_date)
+        # ---
+        # if file_date date == today then continue
+        # ---
+        if file_date.strftime('%Y-%m-%d') == datetime.now().strftime('%Y-%m-%d'):
+            continue
+        # ---
+        day_str = file_date.strftime('%d')
+
+        if day_str != '01':
+            print(f"📅 def get_time_of_changes(): Found timestamp: {file_date}")
+            break
+    # ---
+    return day_str
+
+
+def get_day_str(folder_path):
+    # ---
+    day_str = "01"
     # ---
     if not os.path.isdir(folder_path):
         return day_str
@@ -48,15 +76,8 @@ def get_day_str(folder_name, day01_path, month_name="", again=True):
         day_str = timestamp.strftime('%d')
 
         if day_str != '01':
-            print(f"📅 Found timestamp: {timestamp_str}")
+            print(f"📅 def get_day_str(): Found timestamp: {timestamp_str}")
             break
-    # ---
-    if day_str == '01' and again:
-        # print(f"⚠️ No timestamp found in folder: {folder_path}")
-        # ---
-        new_path = script_dir / f"reports/2025/{month_name}"
-        # ---
-        return get_day_str(folder_name, new_path, month_name=month_name, again=False)
     # ---
     return day_str
 
@@ -80,8 +101,14 @@ for month in os.listdir(root_path):
 
         print(f"_____\n start get_day_str: {folder_name}")
         # ---
-        day_str = get_day_str(folder_name, day01_path, month_name=month)
+        day_str = get_day_str(folder_path)
 
+        if day_str == '01':
+            # ---
+            new_path = script_dir / f"reports/2025/{month}"
+            # ---
+            day_str = get_time_of_changes(new_path)
+        # ---
         if day_str == '01':
             continue
 
