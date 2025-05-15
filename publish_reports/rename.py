@@ -79,6 +79,7 @@ def get_day_str(folder_path, day_orginal):
 
         # Check if the month matches
         if file_month != folder_month:
+            print(f"📅 def get_day_str(): months are different: {file_month} != {folder_month}")
             continue
 
         day_str = timestamp.strftime('%d')
@@ -137,7 +138,8 @@ for month in os.listdir(root_path):
             if not os.path.isdir(folder_path):
                 continue
 
-            print(f"_____\n start get_day_str: {folder_name}")
+            # ---
+            print(f"_____\n start get_day_str for folder: {folder_name}, {day_orginal=}")
             # ---
             day_str = get_day_str(folder_path, day)
 
