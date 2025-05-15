@@ -69,7 +69,7 @@ def mv_errors():
 
         file_path2 = file_path.replace("/mnt/nfs/labstore-secondary-tools-project/mdwiki/public_html/publish_reports/", "")
 
-        response = input(f"Rename this file to {to}? (y/n): ").strip().lower()
+        response = input(f"Rename file ({old_name}) to ({to})? (y/n): ").strip().lower()
 
         if response in ['y', '']:
             new_path = file_path.replace(old_name, to)
