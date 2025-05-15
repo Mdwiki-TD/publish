@@ -110,49 +110,57 @@ for month in os.listdir(root_path):
     # ---
     month_path = os.path.join(root_path, month)
     # ---
-    day01_path = os.path.join(month_path, day_orginal)
+    print(os.listdir(month_path))
+    # ---
+    for day in os.listdir(month_path):
+        # ---
+        if day_orginal != "all":
+            if day != day_orginal:
+                continue
+        # ---
+        day01_path = os.path.join(month_path, day)
 
-    if not os.path.isdir(day01_path):
-        continue
-
-    folder_files = os.listdir(day01_path)
-
-    print(f"\n Folders in: reports_by_day/2025/{month}/{day_orginal}: {len(folder_files)}")
-
-    folder_filesx = os.listdir(script_dir / f'reports/2025/{month}')
-    print(f"\n Folders in: reports/2025/{month}: {len(folder_filesx)}")
-
-    for folder_name in folder_files:
-        folder_path = os.path.join(day01_path, folder_name)
-
-        if not os.path.isdir(folder_path):
+        if not os.path.isdir(day01_path):
             continue
 
-        print(f"_____\n start get_day_str: {folder_name}")
-        # ---
-        day_str = get_day_str(folder_path, day_orginal)
+        folder_files = os.listdir(day01_path)
 
-        if day_str == day_orginal:
+        print(f"\n Folders in: reports_by_day/2025/{month}/{day}: {len(folder_files)}")
+
+        folder_filesx = os.listdir(script_dir / f'reports/2025/{month}')
+        print(f"\n Folders in: reports/2025/{month}: {len(folder_filesx)}")
+
+        for folder_name in folder_files:
+            folder_path = os.path.join(day01_path, folder_name)
+
+            if not os.path.isdir(folder_path):
+                continue
+
+            print(f"_____\n start get_day_str: {folder_name}")
             # ---
-            new_path = script_dir / f"reports/2025/{month}/{folder_name}"
+            day_str = get_day_str(folder_path, day)
+
+            if day_str == day:
+                # ---
+                new_path = script_dir / f"reports/2025/{month}/{folder_name}"
+                # ---
+                day_str = get_time_of_changes(new_path, day)
             # ---
-            day_str = get_time_of_changes(new_path, day_orginal)
-        # ---
-        if day_str == day_orginal:
-            continue
+            if day_str == day:
+                continue
 
-        # Target path for the new day
-        new_day_path = os.path.join(month_path, day_str)
-        new_folder_path = os.path.join(new_day_path, folder_name)
+            # Target path for the new day
+            new_day_path = os.path.join(month_path, day_str)
+            new_folder_path = os.path.join(new_day_path, folder_name)
 
-        print(f"\n📁 Folder: {folder_path}")
-        print(f"➡️ Suggested move to: {new_folder_path}")
-        response = input("Do you want to move this folder? (y/n): ").strip().lower()
+            print(f"\n📁 Folder: {folder_path}")
+            print(f"➡️ Suggested move to: {new_folder_path}")
+            response = input("Do you want to move this folder? (y/n): ").strip().lower()
 
-        if response in ['y', '']:
-            if not os.path.exists(new_day_path):
-                os.makedirs(new_day_path)
-            shutil.move(folder_path, new_folder_path)
-            print(f"✅ Moved to {new_folder_path}")
-        else:
-            print("⏩ Skipped based on user input.")
+            if response in ['y', '']:
+                if not os.path.exists(new_day_path):
+                    os.makedirs(new_day_path)
+                shutil.move(folder_path, new_folder_path)
+                print(f"✅ Moved to {new_folder_path}")
+            else:
+                print("⏩ Skipped based on user input.")
