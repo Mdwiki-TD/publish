@@ -76,6 +76,9 @@ function to_do($tab, $file_name)
 {
     global $main_dir;
     // ---
+    $tab['time'] = time();
+    $tab['time_date'] = date("Y-m-d H:i:s");
+    // ---
     try {
         // dump $tab to file in folder to_do
         $file_j = $main_dir . "/$file_name.json";
