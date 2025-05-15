@@ -57,7 +57,6 @@ function getMonthDirectory()
 function add_time_badge($reportDir)
 {
     $dir_time = filemtime($reportDir);
-
     $today = date('Y-m-d');
     $dir_day = date('Y-m-d', $dir_time);
 
@@ -65,19 +64,18 @@ function add_time_badge($reportDir)
         $diff = time() - $dir_time;
 
         if ($diff < 60) {
-            return $diff . ' second' . ($diff === 1 ? '' : 's') . ' ago';
+            return $diff . 's ago'; // seconds
         } elseif ($diff < 3600) {
             $minutes = floor($diff / 60);
-            return $minutes . ' minute' . ($minutes === 1 ? '' : 's') . ' ago';
+            return $minutes . 'm ago'; // minutes
         } else {
             $hours = floor($diff / 3600);
-            return $hours . ' hour' . ($hours === 1 ? '' : 's') . ' ago';
+            return $hours . 'h ago'; // hours
         }
     }
 
-    return date('H:i', $dir_time);
+    return date('H:i', $dir_time); // not today → just time
 }
-
 
 function addTodayBadge($dir_date)
 {
