@@ -18,7 +18,7 @@ $rand_id = time() .  "-" . $rand_id;
 $main_dir = check_dirs($rand_id, "reports");
 $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
-function check_dirs($rand_id, $reports_dir)
+function check_dirs($rand_id, $reports_dir_main)
 {
     $publish_reports = "I:/mdwiki/publish-repo/publish_reports/";
     // ---
@@ -26,7 +26,7 @@ function check_dirs($rand_id, $reports_dir)
         $publish_reports = __DIR__ . "/../publish_reports/";
     }
     // ---
-    $reports_dir = "$publish_reports/$reports_dir/";
+    $reports_dir = "$publish_reports/$reports_dir_main/";
     // ---
     if (!is_dir($reports_dir)) {
         mkdir($reports_dir, 0755, true);
@@ -46,7 +46,7 @@ function check_dirs($rand_id, $reports_dir)
     // ---
     $main1_dir = $month_dir . "/" . $rand_id;
     // ---
-    if ($reports_dir != "reports") {
+    if ($reports_dir_main != "reports") {
         $day_dir = $month_dir . "/" . date("d");
         // ---
         if (!is_dir($day_dir)) {
