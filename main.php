@@ -14,8 +14,8 @@ use function WpRefs\FixPage\DoChangesToText1;
 
 $rand_id = rand(0, 999999999);
 
-$main_dir = check_dirs($rand_id);
-
+$main_dir = check_dirs($rand_id, "reports");
+$main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
 function get_revid($sourcetitle)
 {
@@ -39,12 +39,12 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
     return "Created by translating the page [[:mdwiki:Special:Redirect/revision/$revid|$sourcetitle]] to:$to $hashtag";
 }
 
-function check_dirs($rand_id)
+function check_dirs($rand_id, $reports_dir)
 {
-    $publish_reports = "I:/mdwiki/publish-repo/publish_reports/reports/";
+    $publish_reports = "I:/mdwiki/publish-repo/publish_reports/$reports_dir/";
     // ---
     if (!is_dir($publish_reports)) {
-        $publish_reports = __DIR__ . "/../publish_reports/reports/";
+        $publish_reports = __DIR__ . "/../publish_reports/$reports_dir/";
     }
     // ---
     if (!is_dir($publish_reports)) {
@@ -63,6 +63,14 @@ function check_dirs($rand_id)
         mkdir($month_dir, 0755, true);
     }
     // ---
+    if ($reports_dir != "reports") {
+        $day_dir = $month_dir . "/" . date("d");
+        // ---
+        if (!is_dir($day_dir)) {
+            mkdir($day_dir, 0755, true);
+        }
+    }
+    // ---
     $main1_dir = $month_dir . "/" . $rand_id;
     // ---
     if (!is_dir($main1_dir)) {
@@ -74,7 +82,7 @@ function check_dirs($rand_id)
 
 function to_do($tab, $file_name)
 {
-    global $main_dir;
+    global $main_dir, $main_dir_by_day;
     // ---
     $tab['time'] = time();
     $tab['time_date'] = date("Y-m-d H:i:s");
@@ -82,6 +90,15 @@ function to_do($tab, $file_name)
     try {
         // dump $tab to file in folder to_do
         $file_j = $main_dir . "/$file_name.json";
+        // ---
+        file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    } catch (Exception $e) {
+        pub_test_print($e->getMessage());
+    }
+    // ---
+    try {
+        // dump $tab to file in folder to_do
+        $file_j = $main_dir_by_day . "/$file_name.json";
         // ---
         file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (Exception $e) {
