@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import shutil
 from datetime import datetime, timedelta
@@ -89,9 +90,26 @@ def get_day_str(folder_path, day_orginal):
     return day_str
 
 
+only_month = ""
+day_orginal = "01"
+# ---
+for arg in sys.argv:
+    arg, _, value = arg.partition(':')
+    # ---
+    if arg == '-m':
+        only_month = value
+    # ---
+    elif arg == '-d':
+        day_orginal = value
+
+# ---
 for month in os.listdir(root_path):
+    # ---
+    if only_month and month != only_month:
+        continue
+    # ---
     month_path = os.path.join(root_path, month)
-    day_orginal = "01"
+    # ---
     day01_path = os.path.join(month_path, day_orginal)
 
     if not os.path.isdir(day01_path):
