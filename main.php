@@ -15,7 +15,7 @@ use function WpRefs\FixPage\DoChangesToText1;
 $rand_id = rand(0, 999999999);
 $rand_id = time() .  "-" . $rand_id;
 
-$main_dir = check_dirs($rand_id, "reports");
+// $main_dir = check_dirs($rand_id, "reports");
 $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
 function check_dirs($rand_id, $reports_dir_main)
@@ -44,17 +44,13 @@ function check_dirs($rand_id, $reports_dir_main)
         mkdir($month_dir, 0755, true);
     }
     // ---
-    $main1_dir = $month_dir . "/" . $rand_id;
+    $day_dir = $month_dir . "/" . date("d");
     // ---
-    if ($reports_dir_main != "reports") {
-        $day_dir = $month_dir . "/" . date("d");
-        // ---
-        if (!is_dir($day_dir)) {
-            mkdir($day_dir, 0755, true);
-        }
-        // ---
-        $main1_dir = $day_dir . "/" . $rand_id;
+    if (!is_dir($day_dir)) {
+        mkdir($day_dir, 0755, true);
     }
+    // ---
+    $main1_dir = $day_dir . "/" . $rand_id;
     // ---
     if (!is_dir($main1_dir)) {
         mkdir($main1_dir, 0755, true);
@@ -87,11 +83,12 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
 
 function to_do($tab, $file_name)
 {
-    global $main_dir, $main_dir_by_day;
+    global $main_dir_by_day; // $main_dir,
     // ---
     $tab['time'] = time();
     $tab['time_date'] = date("Y-m-d H:i:s");
     // ---
+    /*
     try {
         // dump $tab to file in folder to_do
         $file_j = $main_dir . "/$file_name.json";
@@ -99,7 +96,7 @@ function to_do($tab, $file_name)
         file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
-    }
+    }*/
     // ---
     try {
         // dump $tab to file in folder to_do
