@@ -207,7 +207,8 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $editit = publish_do_edit($apiParams, $lang, $access_key, $access_secret);
 
     $Success = $editit['edit']['result'] ?? '';
-    $is_captcha = $editit['edit']['captcha'] ?? [];
+    $is_captcha = $editit['edit']['captcha'] ?? null;
+    $is_abusefilter = $editit['edit']['error']['abusefilter'] ?? null;
 
     $tab['result'] = $Success;
 
@@ -222,6 +223,12 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
         // ---
     } else if ($is_captcha) {
         $to_do_file = "captcha";
+        // ---
+    } else if ($is_abusefilter) {
+        $to_do_file = "abusefilter";
+        // ---
+    } else if (($editit['edit']['error']['code'] ?? "") === "mwoauth-invalid-authorization") {
+        $to_do_file = "mwoauth-invalid-authorization";
         // ---
     } else {
         $to_do_file = "errors";
@@ -259,7 +266,10 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
             'username' => $user
         ];
         // if str($LinkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
+        // ---
         $file_name = strpos(json_encode($LinkTowd['error']), "Links to user pages") !== false ? 'wd_user_pages' : 'wd_errors';
+        // ---
+        $file_name = strpos(json_encode($LinkTowd['error']), "get_csrftoken") !== false ? 'get_csrftoken' : $file_name;
         // ---
         to_do($tab3, $file_name);
     }
