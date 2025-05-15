@@ -59,10 +59,9 @@ function add_time_badge($reportDir)
     $dir_time = filemtime($reportDir);
 
     $today = date('Y-m-d');
+    $dir_day = date('Y-m-d', $dir_time);
 
-    $dir_date = date('Y-m-d', $dir_time);
-
-    if ($dir_date === $today) {
+    if ($today === $dir_day) {
         $diff = time() - $dir_time;
 
         if ($diff < 60) {
@@ -70,12 +69,9 @@ function add_time_badge($reportDir)
         } elseif ($diff < 3600) {
             $minutes = floor($diff / 60);
             return $minutes . ' minute' . ($minutes === 1 ? '' : 's') . ' ago';
-        } elseif ($diff < 86400) {
+        } else {
             $hours = floor($diff / 3600);
             return $hours . ' hour' . ($hours === 1 ? '' : 's') . ' ago';
-        } else {
-            $days = floor($diff / 86400);
-            return $days . ' day' . ($days === 1 ? '' : 's') . ' ago';
         }
     }
 
