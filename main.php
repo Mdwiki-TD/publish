@@ -13,9 +13,55 @@ use function Publish\TextFix\DoChangesToText;
 use function WpRefs\FixPage\DoChangesToText1;
 
 $rand_id = rand(0, 999999999);
+$rand_id = time() .  "-" . $rand_id;
 
-$main_dir = check_dirs($rand_id);
+$main_dir = check_dirs($rand_id, "reports");
+$main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
+function check_dirs($rand_id, $reports_dir_main)
+{
+    $publish_reports = "I:/mdwiki/publish-repo/publish_reports/";
+    // ---
+    if (!is_dir($publish_reports)) {
+        $publish_reports = __DIR__ . "/../publish_reports/";
+    }
+    // ---
+    $reports_dir = "$publish_reports/$reports_dir_main/";
+    // ---
+    if (!is_dir($reports_dir)) {
+        mkdir($reports_dir, 0755, true);
+    }
+    // ---
+    $year_dir = $reports_dir . date("Y");
+    // ---
+    if (!is_dir($year_dir)) {
+        mkdir($year_dir, 0755, true);
+    }
+    // ---
+    $month_dir = $year_dir . "/" . date("m");
+    // ---
+    if (!is_dir($month_dir)) {
+        mkdir($month_dir, 0755, true);
+    }
+    // ---
+    $main1_dir = $month_dir . "/" . $rand_id;
+    // ---
+    if ($reports_dir_main != "reports") {
+        $day_dir = $month_dir . "/" . date("d");
+        // ---
+        if (!is_dir($day_dir)) {
+            mkdir($day_dir, 0755, true);
+        }
+        // ---
+        $main1_dir = $day_dir . "/" . $rand_id;
+    }
+    // ---
+    if (!is_dir($main1_dir)) {
+        mkdir($main1_dir, 0755, true);
+    }
+    // ---
+    return $main1_dir;
+}
 
 function get_revid($sourcetitle)
 {
@@ -39,46 +85,25 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
     return "Created by translating the page [[:mdwiki:Special:Redirect/revision/$revid|$sourcetitle]] to:$to $hashtag";
 }
 
-function check_dirs($rand_id)
-{
-    $publish_reports = "I:/mdwiki/publish-repo/publish_reports/reports/";
-    // ---
-    if (!is_dir($publish_reports)) {
-        $publish_reports = __DIR__ . "/../publish_reports/reports/";
-    }
-    // ---
-    if (!is_dir($publish_reports)) {
-        mkdir($publish_reports, 0755, true);
-    }
-    // ---
-    $year_dir = $publish_reports . date("Y");
-    // ---
-    if (!is_dir($year_dir)) {
-        mkdir($year_dir, 0755, true);
-    }
-    // ---
-    $month_dir = $year_dir . "/" . date("m");
-    // ---
-    if (!is_dir($month_dir)) {
-        mkdir($month_dir, 0755, true);
-    }
-    // ---
-    $main1_dir = $month_dir . "/" . $rand_id;
-    // ---
-    if (!is_dir($main1_dir)) {
-        mkdir($main1_dir, 0755, true);
-    }
-    // ---
-    return $main1_dir;
-}
-
 function to_do($tab, $file_name)
 {
-    global $main_dir;
+    global $main_dir, $main_dir_by_day;
+    // ---
+    $tab['time'] = time();
+    $tab['time_date'] = date("Y-m-d H:i:s");
     // ---
     try {
         // dump $tab to file in folder to_do
         $file_j = $main_dir . "/$file_name.json";
+        // ---
+        file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    } catch (Exception $e) {
+        pub_test_print($e->getMessage());
+    }
+    // ---
+    try {
+        // dump $tab to file in folder to_do
+        $file_j = $main_dir_by_day . "/$file_name.json";
         // ---
         file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (Exception $e) {
@@ -136,12 +161,13 @@ function prepareApiParams($title, $summary, $text, $request)
 function handleNoAccess($user, $tab)
 {
     $error = ['code' => 'noaccess', 'info' => 'noaccess'];
+    // ---
     $editit = ['error' => $error, 'edit' => ['error' => $error, 'username' => $user], 'username' => $user];
-    $to_do_file = "errors";
     // ---
     $tab['result_to_cx'] = $editit;
-    to_do($tab, $to_do_file);
-
+    // ---
+    to_do($tab, "noaccess");
+    // ---
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
 
@@ -184,8 +210,10 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $editit = publish_do_edit($apiParams, $lang, $access_key, $access_secret);
 
     $Success = $editit['edit']['result'] ?? '';
+    $is_captcha = $editit['edit']['captcha'] ?? [];
 
     $tab['result'] = $Success;
+
     $to_do_file = "";
 
     if ($Success === 'Success') {
@@ -194,6 +222,10 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
         $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle);
         // ---
         $to_do_file = "success";
+        // ---
+    } else if ($is_captcha) {
+        $to_do_file = "captcha";
+        // ---
     } else {
         $to_do_file = "errors";
     }
@@ -212,24 +244,29 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
 function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret)
 {
     $LinkTowd = [];
-
+    // ---
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
         // ---
-        if (isset($LinkTowd['error'])) {
-            $tab3 = [
-                'error' => $LinkTowd['error'],
-                'qid' => $LinkTowd['qid'] ?? "",
-                'title' => $title,
-                'sourcetitle' => $sourcetitle,
-                'lang' => $lang,
-                'username' => $user
-            ];
-            to_do($tab3, 'wd_errors');
-        }
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
     }
+    // ---
+    if (isset($LinkTowd['error'])) {
+        $tab3 = [
+            'error' => $LinkTowd['error'],
+            'qid' => $LinkTowd['qid'] ?? "",
+            'title' => $title,
+            'sourcetitle' => $sourcetitle,
+            'lang' => $lang,
+            'username' => $user
+        ];
+        // if str($LinkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
+        $file_name = strpos(json_encode($LinkTowd['error']), "Links to user pages") !== false ? 'wd_user_pages' : 'wd_errors';
+        // ---
+        to_do($tab3, $file_name);
+    }
+    // ---
     return $LinkTowd;
 }
 
