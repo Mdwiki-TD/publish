@@ -160,11 +160,20 @@ function makeMonthReports($year, $month)
     }
 
     $MonthReportLinks = '';
-
-    foreach (scandir($monthDirPath) as $day) {
+    // ---
+    $daysDirs = scandir($monthDirPath);
+    // ---
+    // sort days by name bigger first
+    usort($daysDirs, function ($a, $b) {
+        return strcmp($b, $a);
+    });
+    // ---
+    foreach ($daysDirs as $day) {
+        // ---
         if ($day === '.' || $day === '..') continue;
+        // ---
         $dayReportDir = $monthDirPath . '/' . $day;
-
+        // ---
         if (!is_dir($dayReportDir)) {
             continue;
         }
@@ -173,16 +182,18 @@ function makeMonthReports($year, $month)
         // ---
         $formattedDate = "$year-$month-$day";
         // ---
-        foreach (scandir($dayReportDir) as $report) {
+        $dailyReports = scandir($dayReportDir);
+        // ---
+        usort($dailyReports, function ($a, $b) use ($dayReportDir) {
+            return filectime($dayReportDir . '/' . $b) - filectime($dayReportDir . '/' . $a);
+        });
+        // ---
+        foreach ($dailyReports as $report) {
             if ($report === '.' || $report === '..') continue;
             // ---
-            // usort($dailyReports, function ($a, $b) use ($monthDirPath) {
-            //     return filectime($monthDirPath . '/' . $b) - filectime($monthDirPath . '/' . $a);
-            // });
+            // $todayBadge = addTodayBadge($formattedDate);
+            $todayBadge = "";
             // ---
-            $todayBadge = addTodayBadge($formattedDate);
-            // ---
-            // foreach ($dailyReports as $report) {
             $oneReportDir = $dayReportDir . '/' . $report;
             // ---
             $jsonFiles = glob($oneReportDir . '/*.json');
