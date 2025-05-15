@@ -2,8 +2,6 @@ import os
 import json
 import tqdm
 
-reports_dir = os.path.join(os.path.dirname(__file__), 'reports_by_day')
-
 wd_tab = {
     "names" : [
         "wd_errors.json",
@@ -31,16 +29,18 @@ main_tab = {
 }
 
 
+reports_dir = os.path.join(os.path.dirname(__file__), 'reports_by_day')
+
 def mv_errors():
 
     errors_files = {}
     no_names = 0
     for root, dirs, files in os.walk(reports_dir):
         for file in files:
-            if file in main_tab['names']:
+            if file.lower() in main_tab['names']:
                 errors_files[os.path.join(root, file)] = file
 
-            elif file in wd_tab['names']:
+            elif file.lower() in wd_tab['names']:
                 errors_files[os.path.join(root, file)] = file
             else:
                 no_names += 1
