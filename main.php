@@ -15,7 +15,7 @@ use function WpRefs\FixPage\DoChangesToText1;
 $rand_id = rand(0, 999999999);
 $rand_id = time() .  "-" . $rand_id;
 
-$main_dir = check_dirs($rand_id, "reports");
+// $main_dir = check_dirs($rand_id, "reports");
 $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
 function check_dirs($rand_id, $reports_dir_main)
@@ -44,17 +44,13 @@ function check_dirs($rand_id, $reports_dir_main)
         mkdir($month_dir, 0755, true);
     }
     // ---
-    $main1_dir = $month_dir . "/" . $rand_id;
+    $day_dir = $month_dir . "/" . date("d");
     // ---
-    if ($reports_dir_main != "reports") {
-        $day_dir = $month_dir . "/" . date("d");
-        // ---
-        if (!is_dir($day_dir)) {
-            mkdir($day_dir, 0755, true);
-        }
-        // ---
-        $main1_dir = $day_dir . "/" . $rand_id;
+    if (!is_dir($day_dir)) {
+        mkdir($day_dir, 0755, true);
     }
+    // ---
+    $main1_dir = $day_dir . "/" . $rand_id;
     // ---
     if (!is_dir($main1_dir)) {
         mkdir($main1_dir, 0755, true);
@@ -87,11 +83,12 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
 
 function to_do($tab, $file_name)
 {
-    global $main_dir, $main_dir_by_day;
+    global $main_dir_by_day; // $main_dir,
     // ---
     $tab['time'] = time();
     $tab['time_date'] = date("Y-m-d H:i:s");
     // ---
+    /*
     try {
         // dump $tab to file in folder to_do
         $file_j = $main_dir . "/$file_name.json";
@@ -99,7 +96,7 @@ function to_do($tab, $file_name)
         file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (Exception $e) {
         pub_test_print($e->getMessage());
-    }
+    }*/
     // ---
     try {
         // dump $tab to file in folder to_do
@@ -210,7 +207,7 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     $editit = publish_do_edit($apiParams, $lang, $access_key, $access_secret);
 
     $Success = $editit['edit']['result'] ?? '';
-    $is_captcha = $editit['edit']['captcha'] ?? [];
+    $is_captcha = $editit['edit']['captcha'] ?? null;
 
     $tab['result'] = $Success;
 
@@ -228,14 +225,33 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
         // ---
     } else {
         $to_do_file = "errors";
+        // ---
+        $errs = [
+            "protectedpage",
+            "titleblacklist",
+            "ratelimited",
+            "editconflict",
+            "spam filter",
+            "abusefilter",
+            "mwoauth-invalid-authorization",
+        ];
+        // ---
+        $c_text = json_encode($editit);
+        // ---
+        foreach ($errs as $err) {
+            if (strpos($c_text, $err) !== false) {
+                $to_do_file = $err;
+                break;
+            }
+        }
     }
-
+    // ---
     $tab['result_to_cx'] = $editit;
     to_do($tab, $to_do_file);
-
+    // ---
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
-
+    // ---
     print(json_encode($editit, JSON_PRETTY_PRINT));
 
     // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
@@ -262,7 +278,23 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
             'username' => $user
         ];
         // if str($LinkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
-        $file_name = strpos(json_encode($LinkTowd['error']), "Links to user pages") !== false ? 'wd_user_pages' : 'wd_errors';
+        // ---
+        $file_name = 'wd_errors';
+        // ---
+        $errs = [
+            'Links to user pages' => "wd_user_pages",
+            'get_csrftoken' => "wd_csrftoken",
+            'protectedpage' => "wd_protectedpage",
+        ];
+        // ---
+        $f_text = json_encode($LinkTowd['error']);
+        // ---
+        foreach ($errs as $err => $file) {
+            if (strpos($f_text, $err) !== false) {
+                $file_name = $file;
+                break;
+            }
+        }
         // ---
         to_do($tab3, $file_name);
     }
