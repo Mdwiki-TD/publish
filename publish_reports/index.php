@@ -173,8 +173,8 @@ function makeMonthReports($year, $month)
     $MonthReportLinks = '';
 
     foreach ($reportsByDate as $date => $dailyReports) {
-        $dailyReportLinks = '';
 
+        $dailyReportLinks = '';
         usort($dailyReports, function ($a, $b) use ($monthDir) {
             return filectime($monthDir . '/' . $b) - filectime($monthDir . '/' . $a);
         });
