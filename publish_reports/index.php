@@ -54,7 +54,36 @@ function getMonthDirectory()
     return getYearDirectory() . date('m') . '/';
 }
 
-function addBadge($dir_date)
+function add_time_badge($reportDir)
+{
+    $dir_time = filemtime($reportDir);
+
+    $today = date('Y-m-d');
+
+    $dir_date = date('Y-m-d', $dir_time);
+
+    if ($dir_date === $today) {
+        $diff = time() - $dir_time;
+
+        if ($diff < 60) {
+            return $diff . ' second' . ($diff === 1 ? '' : 's') . ' ago';
+        } elseif ($diff < 3600) {
+            $minutes = floor($diff / 60);
+            return $minutes . ' minute' . ($minutes === 1 ? '' : 's') . ' ago';
+        } elseif ($diff < 86400) {
+            $hours = floor($diff / 3600);
+            return $hours . ' hour' . ($hours === 1 ? '' : 's') . ' ago';
+        } else {
+            $days = floor($diff / 86400);
+            return $days . ' day' . ($days === 1 ? '' : 's') . ' ago';
+        }
+    }
+
+    return date('H:i', $dir_time);
+}
+
+
+function addTodayBadge($dir_date)
 {
     $today = date('d M Y');
     $lastModified = date('d M Y', strtotime($dir_date));
@@ -156,9 +185,13 @@ function makeReports($year, $month)
             return filemtime($monthDir . '/' . $b) - filemtime($monthDir . '/' . $a);
         });
 
+        $todayBadge = addTodayBadge($date);
+
         foreach ($dailyReports as $report) {
             $reportDir = $monthDir . '/' . $report;
-            $time = date('H:i', filemtime($reportDir));
+            // ---
+            $time = add_time_badge($reportDir);
+            // ---
             $jsonFiles = glob($reportDir . '/*.json');
             // ---
             if (!$jsonFiles) {
@@ -221,13 +254,11 @@ function makeReports($year, $month)
                 HTML;
         }
 
-        $badge = addBadge($date);
-
         $formattedDate = date('d M Y', strtotime($date));
         $reportLinks .= <<<HTML
                 <div class="card px-0 m-1 mt-3">
                     <div class="card-header bg-secondary text-white">
-                        <span class="card-title h4">$formattedDate $badge</span>
+                        <span class="card-title h4">$formattedDate $todayBadge</span>
 
                     </div>
                     <div class="card-body">
