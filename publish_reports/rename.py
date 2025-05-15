@@ -14,14 +14,14 @@ timestamp_pattern = re.compile(r'"newtimestamp"\s*:\s*"(\d{4}-\d{2}-\d{2}T\d{2}:
 # Iterate through all paths matching 2025/*/01
 
 
-def get_time_of_changes(new_path):
+def get_time_of_changes(new_path, day_orginal):
     # ---
-    day_str = "01"
+    day_str = day_orginal
     # ---
     if not os.path.isdir(new_path):
         return day_str
     # ---
-    print(f"{new_path} is a directory")
+    # print(f"{new_path} is a directory")
     # ---
     for file_name in os.listdir(new_path):
         if not file_name.endswith('.json'):
@@ -44,16 +44,16 @@ def get_time_of_changes(new_path):
         # ---
         day_str = file_date.strftime('%d')
 
-        if day_str != '01':
+        if day_str != day_orginal:
             print(f"📅 def get_time_of_changes(): Found timestamp: {file_date}")
             break
     # ---
     return day_str
 
 
-def get_day_str(folder_path):
+def get_day_str(folder_path, day_orginal):
     # ---
-    day_str = "01"
+    day_str = day_orginal
     # ---
     if not os.path.isdir(folder_path):
         return day_str
@@ -82,7 +82,7 @@ def get_day_str(folder_path):
 
         day_str = timestamp.strftime('%d')
 
-        if day_str != '01':
+        if day_str != day_orginal:
             print(f"📅 def get_day_str(): Found timestamp: {timestamp_str}")
             break
     # ---
@@ -91,14 +91,15 @@ def get_day_str(folder_path):
 
 for month in os.listdir(root_path):
     month_path = os.path.join(root_path, month)
-    day01_path = os.path.join(month_path, '01')
+    day_orginal = "01"
+    day01_path = os.path.join(month_path, day_orginal)
 
     if not os.path.isdir(day01_path):
         continue
 
     folder_files = os.listdir(day01_path)
 
-    print(f"\n Folders in: reports_by_day/2025/{month}/01: {len(folder_files)}")
+    print(f"\n Folders in: reports_by_day/2025/{month}/{day_orginal}: {len(folder_files)}")
 
     folder_filesx = os.listdir(script_dir / f'reports/2025/{month}')
     print(f"\n Folders in: reports/2025/{month}: {len(folder_filesx)}")
@@ -111,15 +112,15 @@ for month in os.listdir(root_path):
 
         print(f"_____\n start get_day_str: {folder_name}")
         # ---
-        day_str = get_day_str(folder_path)
+        day_str = get_day_str(folder_path, day_orginal)
 
-        if day_str == '01':
+        if day_str == day_orginal:
             # ---
             new_path = script_dir / f"reports/2025/{month}/{folder_name}"
             # ---
-            day_str = get_time_of_changes(new_path)
+            day_str = get_time_of_changes(new_path, day_orginal)
         # ---
-        if day_str == '01':
+        if day_str == day_orginal:
             continue
 
         # Target path for the new day
