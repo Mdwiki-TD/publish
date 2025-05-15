@@ -187,7 +187,7 @@ function makeMonthReports($year, $month)
             // ---
             $jsonFiles = glob($oneReportDir . '/*.json');
             // ---
-            // if (!$jsonFiles) continue;
+            if (!$jsonFiles) continue;
             // ---
             $dir_time = filectime($oneReportDir);
             // ---
