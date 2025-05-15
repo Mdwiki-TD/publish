@@ -34,14 +34,18 @@ main_tab = {
 def mv_errors():
 
     errors_files = {}
-
+    no_names = 0
     for root, dirs, files in os.walk(reports_dir):
         for file in files:
             if file in main_tab['names']:
                 errors_files[os.path.join(root, file)] = file
 
-            if file in wd_tab['names']:
+            elif file in wd_tab['names']:
                 errors_files[os.path.join(root, file)] = file
+            else:
+                no_names += 1
+
+    print(f"{no_names=}")
 
     moving_files = {}
 
