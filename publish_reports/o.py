@@ -7,21 +7,24 @@ reports_dir = os.path.join(os.path.dirname(__file__), 'reports_by_day')
 
 def mv_errors():
 
-    errors_files = []
-
+    errors_files = {}
+    bad_names = [
+        "abusefilter-warning.json",
+        'errors.json'
+    ]
     for root, dirs, files in os.walk(reports_dir):
         for file in files:
-            if file.lower() == 'errors.json':
-                errors_files.append(os.path.join(root, file))
+            if file in bad_names:
+                errors_files[os.path.join(root, file)] = file
 
     moving_files = {}
 
     errs = [
         "captcha",
         "noaccess",
-        "abusefilter-warning",
+        "abusefilter",
     ]
-    for file_path in tqdm.tqdm(errors_files):
+    for file_path, old_name in tqdm.tqdm(errors_files.items()):
 
         with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -41,8 +44,8 @@ def mv_errors():
         response = input(f"Rename this file to {to}? (y/n): ").strip().lower()
 
         if response in ['y', '']:
-            new_path = file_path.replace("errors.json", to)
-            file_path3 = file_path2.replace("errors.json", to)
+            new_path = file_path.replace(old_name, to)
+            file_path3 = file_path2.replace(old_name, to)
 
             os.rename(file_path, new_path)
 
