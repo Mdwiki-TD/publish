@@ -227,6 +227,8 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
         $to_do_file = "errors";
         // ---
         $errs = [
+            "protectedpage",
+            "titleblacklist",
             "ratelimited",
             "editconflict",
             "spam filter",

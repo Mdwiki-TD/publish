@@ -18,6 +18,8 @@ main_tab = {
         'errors.json'
     ],
     "errs" : [
+        "protectedpage",
+        "titleblacklist",
         "ratelimited",
         "editconflict",
         "spam filter",
