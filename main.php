@@ -13,6 +13,7 @@ use function Publish\TextFix\DoChangesToText;
 use function WpRefs\FixPage\DoChangesToText1;
 
 $rand_id = rand(0, 999999999);
+$rand_id = time() .  "-" . $rand_id;
 
 $main_dir = check_dirs($rand_id, "reports");
 $main_dir_by_day = check_dirs($rand_id, "reports_by_day");

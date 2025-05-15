@@ -181,13 +181,13 @@ function makeMonthReports($year, $month)
             $todayBadge = addTodayBadge($formattedDate);
             // ---
             // foreach ($dailyReports as $report) {
-            $dayReportDir = $monthDir . '/' . $report;
+            $oneReportDir = $dayReportDir . '/' . $report;
             // ---
-            $jsonFiles = glob($dayReportDir . '/*.json');
+            $jsonFiles = glob($oneReportDir . '/*.json');
             // ---
             // if (!$jsonFiles) continue;
             // ---
-            $dir_time = filectime($dayReportDir);
+            $dir_time = filectime($oneReportDir);
             // ---
             $time = add_time_badge($dir_time);
             // ---
