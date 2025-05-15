@@ -90,6 +90,7 @@ def get_day_str(folder_path, day_orginal):
     return day_str
 
 
+get_time_of_files = "notime" not in sys.argv
 only_month = ""
 day_orginal = "01"
 # ---
@@ -140,7 +141,7 @@ for month in os.listdir(root_path):
             # ---
             day_str = get_day_str(folder_path, day)
 
-            if day_str == day:
+            if day_str == day and get_time_of_files:
                 # ---
                 new_path = script_dir / f"reports/2025/{month}/{folder_name}"
                 # ---
