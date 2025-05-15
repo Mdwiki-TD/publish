@@ -115,7 +115,7 @@ for month in os.listdir(root_path):
 
         if day_str == '01':
             # ---
-            new_path = script_dir / f"reports/2025/{month}"
+            new_path = script_dir / f"reports/2025/{month}/{folder_name}"
             # ---
             day_str = get_time_of_changes(new_path)
         # ---
