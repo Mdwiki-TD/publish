@@ -22,11 +22,11 @@ def get_time_of_changes(new_path):
         print(f"{new_path} is not a directory")
         return day_str
     # ---
-    for file_name in os.listdir(folder_path):
+    for file_name in os.listdir(new_path):
         if not file_name.endswith('.json'):
             continue
 
-        file_path = os.path.join(folder_path, file_name)
+        file_path = os.path.join(new_path, file_name)
 
         file_date = os.path.getmtime(file_path)
         file_date = datetime.fromtimestamp(file_date)
