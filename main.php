@@ -41,17 +41,19 @@ function make_summary($revid, $sourcetitle, $to, $hashtag)
 
 function check_dirs($rand_id, $reports_dir)
 {
-    $publish_reports = "I:/mdwiki/publish-repo/publish_reports/$reports_dir/";
+    $publish_reports = "I:/mdwiki/publish-repo/publish_reports/";
     // ---
     if (!is_dir($publish_reports)) {
-        $publish_reports = __DIR__ . "/../publish_reports/$reports_dir/";
+        $publish_reports = __DIR__ . "/../publish_reports/";
     }
     // ---
-    if (!is_dir($publish_reports)) {
-        mkdir($publish_reports, 0755, true);
+    $reports_dir = "$publish_reports/$reports_dir/";
+    // ---
+    if (!is_dir($reports_dir)) {
+        mkdir($reports_dir, 0755, true);
     }
     // ---
-    $year_dir = $publish_reports . date("Y");
+    $year_dir = $reports_dir . date("Y");
     // ---
     if (!is_dir($year_dir)) {
         mkdir($year_dir, 0755, true);
