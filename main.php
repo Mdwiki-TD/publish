@@ -342,4 +342,4 @@ function start($request)
 }
 
 
-start($_REQUEST);
+start($_POST);
