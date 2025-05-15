@@ -111,7 +111,7 @@ for month in os.listdir(root_path):
     # ---
     month_path = os.path.join(root_path, month)
     # ---
-    print(os.listdir(month_path))
+    print("month_path:", os.listdir(month_path))
     # ---
     for day in os.listdir(month_path):
         # ---
