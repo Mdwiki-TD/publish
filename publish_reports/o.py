@@ -9,6 +9,7 @@ wd_tab = {
     "errs" : {
         'Links to user pages': "wd_user_pages.json",
         'get_csrftoken': "wd_csrftoken.json",
+        'protectedpage': "wd_protectedpage.json",
     }
 }
 

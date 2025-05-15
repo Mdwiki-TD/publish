@@ -284,6 +284,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
         $errs = [
             'Links to user pages' => "wd_user_pages",
             'get_csrftoken' => "wd_csrftoken",
+            'protectedpage' => "wd_protectedpage",
         ];
         // ---
         $f_text = json_encode($LinkTowd['error']);
