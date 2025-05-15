@@ -58,7 +58,7 @@ def mv_errors():
 
             for err, new_name in wd_tab['errs'].items():
                 if str(data).find(err) != -1:
-                    moving_files[file_path] = {"old": old_name, "new": f"{new_name}.json"}
+                    moving_files[file_path] = {"old": old_name, "new": new_name}
                     break
     for n, (file_path, tab) in enumerate(moving_files.items()):
         # ---
