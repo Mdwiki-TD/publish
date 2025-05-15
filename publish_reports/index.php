@@ -54,28 +54,25 @@ function getMonthDirectory()
     return getYearDirectory() . date('m') . '/';
 }
 
-function add_time_badge($reportDir)
+function add_time_badge($dir_time)
 {
-    $dir_time = filemtime($reportDir);
-    $today = date('Y-m-d');
-    $dir_day = date('Y-m-d', $dir_time);
+    $diff = time() - $dir_time;
 
-    if ($today === $dir_day) {
-        $diff = time() - $dir_time;
-
+    if ($diff < 86400) {
         if ($diff < 60) {
-            return $diff . 's ago'; // seconds
+            return $diff . 's ago';
         } elseif ($diff < 3600) {
             $minutes = floor($diff / 60);
-            return $minutes . 'm ago'; // minutes
+            return $minutes . 'm ago';
         } else {
             $hours = floor($diff / 3600);
-            return $hours . 'h ago'; // hours
+            return $hours . 'h ago';
         }
     }
 
-    return date('H:i', $dir_time); // not today → just time
+    return date('H:i', $dir_time);
 }
+
 
 function addTodayBadge($dir_date)
 {
@@ -184,13 +181,15 @@ function makeReports($year, $month)
         foreach ($dailyReports as $report) {
             $reportDir = $monthDir . '/' . $report;
             // ---
-            $time = add_time_badge($reportDir);
-            // ---
             $jsonFiles = glob($reportDir . '/*.json');
             // ---
             if (!$jsonFiles) {
                 continue;
             }
+            // ---
+            $dir_time = filemtime($reportDir);
+            // ---
+            $time = add_time_badge($dir_time);
             // ---
             $user = "";
             $lang = "";
