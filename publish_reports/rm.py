@@ -2,7 +2,7 @@ import os
 import json
 import tqdm
 
-reports_dir = os.path.join(os.path.dirname(__file__), 'reports')
+reports_dir = os.path.join(os.path.dirname(__file__), 'reports_by_day')
 
 print(f"Removing files from {reports_dir}")
 

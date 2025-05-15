@@ -2,9 +2,10 @@ import os
 import json
 import tqdm
 
+reports_dir = os.path.join(os.path.dirname(__file__), 'reports_by_day')
+
 
 def mv_errors():
-    reports_dir = os.path.join(os.path.dirname(__file__), 'reports')
 
     errors_files = []
 
@@ -49,7 +50,6 @@ def mv_errors():
 
 
 def mv_wd_errors():
-    reports_dir = os.path.join(os.path.dirname(__file__), 'reports')
 
     errors_files = []
 
