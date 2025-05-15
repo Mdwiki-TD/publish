@@ -1,6 +1,7 @@
 import os
 import json
 import tqdm
+import sys
 
 wd_tab = {
     "names" : [
@@ -33,6 +34,10 @@ main_tab = {
 
 
 reports_dir = os.path.join(os.path.dirname(__file__), 'reports_by_day')
+
+if "reports" in sys.argv:
+    reports_dir = os.path.join(os.path.dirname(__file__), 'reports')
+
 
 def mv_errors():
 
