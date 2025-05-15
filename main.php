@@ -1,4 +1,29 @@
-<?php
+ <?php  
+// Check if the request is a POST request  
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {  
+    http_response_code(405); // Method Not Allowed  
+    echo json_encode(['error' => 'Only POST requests are allowed']);  
+    exit;  
+}  
+  
+// Check if the request is coming from allowed domains  
+$allowed_domains = ['medwiki.toolforge.org', 'mdwikicx.toolforge.org'];  
+$referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';  
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';  
+  
+$is_allowed = false;  
+foreach ($allowed_domains as $domain) {  
+    if (strpos($referer, $domain) !== false || strpos($origin, $domain) !== false) {  
+        $is_allowed = true;  
+        break;  
+    }  
+}  
+  
+if (!$is_allowed) {  
+    http_response_code(403); // Forbidden  
+    echo json_encode(['error' => 'Access denied. Requests are only allowed from authorized domains.']);  
+    exit;  
+} 
 
 include_once __DIR__ . '/include.php';
 
