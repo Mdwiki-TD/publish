@@ -2,6 +2,7 @@ import os
 import json
 import tqdm
 
+
 def mv_errors():
     reports_dir = os.path.join(os.path.dirname(__file__), 'reports')
 
@@ -14,6 +15,11 @@ def mv_errors():
 
     moving_files = {}
 
+    errs = [
+        "captcha",
+        "noaccess",
+        "abusefilter-warning",
+    ]
     for file_path in tqdm.tqdm(errors_files):
 
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -21,11 +27,10 @@ def mv_errors():
 
         file_path2 = file_path.replace("/mnt/nfs/labstore-secondary-tools-project/mdwiki/public_html/publish_reports/", "")
 
-        if str(data).find('captcha') != -1:
-            moving_files[file_path] = "captcha.json"
-
-        elif str(data).find('noaccess') != -1:
-            moving_files[file_path] = "noaccess.json"
+        for err in errs:
+            if str(data).find(err) != -1:
+                moving_files[file_path] = f"{err}.json"
+                break
 
     for n, (file_path, to) in enumerate(moving_files.items()):
         print(f"Moving file: {n} / {len(moving_files)}:")
