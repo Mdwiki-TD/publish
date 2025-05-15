@@ -147,21 +147,23 @@ function makeMonthsNav($currentYear, $currentMonth)
 
 function makeMonthReports($year, $month)
 {
-    $monthDir = PUBLISH_REPORTS_DIR . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
+    // $monthDir = PUBLISH_REPORTS_DIR . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
+    $monthDir = REPORTS_DIR . "/$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
 
-    if (!is_dir($monthDir)) {
-        $monthDir = PUBLISH_REPORTS_DIR . "$year/01";
+    if (!is_dir(__DIR__ . "/$monthDir")) {
+        $monthDir = REPORTS_DIR . "/$year/01";
     }
+    $monthDirPath = __DIR__ . "/$monthDir";
 
-    if (!is_dir($monthDir)) {
+    if (!is_dir($monthDirPath)) {
         return '<p>No reports available.</p>';
     }
 
     $MonthReportLinks = '';
 
-    foreach (scandir($monthDir) as $day) {
+    foreach (scandir($monthDirPath) as $day) {
         if ($day === '.' || $day === '..') continue;
-        $dayReportDir = $monthDir . '/' . $day;
+        $dayReportDir = $monthDirPath . '/' . $day;
 
         if (!is_dir($dayReportDir)) {
             continue;
@@ -174,8 +176,8 @@ function makeMonthReports($year, $month)
         foreach (scandir($dayReportDir) as $report) {
             if ($report === '.' || $report === '..') continue;
             // ---
-            // usort($dailyReports, function ($a, $b) use ($monthDir) {
-            //     return filectime($monthDir . '/' . $b) - filectime($monthDir . '/' . $a);
+            // usort($dailyReports, function ($a, $b) use ($monthDirPath) {
+            //     return filectime($monthDirPath . '/' . $b) - filectime($monthDirPath . '/' . $a);
             // });
             // ---
             $todayBadge = addTodayBadge($formattedDate);
@@ -208,7 +210,8 @@ function makeMonthReports($year, $month)
                     $lang = $json['lang'] ?? '';
                 }
                 // ---
-                $url = REPORTS_DIR . "/$year/$month/$report/$name";
+                $url = "$monthDir/$day/$report/$name";
+                // ---
                 $ul .= <<<HTML
                         <li class="list-group-item">
                             <a target="_blank" href="$url">$name</a>
