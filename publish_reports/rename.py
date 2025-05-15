@@ -19,8 +19,9 @@ def get_time_of_changes(new_path):
     day_str = "01"
     # ---
     if not os.path.isdir(new_path):
-        print(f"{new_path} is not a directory")
         return day_str
+    # ---
+    print(f"{new_path} is a directory")
     # ---
     for file_name in os.listdir(new_path):
         if not file_name.endswith('.json'):
