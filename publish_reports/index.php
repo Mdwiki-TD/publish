@@ -57,8 +57,12 @@ function getMonthDirectory()
     return getYearDirectory() . date('m') . '/';
 }
 
-function add_time_badge($dir_time)
+function add_time_badge($dir_time, $formattedDate)
 {
+    $today = date('Y-m-d'); // d M Y
+    if ($today != $formattedDate) {
+        return "";
+    }
     $diff = time() - $dir_time;
 
     if ($diff < 86400) {
@@ -174,7 +178,7 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
         // ---
         $dir_time = filectime($oneReportDir);
         // ---
-        $time = add_time_badge($dir_time);
+        $time = add_time_badge($dir_time, $formattedDate);
         // ---
         $user = "";
         $lang = "";
