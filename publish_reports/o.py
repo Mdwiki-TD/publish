@@ -33,10 +33,14 @@ def mv_errors():
 
         for err in errs:
             if str(data).find(err) != -1:
-                moving_files[file_path] = f"{err}.json"
+                moving_files[file_path] = {"old": old_name, "new": f"{err}.json"}
                 break
 
-    for n, (file_path, to) in enumerate(moving_files.items()):
+    for n, (file_path, tab) in enumerate(moving_files.items()):
+        # ---
+        old_name = tab["old"]
+        to = tab["new"]
+        # ---
         print(f"Moving file: {n} / {len(moving_files)}:")
 
         file_path2 = file_path.replace("/mnt/nfs/labstore-secondary-tools-project/mdwiki/public_html/publish_reports/", "")
