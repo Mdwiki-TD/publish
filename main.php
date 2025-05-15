@@ -17,28 +17,6 @@ $rand_id = rand(0, 999999999);
 $main_dir = check_dirs($rand_id, "reports");
 $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
-function get_revid($sourcetitle)
-{
-    // read all_pages_revids.json file
-    $revids_file = __DIR__ . '/all_pages_revids.json';
-    // ---
-    if (!file_exists($revids_file)) $revids_file = __DIR__ . '/../all_pages_revids.json';
-    // ---
-    try {
-        $json = json_decode(file_get_contents($revids_file), true);
-        $revid = $json[$sourcetitle] ?? "";
-        return $revid;
-    } catch (Exception $e) {
-        pub_test_print($e->getMessage());
-    }
-    return "";
-}
-
-function make_summary($revid, $sourcetitle, $to, $hashtag)
-{
-    return "Created by translating the page [[:mdwiki:Special:Redirect/revision/$revid|$sourcetitle]] to:$to $hashtag";
-}
-
 function check_dirs($rand_id, $reports_dir)
 {
     $publish_reports = "I:/mdwiki/publish-repo/publish_reports/";
@@ -65,21 +43,45 @@ function check_dirs($rand_id, $reports_dir)
         mkdir($month_dir, 0755, true);
     }
     // ---
+    $main1_dir = $month_dir . "/" . $rand_id;
+    // ---
     if ($reports_dir != "reports") {
         $day_dir = $month_dir . "/" . date("d");
         // ---
         if (!is_dir($day_dir)) {
             mkdir($day_dir, 0755, true);
         }
+        // ---
+        $main1_dir = $day_dir . "/" . $rand_id;
     }
-    // ---
-    $main1_dir = $month_dir . "/" . $rand_id;
     // ---
     if (!is_dir($main1_dir)) {
         mkdir($main1_dir, 0755, true);
     }
     // ---
     return $main1_dir;
+}
+
+function get_revid($sourcetitle)
+{
+    // read all_pages_revids.json file
+    $revids_file = __DIR__ . '/all_pages_revids.json';
+    // ---
+    if (!file_exists($revids_file)) $revids_file = __DIR__ . '/../all_pages_revids.json';
+    // ---
+    try {
+        $json = json_decode(file_get_contents($revids_file), true);
+        $revid = $json[$sourcetitle] ?? "";
+        return $revid;
+    } catch (Exception $e) {
+        pub_test_print($e->getMessage());
+    }
+    return "";
+}
+
+function make_summary($revid, $sourcetitle, $to, $hashtag)
+{
+    return "Created by translating the page [[:mdwiki:Special:Redirect/revision/$revid|$sourcetitle]] to:$to $hashtag";
 }
 
 function to_do($tab, $file_name)

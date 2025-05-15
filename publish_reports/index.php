@@ -144,7 +144,7 @@ function makeMonthsNav($currentYear, $currentMonth)
     return $nav;
 }
 
-function makeReports($year, $month)
+function makeMonthReports($year, $month)
 {
     $monthDir = PUBLISH_REPORTS_DIR . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
 
@@ -170,7 +170,7 @@ function makeReports($year, $month)
 
     krsort($reportsByDate);
 
-    $reportLinks = '';
+    $MonthReportLinks = '';
 
     foreach ($reportsByDate as $date => $dailyReports) {
         $dailyReportLinks = '';
@@ -251,7 +251,7 @@ function makeReports($year, $month)
         }
 
         $formattedDate = date('d M Y', strtotime($date));
-        $reportLinks .= <<<HTML
+        $MonthReportLinks .= <<<HTML
                 <div class="card px-0 m-1 mt-3">
                     <div class="card-header bg-secondary text-white">
                         <span class="card-title h4">$formattedDate $todayBadge</span>
@@ -266,7 +266,7 @@ function makeReports($year, $month)
             HTML;
     }
 
-    return $reportLinks;
+    return $MonthReportLinks;
 }
 
 // Main Logic
@@ -277,7 +277,7 @@ $month = isset($_GET['m']) ? $_GET['m'] : date('m');
 
 $yearsNav = makeYearsNav($year);
 $monthsNav = makeMonthsNav($year, $month);
-$reports = makeReports($year, $month);
+$reports = makeMonthReports($year, $month);
 
 ?>
 

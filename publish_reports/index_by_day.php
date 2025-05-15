@@ -30,7 +30,7 @@ if (isset($_REQUEST['test'])) {
 // define('REPORTS_DIR', 'reports');
 define('REPORTS_DIR', 'reports_by_day');
 
-define('PUBLISH_REPORTS_DIR', __DIR__ . '/reports/');
+define('PUBLISH_REPORTS_DIR', __DIR__ . '/reports_by_day/');
 
 // Functions
 function ensureDirectoryExists($path)
@@ -79,10 +79,11 @@ function add_time_badge($dir_time)
 
 function addTodayBadge($dir_date)
 {
-    $today = date('d M Y');
-    $lastModified = date('d M Y', strtotime($dir_date));
+    // $dir_date = "$year-$month-$day";
+    // ---
+    $today = date('Y-m-d'); // d M Y
 
-    return $today === $lastModified ? ' <span class="badge text-bg-warning" style="float: right">Today</span>' : "";
+    return $today === $dir_date ? ' <span class="badge text-bg-warning" style="float: right">Today</span>' : "";
 }
 
 function makeYearsNav($currentYear)
@@ -144,7 +145,7 @@ function makeMonthsNav($currentYear, $currentMonth)
     return $nav;
 }
 
-function makeReports($year, $month)
+function makeMonthReports($year, $month)
 {
     $monthDir = PUBLISH_REPORTS_DIR . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
 
@@ -156,41 +157,37 @@ function makeReports($year, $month)
         return '<p>No reports available.</p>';
     }
 
-    $reportsByDate = [];
+    $MonthReportLinks = '';
 
-    foreach (scandir($monthDir) as $report) {
-        if ($report === '.' || $report === '..') continue;
-        $reportDir = $monthDir . '/' . $report;
+    foreach (scandir($monthDir) as $day) {
+        if ($day === '.' || $day === '..') continue;
+        $dayReportDir = $monthDir . '/' . $day;
 
-        if (is_dir($reportDir)) {
-            $dateKey = date('Y-m-d', filectime($reportDir));
-            $reportsByDate[$dateKey][] = $report;
+        if (!is_dir($dayReportDir)) {
+            continue;
         }
-    }
-
-    krsort($reportsByDate);
-
-    $reportLinks = '';
-
-    foreach ($reportsByDate as $date => $dailyReports) {
+        // ---
         $dailyReportLinks = '';
-
-        usort($dailyReports, function ($a, $b) use ($monthDir) {
-            return filectime($monthDir . '/' . $b) - filectime($monthDir . '/' . $a);
-        });
-
-        $todayBadge = addTodayBadge($date);
-
-        foreach ($dailyReports as $report) {
-            $reportDir = $monthDir . '/' . $report;
+        // ---
+        $formattedDate = "$year-$month-$day";
+        // ---
+        foreach (scandir($dayReportDir) as $report) {
+            if ($report === '.' || $report === '..') continue;
             // ---
-            $jsonFiles = glob($reportDir . '/*.json');
+            // usort($dailyReports, function ($a, $b) use ($monthDir) {
+            //     return filectime($monthDir . '/' . $b) - filectime($monthDir . '/' . $a);
+            // });
             // ---
-            if (!$jsonFiles) {
-                continue;
-            }
+            $todayBadge = addTodayBadge($formattedDate);
             // ---
-            $dir_time = filectime($reportDir);
+            // foreach ($dailyReports as $report) {
+            $dayReportDir = $monthDir . '/' . $report;
+            // ---
+            $jsonFiles = glob($dayReportDir . '/*.json');
+            // ---
+            // if (!$jsonFiles) continue;
+            // ---
+            $dir_time = filectime($dayReportDir);
             // ---
             $time = add_time_badge($dir_time);
             // ---
@@ -248,25 +245,25 @@ function makeReports($year, $month)
                         </div>
                     </div>
                 HTML;
+            // }
+
         }
+        // ---
+        $MonthReportLinks .= <<<HTML
+            <div class="card px-0 m-1 mt-3">
+                <div class="card-header bg-secondary text-white">
+                    <span class="card-title h4">$formattedDate $todayBadge</span>
 
-        $formattedDate = date('d M Y', strtotime($date));
-        $reportLinks .= <<<HTML
-                <div class="card px-0 m-1 mt-3">
-                    <div class="card-header bg-secondary text-white">
-                        <span class="card-title h4">$formattedDate $todayBadge</span>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            $dailyReportLinks
-                        </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        $dailyReportLinks
                     </div>
                 </div>
-            HTML;
+            </div>
+        HTML;
     }
-
-    return $reportLinks;
+    return $MonthReportLinks;
 }
 
 // Main Logic
@@ -277,7 +274,7 @@ $month = isset($_GET['m']) ? $_GET['m'] : date('m');
 
 $yearsNav = makeYearsNav($year);
 $monthsNav = makeMonthsNav($year, $month);
-$reports = makeReports($year, $month);
+$reports = makeMonthReports($year, $month);
 
 ?>
 
