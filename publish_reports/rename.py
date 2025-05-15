@@ -52,7 +52,7 @@ def get_day_str(folder_name, day01_path, month_name="", again=True):
             break
     # ---
     if day_str == '01' and again:
-        print(f"⚠️ No timestamp found in folder: {folder_path}")
+        # print(f"⚠️ No timestamp found in folder: {folder_path}")
         # ---
         new_path = script_dir / f"reports/2025/{month_name}"
         # ---
