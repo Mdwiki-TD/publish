@@ -20,6 +20,8 @@ main_tab = {
         'errors.json'
     ],
     "errs" : [
+        "ratelimited",
+        "editconflict",
         "spam filter",
         "captcha",
         "noaccess",

@@ -208,7 +208,6 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
 
     $Success = $editit['edit']['result'] ?? '';
     $is_captcha = $editit['edit']['captcha'] ?? null;
-    $is_abusefilter = $editit['edit']['error']['abusefilter'] ?? null;
 
     $tab['result'] = $Success;
 
@@ -224,22 +223,33 @@ function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $us
     } else if ($is_captcha) {
         $to_do_file = "captcha";
         // ---
-    } else if ($is_abusefilter) {
-        $to_do_file = "abusefilter";
-        // ---
-    } else if (($editit['edit']['error']['code'] ?? "") === "mwoauth-invalid-authorization") {
-        $to_do_file = "mwoauth-invalid-authorization";
-        // ---
     } else {
         $to_do_file = "errors";
+        // ---
+        $errs = [
+            "ratelimited",
+            "editconflict",
+            "spam filter",
+            "abusefilter",
+            "mwoauth-invalid-authorization",
+        ];
+        // ---
+        $c_text = json_encode($editit);
+        // ---
+        foreach ($errs as $err) {
+            if (strpos($c_text, $err) !== false) {
+                $to_do_file = $err;
+                break;
+            }
+        }
     }
-
+    // ---
     $tab['result_to_cx'] = $editit;
     to_do($tab, $to_do_file);
-
+    // ---
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
-
+    // ---
     print(json_encode($editit, JSON_PRETTY_PRINT));
 
     // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
@@ -267,9 +277,21 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
         ];
         // if str($LinkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
         // ---
-        $file_name = strpos(json_encode($LinkTowd['error']), "Links to user pages") !== false ? 'wd_user_pages' : 'wd_errors';
+        $file_name = 'wd_errors';
         // ---
-        $file_name = strpos(json_encode($LinkTowd['error']), "get_csrftoken") !== false ? 'get_csrftoken' : $file_name;
+        $errs = [
+            'Links to user pages' => "wd_user_pages",
+            'get_csrftoken' => "wd_csrftoken",
+        ];
+        // ---
+        $f_text = json_encode($LinkTowd['error']);
+        // ---
+        foreach ($errs as $err => $file) {
+            if (strpos($f_text, $err) !== false) {
+                $file_name = $file;
+                break;
+            }
+        }
         // ---
         to_do($tab3, $file_name);
     }
