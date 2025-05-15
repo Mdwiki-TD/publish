@@ -158,7 +158,7 @@ function makeMonthReports($year, $month)
     if (!is_dir($monthDirPath)) {
         return '<p>No reports available.</p>';
     }
-
+    // ---
     $MonthReportLinks = '';
     // ---
     $daysDirs = scandir($monthDirPath);
@@ -263,20 +263,24 @@ function makeMonthReports($year, $month)
 
         }
         // ---
-        $MonthReportLinks .= <<<HTML
-            <div class="card px-0 m-1 mt-3">
-                <div class="card-header bg-secondary text-white">
-                    <span class="card-title h4">$formattedDate $todayBadge</span>
+        if (!empty($dailyReportLinks)) {
+            $MonthReportLinks .= <<<HTML
+                <div class="card px-0 m-1 mt-3">
+                    <div class="card-header bg-secondary text-white">
+                        <span class="card-title h4">$formattedDate $todayBadge</span>
 
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        $dailyReportLinks
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            $dailyReportLinks
+                        </div>
                     </div>
                 </div>
-            </div>
-        HTML;
+            HTML;
+        }
+        // ---
     }
+    // ---
     return $MonthReportLinks;
 }
 
