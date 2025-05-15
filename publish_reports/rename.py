@@ -1,7 +1,7 @@
 import os
 import re
 import shutil
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 script_dir = Path(__file__).parent
@@ -33,6 +33,11 @@ def get_time_of_changes(new_path):
         # if file_date date == today then continue
         # ---
         if file_date.strftime('%Y-%m-%d') == datetime.now().strftime('%Y-%m-%d'):
+            continue
+        # ---
+        # if file_date date == yesterday then continue
+        # ---
+        if file_date.strftime('%Y-%m-%d') == (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'):
             continue
         # ---
         day_str = file_date.strftime('%d')
