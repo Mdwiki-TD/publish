@@ -27,8 +27,8 @@ if (isset($_REQUEST['test'])) {
 }
 
 // Constants
-define('REPORTS_DIR', 'reports');
-// define('REPORTS_DIR', 'reports_by_day');
+// define('REPORTS_DIR', 'reports');
+define('REPORTS_DIR', 'reports_by_day');
 
 define('PUBLISH_REPORTS_DIR', __DIR__ . '/reports/');
 
