@@ -99,7 +99,10 @@ for month in os.listdir(root_path):
 
     print(f"\n Folders in: reports_by_day/2025/{month}/01: {len(folder_files)}")
 
-    for folder_name in os.listdir(day01_path):
+    folder_filesx = os.listdir(script_dir / f'reports/2025/{month}')
+    print(f"\n Folders in: reports/2025/{month}: {len(folder_filesx)}")
+
+    for folder_name in folder_files:
         folder_path = os.path.join(day01_path, folder_name)
 
         if not os.path.isdir(folder_path):
