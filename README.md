@@ -14,7 +14,7 @@ Before publishing to Wikipedia, this process uses the [fix_refs](https://github.
 These pre-processing steps help ensure the quality and consistency of articles published to Wikipedia.
 
 # Usage
-The main script to run is `main.php`. It processes the publishing of Wikipedia articles by performing the following steps:
+The main script to run is `index.php`. It processes the publishing of Wikipedia articles by performing the following steps:
 
 1. **Read Revision ID:** The script reads the `all_pages_revids.json` file to get the revision ID of the source title.
 2. **Make Summary:** Creates a summary for the edit based on the revision ID, source title, target language, and hashtag.
@@ -25,7 +25,7 @@ The main script to run is `main.php`. It processes the publishing of Wikipedia a
 7. **Handle Successful Edit:** If the edit is successful, it links the article to Wikidata and logs the result.
 
 # Functions
-The main functions in `main.php` include:
+The main functions in `index.php` include:
 
 - `get_revid($sourcetitle)`: Reads the revision ID from `all_pages_revids.json`.
 - `make_summary($revid, $sourcetitle, $to, $hashtag)`: Creates the edit summary.
@@ -44,7 +44,7 @@ The main functions in `main.php` include:
 - The script uses several helper functions from other included files, such as `fix_refs`, `DoChangesToText`, and `LinkToWikidata`.
 
 # License
-# Diagram 
+# Diagram
 ```mermaid
 
 ```
