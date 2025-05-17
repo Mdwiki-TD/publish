@@ -10,8 +10,6 @@ if (!is_allowed()) {
     http_response_code(403); // Forbidden
     echo json_encode(['error' => 'Access denied. Requests are only allowed from authorized domains.']);
 
-    if (isset($_GET['var_export'])) var_export($_SERVER);
-
     exit;
 }
 
