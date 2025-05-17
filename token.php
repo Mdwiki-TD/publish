@@ -6,14 +6,16 @@ include_once __DIR__ . '/cors.php';
 use function Publish\CORS\allowed_domains;
 use function Publish\CORS\is_allowed;
 
+// header("Access-Control-Allow-Origin: " . implode(", ", allowed_domains()));
+header("Access-Control-Allow-Origin: medwiki.toolforge.org");
+
 if (!is_allowed()) {
     http_response_code(403); // Forbidden
     echo json_encode(['error' => 'Access denied. Requests are only allowed from authorized domains.']);
     exit;
 }
 
-// header("Access-Control-Allow-Origin: " . implode(", ", allowed_domains()));
-header("Access-Control-Allow-Origin: medwiki.toolforge.org");
+
 
 include_once __DIR__ . '/../auth/vendor_load.php';
 
