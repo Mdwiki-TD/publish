@@ -13,6 +13,7 @@ if (!is_allowed()) {
 }
 
 // header("Access-Control-Allow-Origin: " . implode(", ", allowed_domains()));
+header("Access-Control-Allow-Origin: medwiki.toolforge.org");
 
 include_once __DIR__ . '/../auth/vendor_load.php';
 
