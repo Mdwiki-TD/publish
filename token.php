@@ -12,7 +12,7 @@ if (!is_allowed()) {
     exit;
 }
 
-header("Access-Control-Allow-Origin: " . implode(", ", allowed_domains()));
+// header("Access-Control-Allow-Origin: " . implode(", ", allowed_domains()));
 
 include_once __DIR__ . '/../auth/vendor_load.php';
 

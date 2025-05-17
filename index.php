@@ -9,10 +9,13 @@ use function Publish\CORS\is_allowed;
 if (!is_allowed()) {
     http_response_code(403); // Forbidden
     echo json_encode(['error' => 'Access denied. Requests are only allowed from authorized domains.']);
+
+    if (isset($_GET['var_export'])) var_export($_SERVER);
+
     exit;
 }
 
-header("Access-Control-Allow-Origin: " . implode(", ", allowed_domains()));
+// header("Access-Control-Allow-Origin: " . implode(", ", allowed_domains()));
 
 include_once __DIR__ . '/include.php';
 
