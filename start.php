@@ -341,6 +341,7 @@ function start($request)
     if ($access == null) {
         handleNoAccess($user, $tab);
     } else {
+        // file_put_contents(__DIR__ . '/post.log', print_r(getallheaders(), true));
         processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $user, $title, $summary, $request, $tab);
     }
 }

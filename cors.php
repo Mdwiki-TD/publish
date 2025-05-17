@@ -5,7 +5,6 @@ namespace Publish\CORS;
 /*
 
 use function Publish\CORS\is_allowed;
-use function Publish\CORS\allowed_domains;
 
 */
 
@@ -21,16 +20,13 @@ function is_allowed()
     $is_allowed = false;
     foreach ($domains as $domain) {
         if (strpos($referer, $domain) !== false || strpos($origin, $domain) !== false) {
-            $is_allowed = true;
+            $is_allowed = $domain;
             break;
         }
     }
-    // return $is_allowed;
-    return true;
-}
 
-function allowed_domains()
-{
-    global $domains;
-    return $domains;
+    // log $_SERVER to file
+    // file_put_contents(__DIR__ . '/cors.log', print_r($_SERVER, true));
+
+    return $is_allowed;
 }
