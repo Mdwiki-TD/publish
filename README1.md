@@ -15,7 +15,7 @@ This project is a PHP-based workflow designed to manage the final steps for publ
 ## System Architecture
 ### Core Components
 1. **Entry Point / Controller**
-   - `main.php`: Orchestrates the workflow, initiating the publishing process.
+   - `index.php`: Orchestrates the workflow, initiating the publishing process.
 
 2. **Pre-Processing Module** (Wikitext Processing)
    - `fix_refs` directory
@@ -46,7 +46,7 @@ This project is a PHP-based workflow designed to manage the final steps for publ
      - `tests/test.php`
 
 ## Workflow
-1. `main.php` starts execution (via web request or scheduled task).
+1. `index.php` starts execution (via web request or scheduled task).
 2. Reads external JSON file (`all_pages_revids.json`) to retrieve revision IDs.
 3. Generates an edit summary using `make_summary`.
 4. Sends the wikitext through `fix_refs` and `textfixes` for cleanup and standardization.
@@ -69,7 +69,7 @@ This project is a PHP-based workflow designed to manage the final steps for publ
 - **GitHub Actions** (For automation and workflow management)
 
 
-## Diagram 
+## Diagram
 ```mermaid
 flowchart TD
     %% Input Sources
@@ -78,7 +78,7 @@ flowchart TD
 
     %% Front-End / Entry Points
     subgraph "Front-End / Entry Points"
-        MP["main.php"]:::entrypoint
+        MP["index.php"]:::entrypoint
         IP["index.php"]:::entrypoint
         DEP["do_edit.php"]:::entrypoint
     end
@@ -149,7 +149,7 @@ flowchart TD
     classDef input fill:#fcc,stroke:#333,stroke-width:2px;
 
     %% Click Events for Component Mapping
-    click MP "https://github.com/mdwiki-td/publish/blob/main/main.php"
+    click MP "https://github.com/mdwiki-td/publish/blob/main/index.php"
     click IP "https://github.com/mdwiki-td/publish/blob/main/index.php"
     click DEP "https://github.com/mdwiki-td/publish/blob/main/do_edit.php"
     click FR "https://github.com/mdwiki-td/publish/tree/main/fix_refs"
