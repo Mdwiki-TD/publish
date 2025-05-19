@@ -1,7 +1,7 @@
 <?PHP
 header('Content-Type: application/json; charset=utf-8');
 
-include_once __DIR__ . '/cors.php';
+include_once __DIR__ . '/bots/cors.php';
 
 use function Publish\CORS\is_allowed;
 

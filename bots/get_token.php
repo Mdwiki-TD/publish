@@ -2,14 +2,13 @@
 
 namespace Publish\GetToken;
 /*
-include_once __DIR__ . '/get_token.php';
 use function Publish\GetToken\get_client;
 use function Publish\GetToken\get_csrftoken;
 use function Publish\GetToken\get_cxtoken;
 use function Publish\GetToken\post_params;
 */
 
-include_once __DIR__ . '/include.php';
+include_once __DIR__ . '/../include.php';
 
 use MediaWiki\OAuthClient\Client;
 use MediaWiki\OAuthClient\ClientConfig;

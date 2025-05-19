@@ -7,14 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 use function Publish\Helps\pub_test_print;
-use function Publish\DoEdit\publish_do_edit;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\AccessHelpsNew\get_access_from_db_new;
-use function Publish\AddToDb\InsertPageTarget;
-use function Publish\AddToDb\retrieveCampaignCategories;
 use function Publish\WD\LinkToWikidata;
 use function Publish\TextFix\DoChangesToText;
 use function WpRefs\FixPage\DoChangesToText1;
+use function Publish\EditProcess\processEdit;
 
 // $rand_id = rand(0, 999999999);
 $rand_id = time() .  "-" . bin2hex(random_bytes(6));
@@ -140,25 +138,6 @@ function determineHashtag($title, $user)
     return $hashtag;
 }
 
-function prepareApiParams($title, $summary, $text, $request)
-{
-    $apiParams = [
-        'action' => 'edit',
-        'title' => $title,
-        // 'section' => 'new',
-        'summary' => $summary,
-        'text' => $text,
-        'format' => 'json',
-    ];
-
-    // wpCaptchaId, wpCaptchaWord
-    if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
-        $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
-        $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
-    }
-    return $apiParams;
-}
-
 function handleNoAccess($user, $tab)
 {
     $error = ['code' => 'noaccess', 'info' => 'noaccess'];
@@ -172,84 +151,6 @@ function handleNoAccess($user, $tab)
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
 
-    print(json_encode($editit, JSON_PRETTY_PRINT));
-
-    // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
-}
-
-function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle)
-{
-    // ---
-    $camp_to_cat = retrieveCampaignCategories();
-    $cat = $camp_to_cat[$campaign] ?? '';
-    $to_users_table = false;
-    // ---
-    // if $wd_result has "abusefilter-warning-39" then $to_users_table = true
-    if (strpos(json_encode($wd_result), "abusefilter-warning-39") !== false) {
-        $to_users_table = true;
-    }
-    // ---
-    $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title, $to_users_table);
-    // ---
-    return $is_user_page;
-}
-function processEdit($access, $sourcetitle, $text, $lang, $campaign, $user, $title, $summary, $request, $tab)
-{
-    $apiParams = prepareApiParams($title, $summary, $text, $request);
-
-    $access_key = $access['access_key'];
-    $access_secret = $access['access_secret'];
-
-    $apiParams["text"] = $text;
-
-    $editit = publish_do_edit($apiParams, $lang, $access_key, $access_secret);
-
-    $Success = $editit['edit']['result'] ?? '';
-    $is_captcha = $editit['edit']['captcha'] ?? null;
-
-    $tab['result'] = $Success;
-
-    $to_do_file = "";
-
-    if ($Success === 'Success') {
-        $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
-        // ---
-        $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle);
-        // ---
-        $to_do_file = "success";
-        // ---
-    } else if ($is_captcha) {
-        $to_do_file = "captcha";
-        // ---
-    } else {
-        $to_do_file = "errors";
-        // ---
-        $errs = [
-            "protectedpage",
-            "titleblacklist",
-            "ratelimited",
-            "editconflict",
-            "spam filter",
-            "abusefilter",
-            "mwoauth-invalid-authorization",
-        ];
-        // ---
-        $c_text = json_encode($editit);
-        // ---
-        foreach ($errs as $err) {
-            if (strpos($c_text, $err) !== false) {
-                $to_do_file = $err;
-                break;
-            }
-        }
-    }
-    // ---
-    $tab['result_to_cx'] = $editit;
-    to_do($tab, $to_do_file);
-    // ---
-    pub_test_print("\n<br>");
-    pub_test_print("\n<br>");
-    // ---
     print(json_encode($editit, JSON_PRETTY_PRINT));
 
     // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
@@ -300,30 +201,56 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
     return $LinkTowd;
 }
 
+function start2($request, $user, $access, $tab)
+{
+    // ---
+    $text = $request['text'] ?? '';
+    // ---
+    // $summary = $request['summary'] ?? '';
+    // $revid = $request['revid'] ?? '';
+    // ---
+    $revid = get_revid($tab['sourcetitle']);
+    // ---
+    $hashtag = determineHashtag($tab['title'], $user);
+    // ---
+    $tab['summary'] = make_summary($revid, $tab['sourcetitle'], $tab['lang'], $hashtag);
+    // ---
+    // file_put_contents(__DIR__ . '/post.log', print_r(getallheaders(), true));
+    // ---
+    $newtext = DoChangesToText1($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $revid);
+    // ---
+    if (!empty($newtext)) {
+        $text = $newtext;
+    }
+    // ---
+    $tabx = processEdit($request, $access, $text, $user, $tab);
+    // ---
+    pub_test_print("\n<br>");
+    pub_test_print("\n<br>");
+    // ---
+    print(json_encode($tabx['editit'], JSON_PRETTY_PRINT));
+    // ---
+    // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
+    // ---
+    to_do($tabx['tab'], $tabx['to_do_file']);
+}
+
+
 function start($request)
 {
-    $sourcetitle = $request['sourcetitle'] ?? '';
-    $title = formatTitle($request['title'] ?? '');
+    // ---
     $user = formatUser($request['user'] ?? '');
-    $lang = $request['target'] ?? '';
-    $text = $request['text'] ?? '';
-    $campaign = $request['campaign'] ?? '';
-    // $summary = $request['summary'] ?? '';
-
-    // $revid = $request['revid'] ?? '';
-    $revid = get_revid($sourcetitle);
-    $hashtag = determineHashtag($title, $user);
-    $summary = make_summary($revid, $sourcetitle, $lang, $hashtag);
-
+    $title = formatTitle($request['title'] ?? '');
+    // ---
     $tab = [
         'title' => $title,
-        'summary' => $summary,
-        'lang' => $lang,
+        'summary' => "",
+        'lang' => $request['target'] ?? '',
         'user' => $user,
-        'campaign' => $campaign,
+        'campaign' => $request['campaign'] ?? '',
         'result' => "",
         'edit' => [],
-        'sourcetitle' => $sourcetitle
+        'sourcetitle' => $request['sourcetitle'] ?? ''
     ];
     // ---
     $access = get_access_from_db_new($user);
@@ -335,17 +262,7 @@ function start($request)
     if ($access == null) {
         handleNoAccess($user, $tab);
     } else {
-        // file_put_contents(__DIR__ . '/post.log', print_r(getallheaders(), true));
-
-        $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
-
-        if (!empty($newtext)) {
-            $text = $newtext;
-        }
-
-        processEdit($access, $sourcetitle, $text, $lang, $campaign, $user, $title, $summary, $request, $tab);
+        start2($request, $user, $access, $tab);
     }
 }
-
-
 start($_POST);
