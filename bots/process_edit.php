@@ -10,6 +10,71 @@ use function Publish\Helps\pub_test_print;
 use function Publish\DoEdit\publish_do_edit;
 use function Publish\AddToDb\InsertPageTarget;
 use function Publish\AddToDb\retrieveCampaignCategories;
+use function Publish\WD\LinkToWikidata;
+use function Publish\FilesHelps\to_do;
+
+function get_errors_file($editit, $place_holder)
+{
+    $to_do_file = $place_holder;
+    // ---
+    $errs_main = [
+        "protectedpage",
+        "titleblacklist",
+        "ratelimited",
+        "editconflict",
+        "spam filter",
+        "abusefilter",
+        "mwoauth-invalid-authorization",
+    ];
+    // ---
+    $errs_wd = [
+        'Links to user pages' => "wd_user_pages",
+        'get_csrftoken' => "wd_csrftoken",
+        'protectedpage' => "wd_protectedpage",
+    ];
+    // ---
+    $errs = ($place_holder == "errors") ? $errs_main : $errs_wd;
+    // ---
+    $c_text = json_encode($editit);
+    // ---
+    foreach ($errs as $err) {
+        if (strpos($c_text, $err) !== false) {
+            $to_do_file = $err;
+            break;
+        }
+    }
+    return $to_do_file;
+}
+
+function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret)
+{
+    $LinkTowd = [];
+    // ---
+    try {
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
+        // ---
+    } catch (\Exception $e) {
+        pub_test_print($e->getMessage());
+    }
+    // ---
+    if (isset($LinkTowd['error'])) {
+        $tab3 = [
+            'error' => $LinkTowd['error'],
+            'qid' => $LinkTowd['qid'] ?? "",
+            'title' => $title,
+            'sourcetitle' => $sourcetitle,
+            'lang' => $lang,
+            'username' => $user
+        ];
+        // if str($LinkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
+        // ---
+        $file_name = get_errors_file($LinkTowd['error'], "wd_errors");
+        // ---
+        to_do($tab3, $file_name);
+    }
+    // ---
+    return $LinkTowd;
+}
 
 function prepareApiParams($title, $summary, $text, $request)
 {
@@ -49,13 +114,12 @@ function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle)
 
 function processEdit($request, $access, $text, $user, $tab)
 {
-    // ---
     $sourcetitle = $tab['sourcetitle'];
     $lang = $tab['lang'];
     $campaign = $tab['campaign'];
     $title = $tab['title'];
     $summary = $tab['summary'];
-    // ---
+
     $apiParams = prepareApiParams($title, $summary, $text, $request);
 
     $access_key = $access['access_key'];
@@ -81,35 +145,13 @@ function processEdit($request, $access, $text, $user, $tab)
         // ---
     } else if ($is_captcha) {
         $to_do_file = "captcha";
-        // ---
     } else {
-        $to_do_file = "errors";
-        // ---
-        $errs = [
-            "protectedpage",
-            "titleblacklist",
-            "ratelimited",
-            "editconflict",
-            "spam filter",
-            "abusefilter",
-            "mwoauth-invalid-authorization",
-        ];
-        // ---
-        $c_text = json_encode($editit);
-        // ---
-        foreach ($errs as $err) {
-            if (strpos($c_text, $err) !== false) {
-                $to_do_file = $err;
-                break;
-            }
-        }
+        $to_do_file = get_errors_file($editit, "errors");
     }
     // ---
     $tab['result_to_cx'] = $editit;
     // ---
-    return [
-        "editit" => $editit,
-        "tab" => $tab,
-        "to_do_file" => $to_do_file
-    ];
+    to_do($tab, $to_do_file);
+    // ---
+    return $editit;
 }
