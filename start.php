@@ -16,8 +16,8 @@ use function Publish\WD\LinkToWikidata;
 use function Publish\TextFix\DoChangesToText;
 use function WpRefs\FixPage\DoChangesToText1;
 
-$rand_id = rand(0, 999999999);
-$rand_id = time() .  "-" . $rand_id;
+// $rand_id = rand(0, 999999999);
+$rand_id = time() .  "-" . bin2hex(random_bytes(6));
 
 // $main_dir = check_dirs($rand_id, "reports");
 $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
@@ -314,7 +314,7 @@ function start($request)
     $lang = $request['target'] ?? '';
     $text = $request['text'] ?? '';
     $campaign = $request['campaign'] ?? '';
-    $summary = $request['summary'] ?? '';
+    // $summary = $request['summary'] ?? '';
 
     // $revid = $request['revid'] ?? '';
     $revid = get_revid($sourcetitle);
