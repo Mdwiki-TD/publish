@@ -193,18 +193,12 @@ function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle)
     // ---
     return $is_user_page;
 }
-function processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $user, $title, $summary, $request, $tab)
+function processEdit($access, $sourcetitle, $text, $lang, $campaign, $user, $title, $summary, $request, $tab)
 {
     $apiParams = prepareApiParams($title, $summary, $text, $request);
 
     $access_key = $access['access_key'];
     $access_secret = $access['access_secret'];
-
-    $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
-
-    if (!empty($newtext)) {
-        $text = $newtext;
-    }
 
     $apiParams["text"] = $text;
 
@@ -342,7 +336,14 @@ function start($request)
         handleNoAccess($user, $tab);
     } else {
         // file_put_contents(__DIR__ . '/post.log', print_r(getallheaders(), true));
-        processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $user, $title, $summary, $request, $tab);
+
+        $newtext = DoChangesToText1($sourcetitle, $title, $text, $lang, $revid);
+
+        if (!empty($newtext)) {
+            $text = $newtext;
+        }
+
+        processEdit($access, $sourcetitle, $text, $lang, $campaign, $user, $title, $summary, $request, $tab);
     }
 }
 
