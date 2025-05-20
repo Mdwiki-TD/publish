@@ -1,15 +1,27 @@
-<?php
-
+<?PHP
 header('Content-Type: application/json; charset=utf-8');
-header("Access-Control-Allow-Origin: *");
+
+include_once __DIR__ . '/bots/cors.php';
+
+use function Publish\CORS\is_allowed;
+
+$alowed = is_allowed();
+
+if (!$alowed) {
+    http_response_code(403); // Forbidden
+    echo json_encode(['error' => 'Access denied. Requests are only allowed from authorized domains.']);
+    exit;
+}
+
+header("Access-Control-Allow-Origin: https://$alowed");
 
 include_once __DIR__ . '/../auth/vendor_load.php';
 
-include_once __DIR__ . '/config.php';
-include_once __DIR__ . '/helps.php';
-include_once __DIR__ . '/access_helps.php';
-include_once __DIR__ . '/access_helps_new.php';
-include_once __DIR__ . '/get_token.php';
+include_once __DIR__ . '/bots/config.php';
+include_once __DIR__ . '/bots/helps.php';
+include_once __DIR__ . '/bots/access_helps.php';
+include_once __DIR__ . '/bots/access_helps_new.php';
+include_once __DIR__ . '/bots/get_token.php';
 
 use function Publish\GetToken\get_cxtoken;
 use function Publish\AccessHelps\get_access_from_db;

@@ -7,12 +7,12 @@ use function Publish\AddToDb\InsertPageTarget;
 use function Publish\AddToDb\retrieveCampaignCategories;
 */
 
-include_once __DIR__ . '/include.php';
+include_once __DIR__ . '/../include.php';
 
 use function Publish\MdwikiSql\fetch_query;
 use function Publish\MdwikiSql\execute_query;
 
-$word_file = __DIR__ . "/../td/Tables/jsons/words.json";
+$word_file = __DIR__ . "/../../td/Tables/jsons/words.json";
 if (!file_exists($word_file)) {
     $word_file = "I:/mdwiki/mdwiki/public_html/td/Tables/jsons/words.json";
 }

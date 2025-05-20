@@ -7,7 +7,7 @@ use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\AccessHelpsNew\del_access_from_db_new;
 */
 
-include_once __DIR__ . '/include.php';
+include_once __DIR__ . '/../include.php';
 
 use function Publish\MdwikiSql\execute_query;
 use function Publish\MdwikiSql\fetch_query;

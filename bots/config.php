@@ -1,6 +1,6 @@
 <?php
 //---
-include_once __DIR__ . '/../auth/vendor_load.php';
+include_once __DIR__ . '/../../auth/vendor_load.php';
 //---
 use Defuse\Crypto\Key;
 //---

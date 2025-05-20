@@ -11,3 +11,5 @@ publish_reports/_index.php
 /reports
 test.php
 tx.php
+bots/new_x.php
+fix_refsx

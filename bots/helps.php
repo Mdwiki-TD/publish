@@ -3,7 +3,6 @@
 namespace Publish\Helps;
 /*
 Usage:
-include_once __DIR__ . '/../publish/helps.php';
 use function Publish\Helps\pub_test_print;
 use function Publish\Helps\encode_value;
 use function Publish\Helps\decode_value;
