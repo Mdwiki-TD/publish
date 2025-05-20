@@ -47,7 +47,7 @@ function check_dirs($rand_id, $reports_dir_main)
     $publish_reports = "I:/mdwiki/publish-repo/publish_reports/";
     // ---
     if (!is_dir($publish_reports)) {
-        $publish_reports = __DIR__ . "/../publish_reports/";
+        $publish_reports = __DIR__ . "/../../publish_reports/";
     }
     // ---
     $reports_dir = "$publish_reports/$reports_dir_main/";
