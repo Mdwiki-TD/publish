@@ -13,7 +13,12 @@ use function Publish\Helps\get_url_curl;
 function get_revid_db($sourcetitle)
 {
     // ---
-    $url = "https://mdwiki.toolforge.org/api.php?get=revids&title=$sourcetitle";
+    $params = [
+        "get" => "revids",
+        "title" => $sourcetitle
+    ];
+    // ---
+    $url = "https://mdwiki.toolforge.org/api.php?" . http_build_query($params);
     // ---
     // $json = file_get_contents($url);
     $json = get_url_curl($url);
