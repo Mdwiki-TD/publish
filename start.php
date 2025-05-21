@@ -88,7 +88,11 @@ function start2($request, $user, $access, $tab)
     // ---
     if ($user == "Mr. Ibrahem") {
         // log request
-        file_put_contents(__DIR__ . '/post.log', print_r($request, true));
+        if (!is_dir(__DIR__ . '/texts')) {
+            mkdir(__DIR__ . '/texts', 0755, true);
+        }
+        // ---
+        file_put_contents(__DIR__ . '/texts/post.log.' . time(), print_r($request, true));
     }
     // ---
     $text = $request['text'] ?? '';
