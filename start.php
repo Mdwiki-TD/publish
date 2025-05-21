@@ -94,7 +94,7 @@ function start2($request, $user, $access, $tab)
     // ---
     if (empty($revid)) {
         $tab['empty revid'] = 'Can not get revid from all_pages_revids.json';
-        $revid = $request['revid'] ?? '';
+        $revid = $request['revid'] ?? $request['revision'] ?? '';
     }
     // ---
     $tab['revid'] = $revid;
