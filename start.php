@@ -89,9 +89,15 @@ function start2($request, $user, $access, $tab)
     $text = $request['text'] ?? '';
     // ---
     // $summary = $request['summary'] ?? '';
-    // $revid = $request['revid'] ?? '';
     // ---
     $revid = get_revid($tab['sourcetitle']);
+    // ---
+    if (empty($revid)) {
+        $tab['empty revid'] = 'Can not get revid from all_pages_revids.json';
+        $revid = $request['revid'] ?? '';
+    }
+    // ---
+    $tab['revid'] = $revid;
     // ---
     $hashtag = determineHashtag($tab['title'], $user);
     // ---
