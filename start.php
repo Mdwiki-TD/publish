@@ -86,6 +86,11 @@ function handleNoAccess($user, $tab)
 function start2($request, $user, $access, $tab)
 {
     // ---
+    if ($user == "Mr. Ibrahem") {
+        // log request
+        file_put_contents(__DIR__ . '/post.log', print_r($request, true));
+    }
+    // ---
     $text = $request['text'] ?? '';
     // ---
     // $summary = $request['summary'] ?? '';
