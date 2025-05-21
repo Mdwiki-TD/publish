@@ -13,6 +13,21 @@ use function Publish\TextFix\DoChangesToText;
 use function WpRefs\FixPage\DoChangesToText1;
 use function Publish\EditProcess\processEdit;
 use function Publish\FilesHelps\to_do;
+use function Publish\Helps\get_url_curl;
+
+function get_revid_db($sourcetitle)
+{
+    $url = "https://mdwiki.toolforge.org/api.php?get=revids&title=$sourcetitle";
+    // ---
+    // $json = file_get_contents($url);
+    $json = get_url_curl($url);
+    // ---
+    $json = json_decode($json, true);
+    // ---
+    $revid = $json[$sourcetitle] ?? "";
+    // ---
+    return $revid;
+}
 
 function get_revid($sourcetitle)
 {
@@ -100,6 +115,8 @@ function start2($request, $user, $access, $tab)
     // $summary = $request['summary'] ?? '';
     // ---
     $revid = get_revid($tab['sourcetitle']);
+    // ---
+    if (empty($revid)) $revid = get_revid_db($tab['sourcetitle']);
     // ---
     if (empty($revid)) {
         $tab['empty revid'] = 'Can not get revid from all_pages_revids.json';
