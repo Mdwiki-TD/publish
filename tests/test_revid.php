@@ -14,8 +14,9 @@ $title = "Lyme disease";
 
 $revid_json = get_revid($title);
 
-echo "revid_json: $revid_json";
+echo "revid_json: $revid_json\n";
+echo "------------------\n";
 
 $revid_db = get_revid_db($title);
 
-echo "revid_db: $revid_db";
+echo "revid_db: $revid_db\n";
