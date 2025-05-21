@@ -18,16 +18,19 @@ function get_revid_db($sourcetitle)
         "title" => $sourcetitle
     ];
     // ---
-    $url = "https://mdwiki.toolforge.org/api.php?" . http_build_query($params);
-    // ---
-    // $json = file_get_contents($url);
-    $json = get_url_curl($url);
-    // ---
-    print_r($json);
+    if (($_SERVER['SERVER_NAME'] ?? "localhost") == "localhost") {
+        $url = "http://localhost:9001/api?" . http_build_query($params);
+        $json = file_get_contents($url);
+    } else {
+        $url = "https://mdwiki.toolforge.org/api.php?" . http_build_query($params);
+        $json = get_url_curl($url);
+    }
     // ---
     $json = json_decode($json, true);
     // ---
-    $revid = $json[$sourcetitle] ?? "";
+    $results = array_column($json["results"] ?? [], "revid", "title");
+    // ---
+    $revid = $results[$sourcetitle] ?? "";
     // ---
     return $revid;
 }
