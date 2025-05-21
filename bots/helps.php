@@ -8,7 +8,7 @@ use function Publish\Helps\encode_value;
 use function Publish\Helps\decode_value;
 */
 
-include_once __DIR__ . '/include.php';
+include_once __DIR__ . '/../include.php';
 
 use Defuse\Crypto\Crypto;
 
