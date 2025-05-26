@@ -55,7 +55,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
         // ---
         // Check if the error is get_csrftoken failure and user is not already "Mr. Ibrahem"  
         if (isset($LinkTowd['error']) &&   
-            strpos(json_encode($LinkTowd['error']), 'get_csrftoken failed') !== false &&  
+            $LinkTowd['error'] == 'get_csrftoken failed' &&  
             $user !== 'Mr. Ibrahem') {  
               
             pub_test_print("get_csrftoken failed for user: $user, retrying with Mr. Ibrahem");  
