@@ -12,6 +12,8 @@ use function Publish\AddToDb\InsertPageTarget;
 use function Publish\AddToDb\retrieveCampaignCategories;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
+use function Publish\AccessHelpsNew\get_access_from_db_new;
+use function Publish\AccessHelps\get_access_from_db;
 
 function get_errors_file($editit, $place_holder)
 {
