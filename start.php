@@ -72,6 +72,7 @@ function handleNoAccess($user, $tab)
 function start2($request, $user, $access, $tab)
 {
     // ---
+    /*
     if ($user == "Mr. Ibrahem") {
         // log request
         if (!is_dir(__DIR__ . '/texts')) {
@@ -79,7 +80,7 @@ function start2($request, $user, $access, $tab)
         }
         // ---
         file_put_contents(__DIR__ . '/texts/post.log.' . time(), print_r($request, true));
-    }
+    }*/
     // ---
     $text = $request['text'] ?? '';
     // ---
