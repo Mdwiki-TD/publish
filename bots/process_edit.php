@@ -12,6 +12,8 @@ use function Publish\AddToDb\InsertPageTarget;
 use function Publish\AddToDb\retrieveCampaignCategories;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
+use function Publish\AccessHelpsNew\get_access_from_db_new;
+use function Publish\AccessHelps\get_access_from_db;
 
 function get_errors_file($editit, $place_holder)
 {
@@ -46,6 +48,33 @@ function get_errors_file($editit, $place_holder)
     return $to_do_file;
 }
 
+function retryWithFallbackUser($sourcetitle, $lang, $title, $user, $original_error)
+{
+    $LinkTowd = [];
+    pub_test_print("get_csrftoken failed for user: $user, retrying with Mr. Ibrahem");
+
+    // Retry with "Mr. Ibrahem" credentials - get fresh credentials from database
+    $fallback_access = get_access_from_db_new('Mr. Ibrahem');
+    if ($fallback_access === null) {
+        $fallback_access = get_access_from_db('Mr. Ibrahem');
+    }
+
+    if ($fallback_access !== null) {
+        $fallback_access_key = $fallback_access['access_key'];
+        $fallback_access_secret = $fallback_access['access_secret'];
+
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, 'Mr. Ibrahem', $title, $fallback_access_key, $fallback_access_secret) ?? [];
+
+        // Add a note that fallback was used
+        if (!isset($LinkTowd['error'])) {
+            $LinkTowd['fallback_user'] = 'Mr. Ibrahem';
+            $LinkTowd['original_user'] = $user;
+            pub_test_print("Successfully linked using Mr. Ibrahem fallback credentials");
+        }
+    }
+    return $LinkTowd;
+}
+
 function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret)
 {
     $LinkTowd = [];
@@ -53,6 +82,11 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
         // ---
+        // Check if the error is get_csrftoken failure and user is not already "Mr. Ibrahem"
+        if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'get_csrftoken failed' && $user !== 'Mr. Ibrahem') {
+            $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user, $LinkTowd['error']);
+        }
+        // Log errors if they still exist after retry
     } catch (\Exception $e) {
         pub_test_print($e->getMessage());
     }
@@ -63,6 +97,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
             'qid' => $LinkTowd['qid'] ?? "",
             'title' => $title,
             'sourcetitle' => $sourcetitle,
+            'fallback' => $LinkTowd['fallback'] ?? "",
             'lang' => $lang,
             'username' => $user
         ];
