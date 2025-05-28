@@ -151,7 +151,7 @@
         }
 
         function showDetails(id) {
-            // البحث في البيانات الأصلية
+            // Search in original data
             const result = originalResults.find(row => row.id == id);
             if (!result) {
                 document.getElementById('modalData').textContent = 'Data not found.';
@@ -164,6 +164,7 @@
                 const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
                 modal.show();
             } catch (e) {
+                console.error('JSON parsing error:', e);
                 document.getElementById('modalData').textContent = 'Unable to parse data.';
             }
         }
@@ -257,7 +258,7 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            // عرض أزرار متعددة للنتائج المجمعة
+                            // Display multiple buttons for grouped results
                             return row.resultsArray.map((res, index) => {
                                 const id = row.idsArray[index];
                                 return `<span class="badge bg-secondary" style="cursor:pointer; margin-right:4px;" onclick="showDetails(${id})">${res}</span>`;
