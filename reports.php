@@ -160,7 +160,9 @@
 
             try {
                 const json = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
-                document.getElementById('modalData').textContent = JSON.stringify(json, null, 2);
+                // Use textContent to prevent XSS
+                const formattedJson = JSON.stringify(json, null, 2);
+                document.getElementById('modalData').textContent = formattedJson;
                 const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
                 modal.show();
             } catch (e) {
@@ -241,9 +243,15 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            let lang = row.lang || 'en';
-                            let title = encodeURIComponent(row.title);
-                            return `<a href="https://${lang}.wikipedia.org/wiki/${title}" target="_blank" rel="noopener noreferrer">${row.title}</a>`;
+
+                            // Validate language code (basic validation)
+                            const lang = /^[a-z]{2,3}$/.test(row.lang) ? row.lang : 'en';
+                            const title = encodeURIComponent(row.title || '');
+                            const escapedTitle = row.title || '';
+
+                            if (!title) return escapedTitle;
+
+                            return `<a href="https://${lang}.wikipedia.org/wiki/${title}" target="_blank" rel="noopener noreferrer">${escapedTitle}</a>`;
                         }
                     },
                     {
@@ -261,7 +269,9 @@
                             // Display multiple buttons for grouped results
                             return row.resultsArray.map((res, index) => {
                                 const id = row.idsArray[index];
-                                return `<span class="badge bg-secondary" style="cursor:pointer; margin-right:4px;" onclick="showDetails(${id})">${res}</span>`;
+                                const escapedRes = res;
+                                const safeId = parseInt(id, 10); // Ensure ID is numeric
+                                return `<span class="badge bg-secondary" style="cursor:pointer; margin-right:4px;" onclick="showDetails(${safeId})">${escapedRes}</span>`;
                             }).join('');
                         }
                     }
