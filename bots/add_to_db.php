@@ -5,6 +5,7 @@ namespace Publish\AddToDb;
 
 use function Publish\AddToDb\InsertPageTarget;
 use function Publish\AddToDb\retrieveCampaignCategories;
+use function Publish\AddToDb\InsertPublishReports; // InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
 */
 
 include_once __DIR__ . '/../include.php';
@@ -74,7 +75,6 @@ function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
     // ---
     return count($result) > 0;
 }
-
 function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, $to_users_table)
 {
     global $Words_table;
@@ -126,7 +126,11 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     SQL;
     // ---
     $params = [
-        $title, $word, $tr_type, $cat, $lang,
+        $title,
+        $word,
+        $tr_type,
+        $cat,
+        $lang,
         $user,
         $target
     ];
@@ -142,4 +146,20 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     // $tab['query_params'] = $params;
     // ---
     return $tab;
+}
+
+
+function InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
+{
+    // ---
+    $query = "INSERT INTO publish_reports (`date`, `title`, `user`, `lang`, `sourcetitle`, `result`, `data`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    // ---
+    $report_data = json_encode($data);
+    // ---
+    // remove .json from $result
+    $result = str_replace(".json", "", $result);
+    // ---
+    $params = [date("Y-m-d H:i:s"), $title, $user, $lang, $sourcetitle, $result, $report_data];
+    // ---
+    execute_query($query, $params);
 }
