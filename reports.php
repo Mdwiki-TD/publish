@@ -169,10 +169,17 @@
         }
 
         $(document).ready(function() {
-            // تحميل الفلاتر مرة واحدة فقط
-            $.getJSON('/api/index.php?get=publish_reports', function(json) {
-                populateFilterOptions(json.results);
-            });
+            // Load filters once only
+            $.getJSON('/api/index.php?get=publish_reports')
+                .done(function(json) {
+                    if (json && json.results) {
+                        populateFilterOptions(json.results);
+                    }
+                })
+                .fail(function(xhr, status, error) {
+                    console.error('Failed to load filter options:', error);
+                    // Optionally show user-friendly error message
+                });
 
             // إعداد DataTable
             let table = $('#resultsTable').DataTable({
