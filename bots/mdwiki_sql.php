@@ -25,19 +25,31 @@ class Database
     private $user;
     private $password;
     private $dbname;
+    private $db_suffix;
+    private $groupByModeDisabled = false;
 
-    public function __construct($server_name)
+    public function __construct($server_name, $db_suffix = 'mdwiki')
+    {
+        if (empty($db_suffix)) {
+            $db_suffix = 'mdwiki';
+        }
+        // ---
+        $this->db_suffix = $db_suffix;
+        $this->set_db($server_name);
+    }
+
+    private function set_db($server_name)
     {
         if ($server_name === 'localhost' || !getenv('HOME')) {
             $this->host = 'localhost:3306';
-            $this->dbname = 'mdwiki';
+            $this->dbname = $this->db_suffix;
             $this->user = 'root';
             $this->password = 'root11';
         } else {
             $ts_pw = posix_getpwuid(posix_getuid());
             $ts_mycnf = parse_ini_file($ts_pw['dir'] . "/confs/db.ini");
             $this->host = 'tools.db.svc.wikimedia.cloud';
-            $this->dbname = $ts_mycnf['user'] . "__mdwiki";
+            $this->dbname = $ts_mycnf['user'] . "__" . $this->db_suffix;
             $this->user = $ts_mycnf['user'];
             $this->password = $ts_mycnf['password'];
             unset($ts_mycnf, $ts_pw);
@@ -48,9 +60,22 @@ class Database
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             pub_test_print($e->getMessage());
+            // Log the error message
+            error_log($e->getMessage());
+            // Display a generic message
+            echo "Unable to connect to the database. Please try again later.";
             exit();
         }
     }
+    public function disableFullGroupByMode($sql_query)
+    {
+        // if the query contains "GROUP BY", disable ONLY_FULL_GROUP_BY, strtoupper() is for case insensitive
+        if (strpos(strtoupper($sql_query), 'GROUP BY') !== false && !$this->groupByModeDisabled) {
+            $this->db->exec("SET SESSION sql_mode=(SELECT REPLACE(@@SESSION.sql_mode,'ONLY_FULL_GROUP_BY',''))");
+            $this->groupByModeDisabled = true;
+        }
+    }
+
     public function execute_query($sql_query, $params = null)
     {
         try {
@@ -83,8 +108,7 @@ class Database
     public function fetch_query($sql_query, $params = null)
     {
         try {
-            // إزالة ONLY_FULL_GROUP_BY مرة واحدة لكل جلسة
-            // $this->db->exec("SET SESSION sql_mode=(SELECT REPLACE(@@SESSION.sql_mode,'ONLY_FULL_GROUP_BY',''))");
+            $this->disableFullGroupByMode($sql_query);
 
             $q = $this->db->prepare($sql_query);
             if ($params) {
@@ -98,6 +122,7 @@ class Database
             return $result;
         } catch (PDOException $e) {
             pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
+            // error_log("SQL Error: " . $e->getMessage() . " | Query: " . $sql_query);
             return array();
         }
     }
@@ -108,11 +133,19 @@ class Database
     }
 }
 
-function execute_query($sql_query, $params = null)
+function execute_query($sql_query, $params = null, $table_name)
 {
-
+    // ---
+    $dbname = 'mdwiki';
+    // ---
+    $gets_new_db = ["missing", "missing_qids", "publish_reports", "login_attempts"];
+    // ---
+    if (in_array($table_name, $gets_new_db)) {
+        $dbname = 'mdwiki_new';
+    }
+    // ---
     // Create a new database object
-    $db = new Database($_SERVER['SERVER_NAME'] ?? '');
+    $db = new Database($_SERVER['SERVER_NAME'] ?? '', $dbname);
 
     // Execute a SQL query
     if ($params) {

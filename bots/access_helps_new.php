@@ -95,5 +95,5 @@ function del_access_from_db_new($user)
         return null;
     }
     //---
-    execute_query($query, [$user_id]);
+    execute_query($query, [$user_id], "keys_new");
 }
