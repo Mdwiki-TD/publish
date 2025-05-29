@@ -14,6 +14,7 @@ use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
 use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\AccessHelps\get_access_from_db;
+use function Publish\AddToDb\InsertPublishReports; // InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
 
 function get_errors_file($editit, $place_holder)
 {
@@ -106,6 +107,8 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
         $file_name = get_errors_file($LinkTowd['error'], "wd_errors");
         // ---
         to_do($tab3, $file_name);
+        // --
+        InsertPublishReports($title, $user, $lang, $sourcetitle, $file_name, $tab3);
     }
     // ---
     return $LinkTowd;
@@ -187,6 +190,8 @@ function processEdit($request, $access, $text, $user, $tab)
     $tab['result_to_cx'] = $editit;
     // ---
     to_do($tab, $to_do_file);
+    // --
+    InsertPublishReports($title, $user, $lang, $sourcetitle, $to_do_file, $tab);
     // ---
     return $editit;
 }

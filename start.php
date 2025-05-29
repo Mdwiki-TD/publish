@@ -16,6 +16,7 @@ use function Publish\FilesHelps\to_do;
 use function Publish\Helps\get_url_curl;
 use function Publish\Revids\get_revid_db;
 use function Publish\Revids\get_revid;
+use function Publish\AddToDb\InsertPublishReports; // InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
 
 function make_summary($revid, $sourcetitle, $to, $hashtag)
 {
@@ -59,6 +60,8 @@ function handleNoAccess($user, $tab)
     $tab['result_to_cx'] = $editit;
     // ---
     to_do($tab, "noaccess");
+    // ---
+    InsertPublishReports($tab['title'], $user, $tab['lang'], $tab['sourcetitle'], "noaccess", $tab);
     // ---
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
