@@ -50,5 +50,5 @@ function del_access_from_db($user)
         DELETE FROM access_keys WHERE user_name = ?;
     SQL;
 
-    execute_query($query, [$user]);
+    execute_query($query, [$user], "access_keys");
 }

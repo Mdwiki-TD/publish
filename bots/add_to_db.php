@@ -70,7 +70,7 @@ function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
         // ---
         $params = [$target, $title, $lang, $user];
         // ---
-        execute_query($query, $params);
+        execute_query($query, $params, $table_name);
     }
     // ---
     return count($result) > 0;
@@ -139,7 +139,7 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
         echo "<br>$query<br>";
     }
     // ---
-    execute_query($query, $params = $params);
+    execute_query($query, $params, $table_name);
     // ---
     $tab['execute_query'] = true;
     // $tab['query'] = $query;
@@ -169,5 +169,5 @@ function InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data
     // ---
     $params = [$title, $user, $lang, $sourcetitle, $result, $report_data];
     // ---
-    execute_query($query, $params);
+    execute_query($query, $params, "publish_reports");
 }
