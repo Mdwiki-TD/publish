@@ -138,7 +138,7 @@ function execute_query($sql_query, $params = null, $table_name)
     // ---
     $dbname = 'mdwiki';
     // ---
-    $gets_new_db = ["missing", "missing_qids", "publish_reports", "login_attempts"];
+    $gets_new_db = ["missing", "missing_qids", "publish_reports", "login_attempts", "logins"];
     // ---
     if (in_array($table_name, $gets_new_db)) {
         $dbname = 'mdwiki_new';
