@@ -9,11 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 use function Publish\Helps\pub_test_print;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\AccessHelpsNew\get_access_from_db_new;
-use function Publish\TextFix\DoChangesToText;
+// use function Publish\TextFix\DoChangesToText;
 use function WpRefs\FixPage\DoChangesToText1;
 use function Publish\EditProcess\processEdit;
 use function Publish\FilesHelps\to_do;
-use function Publish\Helps\get_url_curl;
+// use function Publish\Helps\get_url_curl;
 use function Publish\Revids\get_revid_db;
 use function Publish\Revids\get_revid;
 use function Publish\AddToDb\InsertPublishReports; // InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
@@ -109,6 +109,9 @@ function start2($request, $user, $access, $tab)
     $newtext = DoChangesToText1($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $revid);
     // ---
     if (!empty($newtext)) {
+        // ---
+        $tab['fix_refs'] = ($newtext != $text) ? 'yes' : 'no';
+        // ---
         $text = $newtext;
     }
     // ---
