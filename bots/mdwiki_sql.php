@@ -79,8 +79,7 @@ class Database
     public function executequery($sql_query, $params = null)
     {
         try {
-            // إزالة ONLY_FULL_GROUP_BY مرة واحدة لكل جلسة
-            // $this->db->exec("SET SESSION sql_mode=(SELECT REPLACE(@@SESSION.sql_mode,'ONLY_FULL_GROUP_BY',''))");
+            $this->disableFullGroupByMode($sql_query);
 
             $q = $this->db->prepare($sql_query);
             if ($params) {
@@ -97,11 +96,11 @@ class Database
                 return $result;
             } else {
                 // Otherwise, return null
-                return array();
+                return [];
             }
         } catch (PDOException $e) {
             pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
-            return array();
+            return [];
         }
     }
 
@@ -123,7 +122,7 @@ class Database
         } catch (PDOException $e) {
             pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
             // error_log("SQL Error: " . $e->getMessage() . " | Query: " . $sql_query);
-            return array();
+            return [];
         }
     }
 
@@ -133,17 +132,25 @@ class Database
     }
 }
 
-function execute_query($sql_query, $params = null, $table_name)
+function get_dbname($table_name)
 {
     // ---
     $dbname = 'mdwiki';
     // ---
-    $gets_new_db = ["missing", "missing_qids", "publish_reports", "login_attempts", "logins"];
+    $gets_new_db = ["missing", "missing_qids", "publish_reports", "login_attempts", "logins", "publish_reports_stats"];
     // ---
     if (in_array($table_name, $gets_new_db)) {
         $dbname = 'mdwiki_new';
     }
     // ---
+    return $dbname;
+}
+
+function execute_query($sql_query, $params = null, $table_name = null)
+{
+
+    $dbname = get_dbname($table_name);
+
     // Create a new database object
     $db = new Database($_SERVER['SERVER_NAME'] ?? '', $dbname);
 
@@ -163,13 +170,13 @@ function execute_query($sql_query, $params = null, $table_name)
     //---
     return $results;
 };
-
-// function fetch_query($sql_query, $params = null)
-function fetch_query(string $sql_query, ?array $params = null): array
+function fetch_query(string $sql_query, ?array $params = null, $table_name = null): array
 {
 
+    $dbname = get_dbname($table_name);
+
     // Create a new database object
-    $db = new Database($_SERVER['SERVER_NAME'] ?? '');
+    $db = new Database($_SERVER['SERVER_NAME'] ?? '', $dbname);
 
     // Execute a SQL query
     if ($params) {
