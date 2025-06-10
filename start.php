@@ -9,7 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 use function Publish\Helps\pub_test_print;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\AccessHelpsNew\get_access_from_db_new;
-// use function Publish\TextFix\DoChangesToText;
 use function WpRefs\FixPage\DoChangesToText1;
 use function Publish\EditProcess\processEdit;
 use function Publish\FilesHelps\to_do;
