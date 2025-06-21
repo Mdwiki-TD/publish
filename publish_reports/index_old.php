@@ -1,22 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="robots" content="noindex">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WikiProjectMed Tools</title>
-    <link href='https://tools-static.wmflabs.org/cdnjs/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css' rel='stylesheet'>
-    <script src='https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.7.0/jquery.min.js'></script>
-    <script src='https://tools-static.wmflabs.org/cdnjs/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js'></script>
-    <style>
-        a {
-            text-decoration: none;
-        }
-    </style>
-</head>
-
 <?php
 
 // Enable error reporting for debugging
@@ -31,6 +14,71 @@ define('REPORTS_DIR', 'reports');
 // define('REPORTS_DIR', 'reports_by_day');
 
 define('PUBLISH_REPORTS_DIR', __DIR__ . '/reports/');
+
+function get_host()
+{
+    // $hoste = get_host();
+    //---
+    static $cached_host = null;
+    //---
+    if ($cached_host !== null) {
+        return $cached_host; // استخدم القيمة المحفوظة
+    }
+    //---
+    $hoste = ($_SERVER["SERVER_NAME"] == "localhost")
+        ? "https://cdnjs.cloudflare.com"
+        : "https://tools-static.wmflabs.org/cdnjs";
+    //---
+    if ($hoste == "https://tools-static.wmflabs.org/cdnjs") {
+        $url = "https://tools-static.wmflabs.org";
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_NOBODY, true); // لا نريد تحميل الجسم
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // لمنع الطباعة
+
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // المهلة القصوى للاتصال
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; CDN-Checker)');
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+
+        $result = curl_exec($ch);
+        $curlError = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        // إذا فشل الاتصال أو لم تكن الاستجابة ضمن 200–399، نستخدم cdnjs
+        if ($result === false || !empty($curlError) || $httpCode < 200 || $httpCode >= 400) {
+            $hoste = "https://cdnjs.cloudflare.com";
+        }
+    }
+
+    $cached_host = $hoste;
+
+    return $hoste;
+}
+//---
+$hoste = get_host();
+//---
+echo <<<HTML
+	<head>
+		<meta charset="UTF-8">
+		<meta name="robots" content="noindex">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>WikiProjectMed Tools</title>
+		<link href='$hoste/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css' rel='stylesheet'>
+		<script src='$hoste/ajax/libs/jquery/3.7.0/jquery.min.js'></script>
+		<script src='$hoste/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js'></script>
+		<style>
+			a {
+				text-decoration: none;
+			}
+		</style>
+	</head>
+HTML;
 
 // Functions
 function ensureDirectoryExists($path)
@@ -113,9 +161,18 @@ function makeYearsNav($currentYear)
 function makeMonthsNav($currentYear, $currentMonth)
 {
     $months = [
-        1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
-        5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
-        9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+        1 => 'January',
+        2 => 'February',
+        3 => 'March',
+        4 => 'April',
+        5 => 'May',
+        6 => 'June',
+        7 => 'July',
+        8 => 'August',
+        9 => 'September',
+        10 => 'October',
+        11 => 'November',
+        12 => 'December'
     ];
 
     $nav = '<ul class="nav nav-tabs">';
