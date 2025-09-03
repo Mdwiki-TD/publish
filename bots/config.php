@@ -9,9 +9,7 @@ $inifile = 'I:/mdwiki/mdwiki/confs/OAuthConfig.ini';
 if (!file_exists($inifile)) {
     // get the root path from __FILE__ , split before public_html
     // split the file path on the public_html directory
-    $pathParts = explode('public_html', __FILE__);
-    // the root path is the first part of the split file path
-    $ROOT_PATH = $pathParts[0];
+    $ROOT_PATH = explode('public_html', __FILE__)[0];
     //---
     $inifile = $ROOT_PATH . '/confs/OAuthConfig.ini';
     //---
