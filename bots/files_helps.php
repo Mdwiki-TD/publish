@@ -12,7 +12,6 @@ use function Publish\Helps\pub_test_print;
 // $rand_id = rand(0, 999999999);
 $rand_id = time() .  "-" . bin2hex(random_bytes(6));
 
-// $main_dir = check_dirs($rand_id, "reports");
 $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
 function to_do($tab, $file_name)
@@ -44,7 +43,7 @@ function to_do($tab, $file_name)
 
 function check_dirs($rand_id, $reports_dir_main)
 {
-    $publish_reports = "I:/mdwiki/publish-repo/publish_reports/";
+    $publish_reports = "I:/mdwiki/publish-repo/src/publish_reports/";
     // ---
     if (!is_dir($publish_reports)) {
         $publish_reports = __DIR__ . "/../../publish_reports/";
