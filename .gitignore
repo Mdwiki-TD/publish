@@ -20,3 +20,4 @@ src/pup2.html
 *.json
 test.php
 pup2.html
+/src/reports
