@@ -43,10 +43,10 @@ function to_do($tab, $file_name)
 
 function check_dirs($rand_id, $reports_dir_main)
 {
-    $publish_reports = "I:/mdwiki/publish-repo/src/publish_reports/";
+    $publish_reports = __DIR__ . "/../../publish_reports/";
     // ---
-    if (!is_dir($publish_reports)) {
-        $publish_reports = __DIR__ . "/../../publish_reports/";
+    if (substr(__DIR__, 0, 2) == 'I:') {
+        $publish_reports = "I:/mdwiki/publish-repo/src/publish_reports/";
     }
     // ---
     $reports_dir = "$publish_reports/$reports_dir_main/";
