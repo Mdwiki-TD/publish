@@ -5,7 +5,7 @@ if (isset($_REQUEST['test'])) {
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 };
-include_once __DIR__ . '/../auth/vendor_load.php';
+include_once __DIR__ . '/vendor_load.php';
 
 include_once __DIR__ . '/bots/mdwiki_sql.php';
 
@@ -22,13 +22,8 @@ include_once __DIR__ . '/textfixes/include.php';
 include_once __DIR__ . '/bots/wd.php';
 include_once __DIR__ . '/bots/process_edit.php';
 
-$fix_refs_file = __DIR__ . '/fix_refs/work.php';
-$fix_refs_file2 = __DIR__ . '/../fix_refs_repo/work.php';
-
-if (file_exists($fix_refs_file)) {
-    include_once $fix_refs_file;
-} elseif (file_exists($fix_refs_file2)) {
-    include_once $fix_refs_file2;
+if (substr(__DIR__, 0, 2) == 'I:') {
+    include_once 'I:/mdwiki/fix_refs_repo/work.php';
 } else {
     include_once __DIR__ . '/../fix_refs/work.php';
 }

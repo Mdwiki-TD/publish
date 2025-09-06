@@ -1,19 +1,23 @@
 
-all_pages_revids.json
+src/all_pages_revids.json
 .github/workflows/snorkell-auto-documentation.yml
 *.txt
-/fix_refs_repo1
-/publish_reports/**/*.json
-publish_reports/index2.php
-main copy.php
-/publish_reports/reports
-publish_reports/_index.php
+fix_refs_repo1
+src/publish_reports/**/*.json
+src/publish_reports/index2.php
+src/main copy.php
+/src/publish_reports/reports
+src/publish_reports/_index.php
 /reports
-test.php
-tx.php
-bots/new_x.php
+src/test.php
+src/tx.php
+src/bots/new_x.php
 fix_refsx
-publish_reports/db.py
+src/publish_reports/db.py
 /pub_reports
-pup2.html
+src/pup2.html
 /old
+*.json
+test.php
+pup2.html
+/src/reports
