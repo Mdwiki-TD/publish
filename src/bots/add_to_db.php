@@ -75,7 +75,8 @@ function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
     // ---
     return count($result) > 0;
 }
-function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, $to_users_table)
+
+function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, $to_users_table, $mdwiki_revid)
 {
     global $Words_table;
     // ---
@@ -121,8 +122,8 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
     $table_name = ($tab['use_user_sql']) ? 'pages_users' : 'pages';
     // ---
     $query = <<<SQL
-        INSERT INTO $table_name (title, word, translate_type, cat, lang, user, pupdate, target)
-        SELECT ?, ?, ?, ?, ?, ?, DATE(NOW()), ?
+        INSERT INTO $table_name (title, word, translate_type, cat, lang, user, pupdate, target, mdwiki_revid)
+        SELECT ?, ?, ?, ?, ?, ?, DATE(NOW()), ?, ?
     SQL;
     // ---
     $params = [
@@ -132,7 +133,8 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
         $cat,
         $lang,
         $user,
-        $target
+        $target,
+        $mdwiki_revid
     ];
     // ---
     if (!empty($test)) {
