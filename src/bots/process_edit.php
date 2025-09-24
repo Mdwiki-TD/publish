@@ -133,7 +133,7 @@ function prepareApiParams($title, $summary, $text, $request)
     return $apiParams;
 }
 
-function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle)
+function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle, $mdwiki_revid)
 {
     // ---
     $camp_to_cat = retrieveCampaignCategories();
@@ -145,7 +145,7 @@ function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle)
         $to_users_table = true;
     }
     // ---
-    $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title, $to_users_table);
+    $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title, $to_users_table, $mdwiki_revid);
     // ---
     return $is_user_page;
 }
@@ -157,6 +157,7 @@ function processEdit($request, $access, $text, $user, $tab)
     $campaign = $tab['campaign'];
     $title = $tab['title'];
     $summary = $tab['summary'];
+    $mdwiki_revid = $tab['revid'] ?? "";
 
     $apiParams = prepareApiParams($title, $summary, $text, $request);
 
@@ -177,7 +178,7 @@ function processEdit($request, $access, $text, $user, $tab)
     if ($Success === 'Success') {
         $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
         // ---
-        $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle);
+        $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle, $mdwiki_revid);
         // ---
         $to_do_file = "success";
         // ---
