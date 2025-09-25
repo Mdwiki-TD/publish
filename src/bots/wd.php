@@ -63,7 +63,7 @@ function GetTitleInfo($targettitle, $lang)
         "formatversion" => "2"
     ];
     // ---
-    $url = "https://$lang.wikipedia.org/w/api.php" . "?" . http_build_query($params);
+    $url = "https://$lang.wikipedia.org/w/api.php" . "?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
     // ---
     pub_test_print("GetTitleInfo url: $url");
     // ---

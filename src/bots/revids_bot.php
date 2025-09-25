@@ -19,10 +19,10 @@ function get_revid_db($sourcetitle)
     ];
     // ---
     if (($_SERVER['SERVER_NAME'] ?? "localhost") == "localhost") {
-        $url = "http://localhost:9001/api?" . http_build_query($params);
+        $url = "http://localhost:9001/api?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
         $json = file_get_contents($url);
     } else {
-        $url = "https://mdwiki.toolforge.org/api.php?" . http_build_query($params);
+        $url = "https://mdwiki.toolforge.org/api.php?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
         $json = get_url_curl($url);
     }
     // ---
