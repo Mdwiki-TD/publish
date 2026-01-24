@@ -60,7 +60,7 @@ function post_params($apiParams, $https_domain, $access_key, $access_secret)
     $accessToken = new Token($access_key, $access_secret);
     // ---
     $csrftoken_data = get_csrftoken($client, $access_key, $access_secret, $apiUrl);
-    $csrftoken = $csrftoken_data['query']['tokens']['csrftoken'];
+    $csrftoken = $csrftoken_data['query']['tokens']['csrftoken'] ?? null;
     // ---
     if ($csrftoken == null) {
         return json_encode(['error' => 'get_csrftoken failed', "rand" => rand(), "csrftoken_data" => $csrftoken_data], JSON_PRETTY_PRINT);
