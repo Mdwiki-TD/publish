@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 use function Publish\Helps\pub_test_print;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\AccessHelpsNew\get_access_from_db_new;
-use function WpRefs\FixPage\DoChangesToText1;
+//use function WpRefs\FixPage\DoChangesToText1;
 use function Publish\EditProcess\processEdit;
 use function Publish\FilesHelps\to_do;
 // use function Publish\Helps\get_url_curl;
@@ -105,6 +105,7 @@ function start2($request, $user, $access, $tab)
     // ---
     // file_put_contents(__DIR__ . '/post.log', print_r(getallheaders(), true));
     // ---
+    // create place holder with name DoChangesToText1
     $newtext = DoChangesToText1($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $revid);
     // ---
     if (!empty($newtext)) {
