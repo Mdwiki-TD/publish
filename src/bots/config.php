@@ -37,5 +37,11 @@ $consumerSecret = $ini['consumerSecret'] ?? '';
 $cookie_key     = $ini['cookie_key'] ?? '';
 $decrypt_key    = $ini['decrypt_key'] ?? '';
 
+if (empty($consumerKey) || empty($consumerSecret)) {
+    header("HTTP/1.1 500 Internal Server Error");
+    echo 'Required configuration directives not found in ini file';
+    exit(0);
+}
+
 $cookie_key = Key::loadFromAsciiSafeString($cookie_key);
 $decrypt_key = Key::loadFromAsciiSafeString($decrypt_key);
