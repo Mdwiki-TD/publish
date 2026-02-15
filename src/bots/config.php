@@ -2,6 +2,13 @@
 //---
 include_once __DIR__ . '/../vendor_load.php';
 //---
+$gUserAgent = 'mdwiki MediaWiki OAuth Client/1.0';
+$oauthUrl = 'https://meta.wikimedia.org/w/index.php?title=Special:OAuth';
+
+// Make the api.php URL from the OAuth URL.
+$apiUrl = preg_replace('/index\.php.*/', 'api.php', $oauthUrl);
+$domain = $_SERVER['SERVER_NAME'] ?? 'localhost';
+
 use Defuse\Crypto\Key;
 //---
 $ROOT_PATH = getenv("HOME") ?: 'I:/mdwiki/mdwiki';
@@ -24,29 +31,11 @@ if (
     echo 'Required configuration directives not found in ini file';
     exit(0);
 }
-// $gUserAgent = $ini['agent'];
-$gUserAgent = 'mdwiki MediaWiki OAuth Client/1.0';
-// Load the user token (request or access) from the session
-//---
-// To get this demo working, you need to go to this wiki and register a new OAuth consumer.
-// Not that this URL must be of the long form with 'title=Special:OAuth', and not a clean URL.
-$oauthUrl = 'https://meta.wikimedia.org/w/index.php?title=Special:OAuth';
 
-// Make the api.php URL from the OAuth URL.
-$apiUrl = preg_replace('/index\.php.*/', 'api.php', $oauthUrl);
-
-// When you register, you will get a consumer key and secret. Put these here (and for real
-// applications, keep the secret secret! The key is public knowledge.).
 $consumerKey    = $ini['consumerKey'] ?? '';
 $consumerSecret = $ini['consumerSecret'] ?? '';
-
-$consumerKey_new    = $ini['consumerKey_new'] ?? '';
-$consumerSecrety_new = $ini['consumerSecrety_new'] ?? '';
-
-$domain = $_SERVER['SERVER_NAME'] ?? 'localhost';
-
 $cookie_key     = $ini['cookie_key'] ?? '';
-$cookie_key = Key::loadFromAsciiSafeString($cookie_key);
+$decrypt_key    = $ini['decrypt_key'] ?? '';
 
-$decrypt_key     = $ini['decrypt_key'] ?? '';
+$cookie_key = Key::loadFromAsciiSafeString($cookie_key);
 $decrypt_key = Key::loadFromAsciiSafeString($decrypt_key);
