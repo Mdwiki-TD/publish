@@ -32,15 +32,17 @@ function get_edits_token($client, $accessToken, $apiUrl)
 
 function publish_do_edit($apiParams, $wiki, $access_key, $access_secret)
 {
-    global $gUserAgent, $consumerKey, $consumerSecret;
+    // ---
+    $CONSUMER_KEY        = getenv("CONSUMER_KEY") ?: '';
+    $CONSUMER_SECRET     = getenv("CONSUMER_SECRET") ?: '';
     // ---
     $oauthUrl = "https://$wiki.wikipedia.org/w/index.php?title=Special:OAuth";
     $apiUrl = "https://$wiki.wikipedia.org/w/api.php";
     // ---
     // Configure the OAuth client with the URL and consumer details.
     $conf = new ClientConfig($oauthUrl);
-    $conf->setConsumer(new Consumer($consumerKey, $consumerSecret));
-    $conf->setUserAgent($gUserAgent);
+    $conf->setConsumer(new Consumer($CONSUMER_KEY, $CONSUMER_SECRET));
+    $conf->setUserAgent('mdwiki MediaWiki OAuth Client/1.0');
     $client = new Client($conf);
     // ---
     $accessToken = new Token($access_key, $access_secret);

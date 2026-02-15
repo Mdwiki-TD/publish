@@ -12,8 +12,6 @@ include_once __DIR__ . '/../include.php';
 
 use Defuse\Crypto\Crypto;
 
-$usr_agent = 'WikiProjectMed Translation Dashboard/1.0 (https://mdwiki.toolforge.org/; tools.mdwiki@toolforge.org)';
-
 function pub_test_print($s)
 {
     //---
@@ -65,7 +63,7 @@ function encode_value($value, $key_type = "cookie")
 
 function get_url_curl(string $url): string
 {
-    global $usr_agent;
+    $usr_agent = 'WikiProjectMed Translation Dashboard/1.0 (https://mdwiki.toolforge.org/; tools.mdwiki@toolforge.org)';
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

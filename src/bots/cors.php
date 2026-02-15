@@ -8,11 +8,11 @@ use function Publish\CORS\is_allowed;
 
 */
 
-$domains = ['medwiki.toolforge.org', 'mdwikicx.toolforge.org'];
+
 
 function is_allowed()
 {
-    global $domains;
+    $domains = ['medwiki.toolforge.org', 'mdwikicx.toolforge.org'];
     // Check if the request is coming from allowed domains
     $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
     $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
