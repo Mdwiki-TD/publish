@@ -18,7 +18,9 @@ use function Publish\Helps\pub_test_print;
 
 function get_client($wiki, $oauthUrl = "")
 {
-    global $gUserAgent, $consumerKey, $consumerSecret;
+    // ---
+    $CONSUMER_KEY        = getenv("CONSUMER_KEY") ?: '';
+    $CONSUMER_SECRET     = getenv("CONSUMER_SECRET") ?: '';
     // ---
     if (!empty($wiki)) {
         $oauthUrl = "https://$wiki.wikipedia.org/w/index.php?title=Special:OAuth";
@@ -26,8 +28,8 @@ function get_client($wiki, $oauthUrl = "")
     // ---
     // Configure the OAuth client with the URL and consumer details.
     $conf = new ClientConfig($oauthUrl);
-    $conf->setConsumer(new Consumer($consumerKey, $consumerSecret));
-    $conf->setUserAgent($gUserAgent);
+    $conf->setConsumer(new Consumer($CONSUMER_KEY, $CONSUMER_SECRET));
+    $conf->setUserAgent('mdwiki MediaWiki OAuth Client/1.0');
     $client = new Client($conf);
     // ---
     return $client;
