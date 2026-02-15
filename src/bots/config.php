@@ -34,10 +34,10 @@ if (
 
 // ----------------
 // ----------------
-$consumerKey            = $ini['consumerKey'] ?? '';
-$consumerSecret         = $ini['consumerSecret'] ?? '';
-$cookie_key             = $ini['cookie_key'] ?? '';
-$decrypt_key            = $ini['decrypt_key'] ?? '';
+$consumerKey        = $ini['consumerKey'] ?? '';
+$consumerSecret     = $ini['consumerSecret'] ?? '';
+$cookie_key_str     = $ini['cookie_key'] ?? '';
+$decrypt_key_str    = $ini['decrypt_key'] ?? '';
 // ----------------
 // ----------------
 
@@ -47,5 +47,5 @@ if (empty($consumerKey) || empty($consumerSecret)) {
     exit(0);
 }
 
-$cookie_key = Key::loadFromAsciiSafeString($cookie_key);
-$decrypt_key = Key::loadFromAsciiSafeString($decrypt_key);
+$cookie_key  = Key::loadFromAsciiSafeString($cookie_key_str);
+$decrypt_key = Key::loadFromAsciiSafeString($decrypt_key_str);
