@@ -55,7 +55,6 @@ if ($ini === false) {
 
 // Validate required configuration keys
 if (
-    !isset($ini['agent']) ||
     !isset($ini['consumerKey']) ||
     !isset($ini['consumerSecret'])
 ) {
@@ -106,20 +105,6 @@ $consumerKey = $ini['consumerKey'] ?? '';
  * @var string
  */
 $consumerSecret = $ini['consumerSecret'] ?? '';
-
-/**
- * OAuth consumer key for new authentication flow.
- *
- * @var string
- */
-$consumerKey_new = $ini['consumerKey_new'] ?? '';
-
-/**
- * OAuth consumer secret for new authentication flow.
- *
- * @var string
- */
-$consumerSecrety_new = $ini['consumerSecrety_new'] ?? '';
 
 /**
  * Current server domain name.
