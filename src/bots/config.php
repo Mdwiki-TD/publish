@@ -32,10 +32,14 @@ if (
     exit(0);
 }
 
-$consumerKey    = $ini['consumerKey'] ?? '';
-$consumerSecret = $ini['consumerSecret'] ?? '';
-$cookie_key     = $ini['cookie_key'] ?? '';
-$decrypt_key    = $ini['decrypt_key'] ?? '';
+// ----------------
+// ----------------
+$consumerKey            = $ini['consumerKey'] ?? '';
+$consumerSecret         = $ini['consumerSecret'] ?? '';
+$cookie_key             = $ini['cookie_key'] ?? '';
+$decrypt_key            = $ini['decrypt_key'] ?? '';
+// ----------------
+// ----------------
 
 if (empty($consumerKey) || empty($consumerSecret)) {
     header("HTTP/1.1 500 Internal Server Error");
