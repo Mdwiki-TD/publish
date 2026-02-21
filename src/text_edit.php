@@ -13,8 +13,8 @@ if (file_exists($workFile)) {
 
 function text_changes($sourcetitle, $title, $text, $lang, $mdwiki_revid)
 {
-    if (function_exists('DoChangesToText1')) {
-        $text = DoChangesToText1($sourcetitle, $title, $text, $lang, $mdwiki_revid);
+    if (function_exists('\WpRefs\FixPage\DoChangesToText1')) {
+        $text = \WpRefs\FixPage\DoChangesToText1($sourcetitle, $title, $text, $lang, $mdwiki_revid);
     }
     return $text;
 }
