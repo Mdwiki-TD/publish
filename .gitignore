@@ -24,3 +24,4 @@ pup2.html
 *.json
 !composer.json
 composer.lock
+.phpunit.result.cache
