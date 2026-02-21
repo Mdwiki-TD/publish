@@ -269,14 +269,6 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
         // ---
         $lang = $lang ? "$lang: " : "";
         // ---
-        if (!$jsonFiles) {
-            $ul .= <<<HTML
-            <li class="list-group-item">
-                No files!
-            </li>
-        HTML;
-        }
-        // ---
         $ul .= '</ul>';
         // ---
         $count++;
