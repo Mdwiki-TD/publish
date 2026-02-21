@@ -2,9 +2,9 @@
 
 namespace Publish\EditProcess;
 
-if (substr(__DIR__, 0, 2) == 'I:') {
-    $workFile = 'I:/mdwiki/fix_refs_repo/work.php';
-} else {
+$workFile = 'I:/mdwiki/fix_refs_repo/work.php';
+
+if (!file_exists($workFile)) {
     $workFile = __DIR__ . '/../fix_refs/work.php';
 }
 if (file_exists($workFile)) {
