@@ -21,9 +21,4 @@ include_once __DIR__ . '/bots/get_token.php';
 // include_once __DIR__ . '/textfixes/include.php';
 include_once __DIR__ . '/bots/wd.php';
 include_once __DIR__ . '/bots/process_edit.php';
-
-if (substr(__DIR__, 0, 2) == 'I:') {
-    include_once 'I:/mdwiki/fix_refs_repo/work.php';
-} else {
-    include_once __DIR__ . '/../fix_refs/work.php';
-}
+include_once __DIR__ . '/text_edit.php';
