@@ -17,7 +17,11 @@ src/publish_reports/db.py
 /pub_reports
 src/pup2.html
 /old
-*.json
 test.php
 pup2.html
 /src/reports
+/vendor
+*.json
+!composer.json
+composer.lock
+.phpunit.result.cache

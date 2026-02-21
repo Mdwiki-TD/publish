@@ -19,11 +19,12 @@ $_decrypt_key_str    = getenv("DECRYPT_KEY") ?: '';
 // ----------------
 // ----------------
 
-if (empty($CONSUMER_KEY) || empty($CONSUMER_SECRET)) {
+if ((empty($CONSUMER_KEY) || empty($CONSUMER_SECRET)) && getenv("APP_ENV") === "production") {
     header("HTTP/1.1 500 Internal Server Error");
-    echo 'Required configuration directives not found in ini file';
+    error_log("Required configuration directives not found in environment variables!");
+    echo 'Required configuration directives not found';
     exit(0);
 }
 
-$cookie_key  = Key::loadFromAsciiSafeString($_cookie_key_str);
-$decrypt_key = Key::loadFromAsciiSafeString($_decrypt_key_str);
+$cookie_key  = $_cookie_key_str ? Key::loadFromAsciiSafeString($_cookie_key_str) : null;
+$decrypt_key = $_decrypt_key_str ? Key::loadFromAsciiSafeString($_decrypt_key_str) : null;

@@ -183,7 +183,7 @@ function makeMonthsNav($currentYear, $currentMonth)
     $nav = '<ul class="nav nav-tabs">';
 
     foreach ($months as $monthNum => $monthName) {
-        $monthLink = str_pad($monthNum, 2, '0', STR_PAD_LEFT);
+        $monthLink = str_pad((string)$monthNum, 2, '0', STR_PAD_LEFT);
         $active = $monthNum == $currentMonth || $monthLink == $currentMonth ? 'active' : '';
         $monthDir = PUBLISH_REPORTS_DIR . "$currentYear/$monthLink";
 
@@ -268,14 +268,6 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
         }
         // ---
         $lang = $lang ? "$lang: " : "";
-        // ---
-        if (!$jsonFiles) {
-            $ul .= <<<HTML
-            <li class="list-group-item">
-                No files!
-            </li>
-        HTML;
-        }
         // ---
         $ul .= '</ul>';
         // ---
