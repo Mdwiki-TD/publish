@@ -3,6 +3,9 @@ parameters:
     paths:
         - src/
 
+    excludePaths:
+        - *_old.php
+
     # Scan directories for class definitions
     scanDirectories:
         - I:/mdwiki/auth_repo/vendor/
