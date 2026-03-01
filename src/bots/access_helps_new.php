@@ -14,10 +14,9 @@ use function Publish\MdwikiSql\fetch_query;
 // use function Publish\Helps\encode_value;
 use function Publish\Helps\decode_value;
 
-$user_ids_cache = [];
-
 function get_user_id($user)
 {
+    static $user_ids_cache = [];
     //---
     // Validate and sanitize username
     $user = trim($user);
