@@ -13,7 +13,6 @@ include_once __DIR__ . '/bots/access_helps_new.php';
 include_once __DIR__ . '/bots/do_edit.php';
 include_once __DIR__ . '/bots/add_to_db.php';
 include_once __DIR__ . '/bots/get_token.php';
-// include_once __DIR__ . '/textfixes/include.php';
 include_once __DIR__ . '/bots/wd.php';
 include_once __DIR__ . '/bots/process_edit.php';
 include_once __DIR__ . '/text_edit.php';
