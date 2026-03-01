@@ -1,0 +1,21 @@
+parameters:
+    level: 5
+    paths:
+        - src/
+
+    excludePaths:
+        - *_old.php
+
+    # Scan directories for class definitions
+    # scanDirectories:
+        # - I:/mdwiki/auth_repo/vendor/
+
+    # Scan files for class definitions
+    scanFiles:
+        - src/include.php
+        - src/vendor_load.php
+        # - I:/mdwiki/fix_refs_repo/work.php
+
+    # bootstrap.php
+    bootstrapFiles:
+        - tests/bootstrap.php
