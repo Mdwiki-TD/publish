@@ -3,17 +3,17 @@ src/all_pages_revids.json
 .github/workflows/snorkell-auto-documentation.yml
 *.txt
 fix_refs_repo1
-src/publish_reports/**/*.json
-src/publish_reports/index2.php
 src/main copy.php
-/src/publish_reports/reports
-src/publish_reports/_index.php
 /reports
 src/test.php
 src/tx.php
 src/bots/new_x.php
 fix_refsx
-src/publish_reports/db.py
+publish_reports/db.py
+publish_reports/**/*.json
+publish_reports/index2.php
+publish_reports/reports
+publish_reports/_index.php
 /pub_reports
 src/pup2.html
 /old
