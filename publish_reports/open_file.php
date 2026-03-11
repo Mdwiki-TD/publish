@@ -22,6 +22,12 @@ $month  = $_GET["month"] ?: "";
 $day    = $_GET["day"] ?: "";
 $name   = $_GET["name"] ?: "";
 
+// Return false if any required parameter is empty
+if (empty($report) || empty($year) || empty($month) || empty($day) || empty($name)) {
+    echo json_encode([]);
+    exit;
+}
+
 $file_path = $reports_by_day . "/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
 
 $data = [];
