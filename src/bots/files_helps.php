@@ -52,7 +52,7 @@ function check_dirs($rand_id, $reports_dir_main)
         // ---
         $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'development');
         $publish_reports_path = ($env === 'production')
-            ? getenv("HOME") . "/data/publish_reports_data/"
+            ? getenv("HOME") . "/data/publish_reports_data"
             : 'I:/mdwiki/publish-repo/publish_reports_data';
     };
     // ---
