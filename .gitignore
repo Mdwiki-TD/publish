@@ -1,7 +1,6 @@
 *.json
 !composer.json
 *.txt
-.github/workflows/snorkell-auto-documentation.yml
 .phpunit.result.cache
 **/old/**
 /pub_reports
