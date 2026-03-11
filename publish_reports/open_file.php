@@ -16,15 +16,29 @@ $reports_by_day = $publish_reports_path . '/reports_by_day';
 
 // open_file.php?report=bbbb&year=2025&month=04&day=15&name=success.json
 
-$report = $_GET["report"] ?: "";
-$year   = $_GET["year"] ?: "";
-$month  = $_GET["month"] ?: "";
-$day    = $_GET["day"] ?: "";
-$name   = $_GET["name"] ?: "";
+$report = $_GET['report'] ?? '';
+$year   = $_GET['year'] ?? '';
+$month  = $_GET['month'] ?? '';
+$day    = $_GET['day'] ?? '';
+$name   = $_GET['name'] ?? '';
+
+// Validate name: alphanumeric, hyphens, underscores, dots only (allowlist for filename)
+if (!preg_match('/^\d+$/', $year) || !preg_match('/^\d+$/', $month) || !preg_match('/^\d+$/', $day)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid name format']);
+    exit;
+}
 
 // Return false if any required parameter is empty
 if (empty($report) || empty($year) || empty($month) || empty($day) || empty($name)) {
     echo json_encode([]);
+    exit;
+}
+
+// Validate name: alphanumeric, hyphens, underscores, dots only (allowlist for filename)
+if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name) || !preg_match('/^[a-zA-Z0-9_.-]+$/', $report)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid name format']);
     exit;
 }
 
