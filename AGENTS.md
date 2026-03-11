@@ -44,7 +44,7 @@ vendor/bin/phpstan analyse src --level=5
 - Functions: snake_case (e.g., `publish_do_edit()`, `get_errors_file()`)
 - Classes: PascalCase (when used)
 - Variables: snake_case (e.g., `$access_key`, `$api_params`)
-- Constants: UPPER_CASE (e.g., `$CONSUMER_KEY`)
+- Variables used as constants: UPPER_CASE (e.g., `$CONSUMER_KEY`)
 - Files: snake_case.php
 
 ### Formatting
