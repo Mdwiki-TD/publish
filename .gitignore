@@ -3,7 +3,7 @@
 *.txt
 .github/workflows/snorkell-auto-documentation.yml
 .phpunit.result.cache
-/old
+**/old/**
 /pub_reports
 /reports
 /src/reports
