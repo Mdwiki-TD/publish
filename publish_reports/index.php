@@ -75,10 +75,20 @@ echo <<<HTML
 	</head>
 HTML;
 // Constants
-// define('REPORTS_DIR', 'reports');
-define('REPORTS_DIR', 'reports_by_day');
 
-define('PUBLISH_REPORTS_DIR', __DIR__ . '/reports_by_day/');
+// /data/project/mdwiki/data/publish_reports
+$publish_reports_path = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
+// ---
+if (empty($publish_reports_path)) {
+    error_log("PUBLISH_REPORTS_PATH is not set");
+    // ---
+    $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'development');
+    $publish_reports_path = ($env === 'production')
+        ? getenv("HOME") . "/data/publish_reports_data"
+        : 'I:/mdwiki/publish-repo/publish_reports_data';
+};
+
+define('PUBLISH_REPORTS_DIR_BY_DAY', $publish_reports_path . '/reports_by_day/');
 
 // Functions
 function ensureDirectoryExists($path)
@@ -90,14 +100,14 @@ function ensureDirectoryExists($path)
 
 function checkDirectories()
 {
-    ensureDirectoryExists(PUBLISH_REPORTS_DIR);
+    ensureDirectoryExists(PUBLISH_REPORTS_DIR_BY_DAY);
     ensureDirectoryExists(getYearDirectory());
     ensureDirectoryExists(getMonthDirectory());
 }
 
 function getYearDirectory()
 {
-    return PUBLISH_REPORTS_DIR . date('Y') . '/';
+    return PUBLISH_REPORTS_DIR_BY_DAY . date('Y') . '/';
 }
 
 function getMonthDirectory()
@@ -140,8 +150,8 @@ function addTodayBadge($dir_date)
 
 function makeYearsNav($currentYear)
 {
-    $years = array_filter(scandir(PUBLISH_REPORTS_DIR), function ($item) {
-        return is_dir(PUBLISH_REPORTS_DIR . $item) && !in_array($item, ['.', '..']);
+    $years = array_filter(scandir(PUBLISH_REPORTS_DIR_BY_DAY), function ($item) {
+        return is_dir(PUBLISH_REPORTS_DIR_BY_DAY . $item) && !in_array($item, ['.', '..']);
     });
 
     if (empty($years)) {
@@ -185,7 +195,7 @@ function makeMonthsNav($currentYear, $currentMonth)
     foreach ($months as $monthNum => $monthName) {
         $monthLink = str_pad((string)$monthNum, 2, '0', STR_PAD_LEFT);
         $active = $monthNum == $currentMonth || $monthLink == $currentMonth ? 'active' : '';
-        $monthDir = PUBLISH_REPORTS_DIR . "$currentYear/$monthLink";
+        $monthDir = PUBLISH_REPORTS_DIR_BY_DAY . "$currentYear/$monthLink";
 
         if (is_dir($monthDir)) {
             $nav .= <<<HTML
@@ -254,7 +264,17 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
                 $lang = $json['lang'] ?? '';
             }
             // ---
-            $url = "$monthDir/$day/$report/$name";
+            // $url = "$monthDir/$day/$report/$name";
+            // ---
+            $url_params = [
+                "report" => $report,
+                "year" => $year,
+                "month" => $month,
+                "day" => $day,
+                "name" => $name,
+            ];
+            // ---
+            $url = "open_file.php?" . http_build_query($url_params);
             // ---
             $ul .= <<<HTML
                 <li class="list-group-item">
@@ -311,13 +331,12 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
 }
 function makeMonthReports($year, $month)
 {
-    // $monthDir = PUBLISH_REPORTS_DIR . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
-    $monthDir = REPORTS_DIR . "/$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
+    // $monthDir = PUBLISH_REPORTS_DIR_BY_DAY . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
+    $monthDirPath = PUBLISH_REPORTS_DIR_BY_DAY . "/$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
 
-    if (!is_dir(__DIR__ . "/$monthDir")) {
-        $monthDir = REPORTS_DIR . "/$year/01";
+    if (!is_dir($monthDirPath)) {
+        $monthDirPath = PUBLISH_REPORTS_DIR_BY_DAY . "/$year/01";
     }
-    $monthDirPath = __DIR__ . "/$monthDir";
 
     if (!is_dir($monthDirPath)) {
         return '<p>No reports available.</p>';
@@ -342,7 +361,7 @@ function makeMonthReports($year, $month)
             continue;
         }
         // ---
-        $dailyReportLinks = makeDayReports($year, $month, $day, $dayReportDir, $monthDir);
+        $dailyReportLinks = makeDayReports($year, $month, $day, $dayReportDir, $monthDirPath);
         // ---
         $MonthReportLinks .= $dailyReportLinks;
         // ---

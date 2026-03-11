@@ -43,14 +43,24 @@ function to_do($tab, $file_name)
 
 function check_dirs($rand_id, $reports_dir_main)
 {
-    // $publish_reports = __DIR__ . "/../../publish_reports/";
-    // if (substr(__DIR__, 0, 2) == 'I:') $publish_reports = "I:/mdwiki/publish-repo/src/publish_reports/";
     // ---
-	$html_dir = getenv("HOME") ?: 'I:/mdwiki/publish-repo/src';
+    // /data/project/mdwiki/data/publish_reports
+    $publish_reports_path = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
     // ---
-    $publish_reports = $html_dir . "/publish_reports/";
+    if (empty($publish_reports_path)) {
+        error_log("PUBLISH_REPORTS_PATH is not set");
+        // ---
+        $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'development');
+        $publish_reports_path = ($env === 'production')
+            ? getenv("HOME") . "/data/publish_reports_data"
+            : 'I:/mdwiki/publish-repo/publish_reports_data';
+    };
     // ---
-    $reports_dir = "$publish_reports/$reports_dir_main/";
+    if (!is_dir($publish_reports_path)) {
+        mkdir($publish_reports_path, 0755, true);
+    }
+    // ---
+    $reports_dir = "$publish_reports_path/$reports_dir_main/";
     // ---
     if (!is_dir($reports_dir)) {
         mkdir($reports_dir, 0755, true);
