@@ -39,7 +39,7 @@ function get_revid($sourcetitle)
 {
     // read all_pages_revids.json file
     // ---
-    $revids_file_path = getenv("ALL_PAGES_REVIDS_PATH") ?: $_ENV['ALL_PAGES_REVIDS_PATH'] ?: "";
+    $revids_file_path = getenv("ALL_PAGES_REVIDS_PATH") ?: ($_ENV['ALL_PAGES_REVIDS_PATH'] ?? "");
     // ---
     if (empty($revids_file_path)) {
         error_log("ALL_PAGES_REVIDS_PATH is not set");
