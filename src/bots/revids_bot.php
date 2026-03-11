@@ -38,12 +38,21 @@ function get_revid_db($sourcetitle)
 function get_revid($sourcetitle)
 {
     // read all_pages_revids.json file
-    $revids_file = __DIR__ . '/all_pages_revids.json';
     // ---
-    if (!file_exists($revids_file)) $revids_file = __DIR__ . '/../all_pages_revids.json';
+    $revids_file_path = getenv("ALL_PAGES_REVIDS_PATH") ?: $_ENV['ALL_PAGES_REVIDS_PATH'] ?: "";
+    // ---
+    if (empty($revids_file_path)) {
+        error_log("ALL_PAGES_REVIDS_PATH is not set");
+        $revids_file_path = __DIR__ . '/all_pages_revids.json';
+    };
+    // ---
+    if (!file_exists($revids_file_path)) {
+        error_log("all_pages_revids.json file not found");
+        return "";
+    }
     // ---
     try {
-        $json = json_decode(file_get_contents($revids_file), true);
+        $json = json_decode(file_get_contents($revids_file_path), true);
         $revid = $json[$sourcetitle] ?? "";
         return $revid;
     } catch (\Exception $e) {
