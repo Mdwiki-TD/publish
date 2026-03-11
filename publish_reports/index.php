@@ -77,7 +77,7 @@ HTML;
 // Constants
 
 // /data/project/mdwiki/data/publish_reports
-$publish_reports_path = getenv("PUBLISH_REPORTS_PATH") ?: $_ENV['PUBLISH_REPORTS_PATH'] ?: "";
+$publish_reports_path = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
 // ---
 if (empty($publish_reports_path)) {
     error_log("PUBLISH_REPORTS_PATH is not set");
