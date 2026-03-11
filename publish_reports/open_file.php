@@ -24,7 +24,7 @@ $name   = $_GET["name"] ?: "";
 
 $file_path = $reports_by_day . "/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
 
-$daya = [];
+$data = [];
 if (file_exists($file_path)) {
     $data = json_decode(file_get_contents($file_path), true);
 }
