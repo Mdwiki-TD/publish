@@ -21,3 +21,6 @@ src/pup2.html
 src/test.php
 src/tx.php
 test.php
+publish_reports_data/db.py
+publish_reports_data/reports/db.py
+publish_reports_data/reports/plan.md
