@@ -11,13 +11,11 @@
 composer.lock
 fix_refs_repo1
 fix_refsx
-publish_reports/**/*.json
 publish_reports/_index.php
 publish_reports/db.py
 publish_reports/index2.php
 publish_reports/reports
 pup2.html
-src/all_pages_revids.json
 src/bots/new_x.php
 src/main copy.php
 src/pup2.html
