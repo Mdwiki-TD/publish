@@ -6,9 +6,6 @@ namespace MyLibrary\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-// Load only the revids_bot.php file for testing
-require_once __DIR__ . '/../src/bots/revids_bot.php';
-
 use function Publish\Revids\get_revid;
 
 /**

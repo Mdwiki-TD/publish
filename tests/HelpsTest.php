@@ -6,9 +6,6 @@ namespace MyLibrary\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-// Load only the helps.php file for testing
-require_once __DIR__ . '/../src/bots/helps.php';
-
 use function Publish\Helps\pub_test_print;
 
 /**
