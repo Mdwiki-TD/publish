@@ -81,6 +81,14 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
 {
     $LinkTowd = [];
     // ---
+    $page_informations = GetTitleInfo($title, $lang);
+    $page_namespace = $page_informations["ns"] ?? null;
+    // ---
+    if ($page_namespace == 2) {
+        // skip link to wd for user pages
+        return $LinkTowd;
+    }
+    // ---
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
         // ---
@@ -177,7 +185,6 @@ function processEdit($request, $access, $text, $user, $tab)
     $to_do_file = "";
 
     if ($Success === 'Success') {
-        $page_informations = GetTitleInfo($title, $lang);
         $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
         // ---
         $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle, $mdwiki_revid);
