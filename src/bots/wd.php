@@ -3,6 +3,7 @@
 namespace Publish\WD;
 /*
 use function Publish\WD\LinkToWikidata;
+use function Publish\WD\GetTitleInfo;
 use function Publish\WD\GetQidForMdtitle;
 */
 
@@ -29,28 +30,6 @@ function GetQidForMdtitle($title)
     return $result;
 }
 
-function GetTitleInfoOld($targettitle, $lang)
-{
-    // replace '/' with '%2F'
-    $targettitle = urlencode($targettitle);
-    // $targettitle = str_replace('/', '%2F', $targettitle);
-    // $targettitle = str_replace(' ', '_', $targettitle);
-    // ---
-    $url = "https://$lang.wikipedia.org/api/rest_v1/page/summary/$targettitle";
-    // ---
-    pub_test_print("GetTitleInfo url: $url");
-    // ---
-    try {
-        $result = get_url_curl($url);
-        pub_test_print("GetTitleInfo result: $result");
-        $result = json_decode($result, true);
-    } catch (\Exception $e) {
-        pub_test_print("GetTitleInfo: $e");
-        $result = null;
-    }
-    // ---
-    return $result;
-}
 
 function GetTitleInfo($targettitle, $lang)
 {

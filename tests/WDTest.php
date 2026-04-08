@@ -18,7 +18,6 @@ class WDTest extends TestCase
     public function testFunctionsExist(): void
     {
         $this->assertTrue(function_exists('Publish\WD\GetQidForMdtitle'));
-        $this->assertTrue(function_exists('Publish\WD\GetTitleInfoOld'));
         $this->assertTrue(function_exists('Publish\WD\GetTitleInfo'));
         $this->assertTrue(function_exists('Publish\WD\LinkIt'));
         $this->assertTrue(function_exists('Publish\WD\getAccessCredentials'));

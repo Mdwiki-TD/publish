@@ -14,7 +14,8 @@ use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
 use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\AccessHelps\get_access_from_db;
-use function Publish\AddToDb\InsertPublishReports; // InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
+use function Publish\AddToDb\InsertPublishReports;
+use function Publish\WD\GetTitleInfo;
 
 function get_errors_file($editit, $place_holder)
 {
@@ -176,6 +177,7 @@ function processEdit($request, $access, $text, $user, $tab)
     $to_do_file = "";
 
     if ($Success === 'Success') {
+        $page_informations = GetTitleInfo($title, $lang);
         $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
         // ---
         $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle, $mdwiki_revid);

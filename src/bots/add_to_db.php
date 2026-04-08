@@ -34,23 +34,6 @@ function retrieveCampaignCategories()
     return $camp_to_cats;
 }
 
-function find_exists($title, $lang, $user, $target, $use_user_sql)
-{
-    $query = <<<SQL
-        SELECT 1 FROM (
-            SELECT 1 FROM pages WHERE title = ? AND lang = ? AND user = ? AND target != ""
-            UNION
-            SELECT 1 FROM pages_users WHERE title = ? AND lang = ? AND user = ? AND target != ""
-        ) AS combined
-    SQL;
-    // ---
-    $params = [$title, $lang, $user, $title, $lang, $user];
-    // ---
-    $result = fetch_query($query, $params);
-    // ---
-    return count($result) > 0;
-}
-
 function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
 {
     // ---
