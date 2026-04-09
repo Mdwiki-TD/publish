@@ -419,7 +419,7 @@ if (substr(__DIR__, 0, 2) == 'I:') {
 -   [ ] Use autoloading instead
 -   [ ] Remove external `fix_refs` dependency or package properly
 
-### `src/start.php`
+### `src/su/start.php`
 
 -   [ ] Extract to proper Controller class
 -   [ ] Remove direct $\_POST access

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for src/bots/process_edit.php  (namespace Publish\EditProcess)
- *            src/start.php             (helper functions)
+ *            src/su/start.php             (helper functions)
  *
  * These files orchestrate the full edit workflow (OAuth → MediaWiki API →
  * Wikidata linking → DB insert).  Because they depend on live OAuth and DB
@@ -262,7 +262,7 @@ class ProcessEditAndStartTest extends TestCase
 
     public function testStartPhpIsValidPhp(): void
     {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/start.php') . ' 2>&1');
+        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/start.php') . ' 2>&1');
         $this->assertStringContainsString('No syntax errors', $output);
     }
 }

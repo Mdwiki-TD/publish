@@ -108,7 +108,7 @@ pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
 
 #### SEC-007: No Rate Limiting
 
-**File:** `src/start.php`
+**File:** `src/su/start.php`
 **Severity:** High
 **Description:** No rate limiting on the publish endpoint.
 **Impact:** Abuse, DoS attacks, automated spam publishing.
@@ -118,7 +118,7 @@ pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
 
 #### SEC-008: Missing Input Validation
 
-**File:** `src/start.php:131-132`
+**File:** `src/su/start.php:131-132`
 **Severity:** Medium
 **Description:** User input is only trimmed, not validated for length or format.
 
@@ -143,7 +143,7 @@ mkdir($reports_dir, 0755, true);
 
 #### SEC-010: Unvalidated Revision ID Fallback
 
-**File:** `src/start.php:97`
+**File:** `src/su/start.php:97`
 **Severity:** Medium
 **Description:** Revision ID falls back to request parameter without validation.
 
@@ -263,7 +263,7 @@ $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
 #### LOG-007: Empty String vs Null Ambiguity
 
-**File:** `src/start.php:95-98`
+**File:** `src/su/start.php:95-98`
 **Severity:** Medium
 **Description:** Empty string used as sentinel value, conflated with legitimate empty values.
 
