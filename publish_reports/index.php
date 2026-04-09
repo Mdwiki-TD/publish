@@ -11,7 +11,9 @@ if (isset($_REQUEST['test'])) {
 }
 
 include_once __DIR__ . "/config.php";
-
+if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
+    define("PUBLISH_REPORTS_DIR_BY_DAY", "/tmp");
+}
 function get_host()
 {
     // $hoste = get_host();

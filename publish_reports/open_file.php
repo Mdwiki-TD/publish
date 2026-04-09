@@ -3,6 +3,9 @@ header('Content-Type: application/json');
 
 include_once __DIR__ . "/config.php";
 
+if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
+    define("PUBLISH_REPORTS_DIR_BY_DAY", "/tmp");
+}
 // open_file.php?report=bbbb&year=2025&month=04&day=15&name=success.json
 
 $report = $_GET['report'] ?? '';
@@ -31,7 +34,6 @@ if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name) || !preg_match('/^[a-zA-Z0-9_.-]+$
     exit;
 }
 
-// @phpstan-ignore constant.notFound
 $file_path = PUBLISH_REPORTS_DIR_BY_DAY . "/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
 
 $data = [];
