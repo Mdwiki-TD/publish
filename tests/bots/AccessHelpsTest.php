@@ -37,22 +37,12 @@ class AccessHelpsTest extends TestCase
         $GLOBALS['cookie_key']  = self::$cookieKey;
         $GLOBALS['decrypt_key'] = self::$decryptKey;
 
-        // In-memory SQLite with the same schema used by both access_helps files
-        self::$pdo = new PDO('sqlite::memory:');
-        self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        self::$pdo->exec("
-            CREATE TABLE access_keys (
-                user_name TEXT PRIMARY KEY,
-                access_key TEXT,
-                access_secret TEXT
-            );
-            CREATE TABLE keys_new (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                u_n TEXT,
-                a_k TEXT,
-                a_s TEXT
-            );
-        ");
+        // Set environment variables to prevent MySQL connection attempts
+        putenv('DB_HOST_TOOLS=invalid');
+        putenv('DB_NAME=test');
+        putenv('DB_NAME_NEW=test_new');
+        putenv('TOOL_TOOLSDB_USER=');
+        putenv('TOOL_TOOLSDB_PASSWORD=');
 
         // require_once dirname(dirname(__DIR__)) . '/src/bots/helps.php';
         // require_once dirname(dirname(__DIR__)) . '/src/bots/mdwiki_sql.php';
