@@ -8,8 +8,6 @@ use function Publish\GetToken\get_cxtoken;
 use function Publish\GetToken\post_params;
 */
 
-include_once __DIR__ . '/../su/include.php';
-
 use MediaWiki\OAuthClient\Client;
 use MediaWiki\OAuthClient\ClientConfig;
 use MediaWiki\OAuthClient\Consumer;

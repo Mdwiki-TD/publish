@@ -1,7 +1,5 @@
 <?php
-//---
-include_once __DIR__ . '/../vendor_load.php';
-//---
+
 $oauthUrl = 'https://meta.wikimedia.org/w/index.php?title=Special:OAuth';
 
 // Make the api.php URL from the OAuth URL.
