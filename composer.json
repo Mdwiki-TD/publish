@@ -2,7 +2,9 @@
     "name": "mdwiki/td_api",
     "description": "A PHP library for the Translation Dashboard API, providing functionalities for managing translations, handling API interactions, and facilitating translation workflows.",
     "autoload": {
-        "psr-4": {},
+        "psr-4": {
+            "Publish\\": "src/"
+        },
         "files": []
     },
     "authors": [
