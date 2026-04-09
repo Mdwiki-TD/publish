@@ -137,7 +137,7 @@ $revid = $request['revid'] ?? $request['revision'] ?? '';
 **Recommendation:** Sanitize all user-generated content before display.
 
 #### SEC-012: Debug Mode Information Exposure
-**File:** `src/include.php:3-7`
+**File:** `src/su/include.php:3-7`
 **Severity:** Low
 **Description:** Debug mode enabled via URL parameter exposes errors.
 ```php

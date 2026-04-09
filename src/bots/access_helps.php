@@ -31,14 +31,12 @@ function get_access_from_db($user)
 
     // التحقق مما إذا كان قد تم العثور على نتائج
     if ($result) {
-        $result = $result[0];
         return [
-            'access_key' => decode_value($result['access_key']),
-            'access_secret' => decode_value($result['access_secret'])
+            'access_key' => decode_value($result[0]['access_key']),
+            'access_secret' => decode_value($result[0]['access_secret'])
         ];
     } else {
-        // إذا لم يتم العثور على نتيجة، إرجاع null أو يمكنك تخصيص رد معين
-        return null;
+        return [];
     }
 }
 

@@ -12,7 +12,7 @@ parameters:
 
     # Scan files for class definitions
     scanFiles:
-        - src/include.php
+        - src/su/include.php
         - src/vendor_load.php
         # - I:/mdwiki/fix_refs_repo/work.php
 

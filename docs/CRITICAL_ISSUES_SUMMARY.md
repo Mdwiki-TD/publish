@@ -173,7 +173,7 @@ All files have been updated with:
 | `src/bots/config.php` | Added PHPDoc, type annotations |
 | `src/start.php` | Added PHPDoc, type annotations, typedefs |
 | `src/index.php` | Added PHPDoc, security warning |
-| `src/include.php` | Added PHPDoc |
+| `src/su/include.php` | Added PHPDoc |
 | `src/vendor_load.php` | Added PHPDoc |
 | `src/main.php` | Added PHPDoc |
 

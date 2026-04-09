@@ -76,7 +76,7 @@ echo "Unable to connect to the database. Please try again later.";
 
 **Locations:** Multiple files
 
--   `src/include.php:25-29` - Conditional paths based on drive letter
+-   `src/su/include.php:25-29` - Conditional paths based on drive letter
 -   `src/bots/files_helps.php:49` - `I:/mdwiki/publish-repo/php-publish-repo/src`
 -   `src/bots/add_to_db.php:16-19` - Fallback paths for words.json
 
@@ -321,7 +321,7 @@ if (substr(__DIR__, 0, 2) == 'I:') { ... }
 
 #### 7.1 External File Dependencies
 
-**Location:** `src/include.php:25-29`
+**Location:** `src/su/include.php:25-29`
 
 ```php
 if (substr(__DIR__, 0, 2) == 'I:') {
@@ -413,7 +413,7 @@ if (substr(__DIR__, 0, 2) == 'I:') {
 -   [ ] Add request validation middleware
 -   [ ] Implement proper error responses
 
-### `src/include.php`
+### `src/su/include.php`
 
 -   [ ] Remove conditional includes
 -   [ ] Use autoloading instead

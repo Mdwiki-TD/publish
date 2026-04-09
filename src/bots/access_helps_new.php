@@ -59,18 +59,14 @@ function get_access_from_db_new($user)
 
     $user_id = get_user_id($user);
     //---
-    if (!$user_id) {
-        return null;
-    }
+    if (!$user_id) return [];
 
     // تنفيذ الاستعلام وتمرير اسم المستخدم كمعامل
     $result = fetch_query($query, [$user_id]);
 
     // التحقق مما إذا كان قد تم العثور على نتائج
 
-    if (!$result) {
-        return null;
-    }
+    if (!$result) return [];
 
     $result = $result[0];
     // ---
