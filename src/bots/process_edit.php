@@ -95,12 +95,13 @@ function shouldAddedToWikidata($lang, $title)
 
 function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id)
 {
-    $LinkTowd = [];
     // ---
     if (!shouldAddedToWikidata($lang, $title)) {
         // skip link to wd for user pages
-        return $LinkTowd;
+        return ["error" => "skip link to wd for user pages"];
     }
+    // ---
+    $LinkTowd = [];
     // ---
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
