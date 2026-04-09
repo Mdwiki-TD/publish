@@ -30,7 +30,7 @@ final class WdTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function testGetTitleInfoUserPgaes(): void
+    public function testGetTitleInfoUserPgaesBs(): void
     {
         $result = \Publish\WD\GetTitleInfo("Korisnik:Doc James/Analna fistula", 'bs');
         $this->assertIsArray($result);
