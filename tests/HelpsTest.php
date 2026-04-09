@@ -40,11 +40,6 @@ final class HelpsTest extends TestCase
         $this->assertEquals("", $result);
     }
 
-    public function testDecodeValueWithInvalidData(): void
-    {
-        $this->markTestSkipped('Requires encryption keys in test environment');
-    }
-
     public function testGetUrlCurlReturnsString(): void
     {
         $result = \Publish\Helps\get_url_curl("https://example.com");

@@ -43,9 +43,4 @@ final class WdTest extends TestCase
         $this->assertIsArray($result);
         $this->assertCount(2, $result);
     }
-
-    public function testLinkToWikidataReturnsArray(): void
-    {
-        $this->markTestSkipped('Requires database and encryption keys in test environment');
-    }
 }
