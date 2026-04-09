@@ -24,9 +24,9 @@ final class WdTest extends TestCase
 
     public function testGetTitleInfoUserPgaes(): void
     {
-        $result = \Publish\WD\GetTitleInfo('Mpikambana:Doc James/Fahaverezan\'ny volo', 'mg');
+        $result = \Publish\WD\GetTitleInfo("Mpikambana:Doc James/Fahaverezan'ny volo", 'mg');
         $this->assertIsArray($result);
-        $expected = ['pageid' => 15580374, 'ns' => 0, 'title' => 'Main Page'];
+        $expected = ['pageid' => 298895, 'ns' => 2, 'title' => "Mpikambana:Doc James/Fahaverezan'ny volo"];
         $this->assertSame($expected, $result);
     }
 
