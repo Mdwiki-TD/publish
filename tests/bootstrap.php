@@ -33,4 +33,4 @@ putenv('DECRYPT_KEY=def000001358577eb292b944a354cfe446413d532d4c18c963597a88ec1d
 
 $_SERVER['SERVER_NAME'] = 'localhost';
 
-include_once dirname(__DIR__) . '/src/include.php';
+include_once dirname(__DIR__) . '/src/su/include.php';

@@ -15,6 +15,6 @@ use function Publish\CORS\is_allowed;
 
 // header("Access-Control-Allow-Origin: https://$alowed");
 
-include_once __DIR__ . '/include.php';
+include_once __DIR__ . '/su/include.php';
 
 include_once __DIR__ . '/start.php';
