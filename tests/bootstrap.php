@@ -19,7 +19,7 @@ putenv('TOOL_TOOLSDB_PASSWORD=root11');
 
 putenv('CONSUMER_KEY=test_consumer_key');
 putenv('CONSUMER_SECRET=test_consumer_secret');
-putenv('PUBLISH_REPORTS_PATH=/tmp/publish_reports_test');
+putenv('PUBLISH_REPORTS_PATH=' . sys_get_temp_dir() . '/publish_reports_phpunit');
 
 // Provide placeholder keys that satisfy Defuse\Crypto\Key::loadFromAsciiSafeString()
 // In real tests you'd generate these with Key::createNewRandomKey()->saveToAsciiSafeString()
