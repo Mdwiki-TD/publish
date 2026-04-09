@@ -35,7 +35,7 @@ class WdTest extends TestCase
             'formatversion' => '2',
         ];
         return "https://$lang.wikipedia.org/w/api.php?" .
-               http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+            http_build_query($params, '', '&', PHP_QUERY_RFC3986);
     }
 
     public function testGetTitleInfoUrlContainsLang(): void
@@ -195,7 +195,7 @@ class WdTest extends TestCase
 
     public function testWdPhpIsValidPhp(): void
     {
-        $output = shell_exec('php -l ' . escapeshellarg(__DIR__ . '/../src/bots/wd.php') . ' 2>&1');
+        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/bots/wd.php') . ' 2>&1');
         $this->assertStringContainsString('No syntax errors', $output);
     }
 }

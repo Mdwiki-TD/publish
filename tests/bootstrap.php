@@ -31,4 +31,4 @@ putenv('TOOL_TOOLSDB_PASSWORD=root11');
 
 $_SERVER['SERVER_NAME'] = 'localhost';
 
-include_once __DIR__ . '/../src/include.php';
+include_once dirname(__DIR__) . '/src/include.php';

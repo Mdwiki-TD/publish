@@ -21,7 +21,7 @@ class CorsTest extends TestCase
     private function loadCors(): void
     {
         // Include only once per process; subsequent includes are no-ops.
-        require_once __DIR__ . '/../src/bots/cors.php';
+        require_once dirname(dirname(__DIR__)) . '/src/bots/cors.php';
     }
 
     // -------------------------------------------------------------------------

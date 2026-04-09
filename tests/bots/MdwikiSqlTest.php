@@ -22,7 +22,7 @@ class MdwikiSqlTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        // require_once __DIR__ . '/../src/bots/mdwiki_sql.php';
+        // require_once dirname(dirname(__DIR__)) . '/src/bots/mdwiki_sql.php';
 
         // Build a shared in-memory SQLite database with the tables used in tests
         self::$sqlite = new PDO('sqlite::memory:');
