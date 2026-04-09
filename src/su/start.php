@@ -1,10 +1,4 @@
 <?php
-// Check if the request is a POST request
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Method Not Allowed
-    echo json_encode(['error' => 'Only POST requests are allowed']);
-    exit;
-}
 
 use function Publish\EditProcess\text_changes;
 use function Publish\Helps\pub_test_print;
@@ -12,10 +6,9 @@ use function Publish\AccessHelps\get_access_from_db;
 use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\EditProcess\processEdit;
 use function Publish\FilesHelps\to_do;
-// use function Publish\Helps\get_url_curl;
 use function Publish\Revids\get_revid_db;
 use function Publish\Revids\get_revid;
-use function Publish\AddToDb\InsertPublishReports; // InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
+use function Publish\AddToDb\InsertPublishReports;
 
 function make_summary($revid, $sourcetitle, $to, $hashtag)
 {
@@ -156,5 +149,3 @@ function start($request)
         start2($request, $user, $access, $tab, $rand_id);
     }
 }
-
-start($_POST);

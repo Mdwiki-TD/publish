@@ -171,15 +171,15 @@
             }
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Load filters once only
             $.getJSON('/api/index.php?get=publish_reports')
-                .done(function(json) {
+                .done(function (json) {
                     if (json && json.results) {
                         populateFilterOptions(json.results);
                     }
                 })
-                .fail(function(xhr, status, error) {
+                .fail(function (xhr, status, error) {
                     console.error('Failed to load filter options:', error);
                     // Optionally show user-friendly error message
                 });
@@ -188,7 +188,7 @@
             let table = $('#resultsTable').DataTable({
                 ajax: {
                     url: '/api/index.php?get=publish_reports',
-                    data: function(d) {
+                    data: function (d) {
                         const formData = $('#filterForm').serializeArray();
                         formData.forEach(field => {
                             if (field.value.trim()) {
@@ -196,7 +196,7 @@
                             }
                         });
                     },
-                    dataSrc: function(json) {
+                    dataSrc: function (json) {
                         // تخزين البيانات الأصلية كاملة
                         originalResults = json.results;
 
@@ -228,53 +228,53 @@
                     }
                 },
                 columns: [{
-                        data: 'id',
-                        visible: false
-                    },
-                    {
-                        data: 'date',
-                        render: function(data, type) {
-                            if (type === 'display' || type === 'filter') {
-                                return data.split(' ')[0];
-                            }
-                            return data;
+                    data: 'id',
+                    visible: false
+                },
+                {
+                    data: 'date',
+                    render: function (data, type) {
+                        if (type === 'display' || type === 'filter') {
+                            return data.split(' ')[0];
                         }
-                    },
-                    {
-                        data: null,
-                        render: function(data, type, row) {
-
-                            // Validate language code (basic validation)
-                            const lang = /^[a-z]{2,3}$/.test(row.lang) ? row.lang : 'en';
-                            const title = encodeURIComponent(row.title || '');
-                            const escapedTitle = row.title || '';
-
-                            if (!title) return escapedTitle;
-
-                            return `<a href="https://${lang}.wikipedia.org/wiki/${title}" target="_blank" rel="noopener noreferrer">${escapedTitle}</a>`;
-                        }
-                    },
-                    {
-                        data: 'user'
-                    },
-                    {
-                        data: 'lang'
-                    },
-                    {
-                        data: 'sourcetitle'
-                    },
-                    {
-                        data: null,
-                        render: function(data, type, row) {
-                            // Display multiple buttons for grouped results
-                            return row.resultsArray.map((res, index) => {
-                                const id = row.idsArray[index];
-                                const escapedRes = res;
-                                const safeId = parseInt(id, 10); // Ensure ID is numeric
-                                return `<span class="badge bg-secondary" style="cursor:pointer; margin-right:4px;" onclick="showDetails(${safeId})">${escapedRes}</span>`;
-                            }).join('');
-                        }
+                        return data;
                     }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+
+                        // Validate language code (basic validation)
+                        const lang = /^[a-z]{2,3}$/.test(row.lang) ? row.lang : 'en';
+                        const title = encodeURIComponent(row.title || '');
+                        const escapedTitle = row.title || '';
+
+                        if (!title) return escapedTitle;
+
+                        return `<a href="https://${lang}.wikipedia.org/wiki/${title}" target="_blank" rel="noopener noreferrer">${escapedTitle}</a>`;
+                    }
+                },
+                {
+                    data: 'user'
+                },
+                {
+                    data: 'lang'
+                },
+                {
+                    data: 'sourcetitle'
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        // Display multiple buttons for grouped results
+                        return row.resultsArray.map((res, index) => {
+                            const id = row.idsArray[index];
+                            const escapedRes = res;
+                            const safeId = parseInt(id, 10); // Ensure ID is numeric
+                            return `<span class="badge bg-secondary" style="cursor:pointer; margin-right:4px;" onclick="showDetails(${safeId})">${escapedRes}</span>`;
+                        }).join('');
+                    }
+                }
                 ],
                 order: [
                     [1, 'desc']
@@ -282,13 +282,13 @@
             });
 
             // حدث إرسال الفورم
-            $('#filterForm').on('submit', function(e) {
+            $('#filterForm').on('submit', function (e) {
                 e.preventDefault();
                 table.ajax.reload();
             });
 
             // زر إعادة التهيئة
-            $('#resetBtn').on('click', function() {
+            $('#resetBtn').on('click', function () {
                 $('#filterForm')[0].reset();
                 table.ajax.reload();
             });
