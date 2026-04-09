@@ -1,18 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-$publish_reports_path = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
-// ---
-if (empty($publish_reports_path)) {
-    error_log("PUBLISH_REPORTS_PATH is not set");
-    // ---
-    $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'development');
-    $publish_reports_path = ($env === 'production')
-        ? getenv("HOME") . "/data/publish_reports_data"
-        : 'I:/mdwiki/publish-repo/publish_reports_data';
-};
-
-$reports_by_day = $publish_reports_path . '/reports_by_day';
+include_once __DIR__ . "/config.php";
 
 // open_file.php?report=bbbb&year=2025&month=04&day=15&name=success.json
 
@@ -42,7 +31,8 @@ if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name) || !preg_match('/^[a-zA-Z0-9_.-]+$
     exit;
 }
 
-$file_path = $reports_by_day . "/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
+// @phpstan-ignore constant.notFound
+$file_path = PUBLISH_REPORTS_DIR_BY_DAY . "/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
 
 $data = [];
 if (file_exists($file_path)) {
