@@ -35,7 +35,7 @@ The main functions in `index.php` include:
 -   `make_summary($revid, $sourcetitle, $to, $hashtag)`: Creates the edit summary.
 -   `to_do($tab, $dir)`: Logs the tasks to a file.
 -   `formatTitle($title)`: Formats the title.
--   `formatUser($user)`: Formats the user name.
+-   `formatUser($user)`: Formats the username.
 -   `determineHashtag($title, $user)`: Determines the hashtag to be used.
 -   `prepareApiParams($title, $summary, $text, $request)`: Prepares the API parameters for the edit request.
 -   `handleNoAccess($user, $tab)`: Handles cases where the user does not have access.

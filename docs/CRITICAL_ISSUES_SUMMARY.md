@@ -133,7 +133,7 @@ PDO::ATTR_PERSISTENT => true
 
 ## Type Safety Improvements
 
-All files have been updated with:
+Many files were updated with:
 
 -   `declare(strict_types=1)`
 -   PHPDoc `@param` and `@return` annotations
@@ -193,7 +193,7 @@ All files have been updated with:
 | `src/bots/get_token.php`        | Added PHPDoc, type annotations                         |
 | `src/bots/cors.php`             | Added PHPDoc, security warnings                        |
 | `src/bots/config.php`           | Added PHPDoc, type annotations                         |
-| `src/su/start.php`                 | Added PHPDoc, type annotations, typedefs               |
+| `src/su/start.php`              | Added PHPDoc, type annotations, typedefs               |
 | `src/index.php`                 | Added PHPDoc, security warning                         |
 | `src/su/include.php`            | Added PHPDoc                                           |
 | `src/vendor_load.php`           | Added PHPDoc                                           |

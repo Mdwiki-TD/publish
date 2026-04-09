@@ -139,11 +139,11 @@ function start($request)
     // ---
     $access = get_access_from_db_new($user);
     // ---
-    if ($access === null) {
+    if (empty($access)) {
         $access = get_access_from_db($user);
     }
     // ---
-    if ($access == null) {
+    if (empty($access)) {
         handleNoAccess($user, $tab, $rand_id);
     } else {
         start2($request, $user, $access, $tab, $rand_id);

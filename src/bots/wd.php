@@ -98,11 +98,11 @@ function getAccessCredentials($user, $access_key, $access_secret)
     if (!$access_key || !$access_secret) {
         $access = get_access_from_db_new($user);
         // ---
-        if ($access === null) {
+        if (empty($access)) {
             $access = get_access_from_db($user);
         }
         // ---
-        if ($access === null) {
+        if (empty($access)) {
             pub_test_print("user = $user");
             pub_test_print("access == null");
             return null;

@@ -57,11 +57,12 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user, $original_err
 
     // Retry with "Mr. Ibrahem" credentials - get fresh credentials from database
     $fallback_access = get_access_from_db_new('Mr. Ibrahem');
-    if ($fallback_access === null) {
+
+    if (empty($fallback_access)) {
         $fallback_access = get_access_from_db('Mr. Ibrahem');
     }
 
-    if ($fallback_access !== null) {
+    if (!empty($fallback_access)) {
         $fallback_access_key = $fallback_access['access_key'];
         $fallback_access_secret = $fallback_access['access_secret'];
 
@@ -80,13 +81,16 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user, $original_err
 function shouldAddedToWikidata($lang, $title)
 {
     $page_informations = GetTitleInfo($title, $lang);
+    if (!$page_informations) {
+        return false;
+    }
     $page_namespace = $page_informations["ns"] ?? null;
     // ---
     if ($page_namespace == 2) {
         // skip link to wd for user pages
-        return False;
+        return false;
     }
-    return True;
+    return true;
 }
 
 function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id)

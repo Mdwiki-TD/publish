@@ -35,9 +35,8 @@ function get_access_from_db($user)
             'access_key' => decode_value($result[0]['access_key']),
             'access_secret' => decode_value($result[0]['access_secret'])
         ];
-    } else {
-        return [];
     }
+    return [];
 }
 
 function del_access_from_db($user)
