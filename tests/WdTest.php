@@ -18,6 +18,16 @@ final class WdTest extends TestCase
     {
         $result = \Publish\WD\GetTitleInfo('Main Page', 'en');
         $this->assertIsArray($result);
+        $expected = ['pageid' => 15580374, 'ns' => 0, 'title' => 'Main Page'];
+        $this->assertSame($expected, $result);
+    }
+
+    public function testGetTitleInfoUserPgaes(): void
+    {
+        $result = \Publish\WD\GetTitleInfo('Mpikambana:Doc James/Fahaverezan\'ny volo', 'mg');
+        $this->assertIsArray($result);
+        $expected = ['pageid' => 15580374, 'ns' => 0, 'title' => 'Main Page'];
+        $this->assertSame($expected, $result);
     }
 
     public function testGetAccessCredentialsReturnsArrayWithKeys(): void
