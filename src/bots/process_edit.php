@@ -77,14 +77,23 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user, $original_err
     return $LinkTowd;
 }
 
-function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret)
+function shouldAddedToWikidata($lang, $title)
 {
-    $LinkTowd = [];
-    // ---
     $page_informations = GetTitleInfo($title, $lang);
     $page_namespace = $page_informations["ns"] ?? null;
     // ---
     if ($page_namespace == 2) {
+        // skip link to wd for user pages
+        return False;
+    }
+    return True;
+}
+
+function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret)
+{
+    $LinkTowd = [];
+    // ---
+    if (!shouldAddedToWikidata($lang, $title)) {
         // skip link to wd for user pages
         return $LinkTowd;
     }
