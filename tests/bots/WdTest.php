@@ -195,7 +195,7 @@ class WdTest extends TestCase
 
     public function testWdPhpIsValidPhp(): void
     {
-        $output = shell_exec('php -l ' . escapeshellarg(__DIR__ . '/../../src/bots/wd.php') . ' 2>&1');
+        $output = shell_exec('php -l ' . escapeshellarg(__DIR__ . '/../src/bots/wd.php') . ' 2>&1');
         $this->assertStringContainsString('No syntax errors', $output);
     }
 }

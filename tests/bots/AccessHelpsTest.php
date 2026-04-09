@@ -54,10 +54,10 @@ class AccessHelpsTest extends TestCase
             );
         ");
 
-        require_once __DIR__ . '/../src/bots/helps.php';
-        require_once __DIR__ . '/../src/bots/mdwiki_sql.php';
-        require_once __DIR__ . '/../src/bots/access_helps.php';
-        require_once __DIR__ . '/../src/bots/access_helps_new.php';
+        // require_once __DIR__ . '/../src/bots/helps.php';
+        // require_once __DIR__ . '/../src/bots/mdwiki_sql.php';
+        // require_once __DIR__ . '/../src/bots/access_helps.php';
+        // require_once __DIR__ . '/../src/bots/access_helps_new.php';
     }
 
     // -----------------------------------------------------------------------
@@ -163,14 +163,14 @@ class AccessHelpsTest extends TestCase
 
     public function testAccessHelpsPhpIsValidPhp(): void
     {
-        $file = __DIR__ . '/../../src/bots/access_helps.php';
+        $file = __DIR__ . '/../src/bots/access_helps.php';
         $output = shell_exec("php -l " . escapeshellarg($file) . " 2>&1");
         $this->assertStringContainsString('No syntax errors', $output);
     }
 
     public function testAccessHelpsNewPhpIsValidPhp(): void
     {
-        $file = __DIR__ . '/../../src/bots/access_helps_new.php';
+        $file = __DIR__ . '/../src/bots/access_helps_new.php';
         $output = shell_exec("php -l " . escapeshellarg($file) . " 2>&1");
         $this->assertStringContainsString('No syntax errors', $output);
     }
