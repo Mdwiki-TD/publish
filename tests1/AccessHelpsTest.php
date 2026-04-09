@@ -54,10 +54,10 @@ class AccessHelpsTest extends TestCase
             );
         ");
 
-        require_once __DIR__ . '/../../src/bots/helps.php';
-        require_once __DIR__ . '/../../src/bots/mdwiki_sql.php';
-        require_once __DIR__ . '/../../src/bots/access_helps.php';
-        require_once __DIR__ . '/../../src/bots/access_helps_new.php';
+        require_once __DIR__ . '/../src/bots/helps.php';
+        require_once __DIR__ . '/../src/bots/mdwiki_sql.php';
+        require_once __DIR__ . '/../src/bots/access_helps.php';
+        require_once __DIR__ . '/../src/bots/access_helps_new.php';
     }
 
     // -----------------------------------------------------------------------

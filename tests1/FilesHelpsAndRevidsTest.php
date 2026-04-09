@@ -18,11 +18,11 @@ class FilesHelpsAndRevidsTest extends TestCase
     {
         putenv('PUBLISH_REPORTS_PATH=' . sys_get_temp_dir() . '/publish_reports_phpunit');
 
-        require_once __DIR__ . '/../../src/bots/helps.php';
-        require_once __DIR__ . '/../../src/bots/files_helps.php';
+        require_once __DIR__ . '/../src/bots/helps.php';
+        require_once __DIR__ . '/../src/bots/files_helps.php';
 
         // revids_bot.php has no top-level side-effects
-        require_once __DIR__ . '/../../src/bots/revids_bot.php';
+        require_once __DIR__ . '/../src/bots/revids_bot.php';
     }
 
     // -----------------------------------------------------------------------

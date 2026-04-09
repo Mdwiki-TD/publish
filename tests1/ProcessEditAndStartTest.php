@@ -17,9 +17,9 @@ class ProcessEditAndStartTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        require_once __DIR__ . '/../../src/bots/helps.php';
-        require_once __DIR__ . '/../../src/bots/mdwiki_sql.php';
-        require_once __DIR__ . '/../../src/bots/files_helps.php';
+        require_once __DIR__ . '/../src/bots/helps.php';
+        require_once __DIR__ . '/../src/bots/mdwiki_sql.php';
+        require_once __DIR__ . '/../src/bots/files_helps.php';
 
         // process_edit.php defines several standalone helper functions we test.
         // It also `use`s functions from other namespaces – those are auto-loaded

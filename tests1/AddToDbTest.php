@@ -29,9 +29,9 @@ class AddToDbTest extends TestCase
         // The file checks two hard-coded paths; neither will exist, so $Words_table = []
         // That is fine for our tests.
 
-        require_once __DIR__ . '/../../src/bots/helps.php';
-        require_once __DIR__ . '/../../src/bots/mdwiki_sql.php';
-        require_once __DIR__ . '/../../src/bots/add_to_db.php';
+        require_once __DIR__ . '/../src/bots/helps.php';
+        require_once __DIR__ . '/../src/bots/mdwiki_sql.php';
+        require_once __DIR__ . '/../src/bots/add_to_db.php';
     }
 
     // -----------------------------------------------------------------------
