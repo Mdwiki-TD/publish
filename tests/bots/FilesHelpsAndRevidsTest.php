@@ -30,8 +30,8 @@ class FilesHelpsAndRevidsTest extends TestCase
             'user'        => 'TestUser',
             'sourcetitle' => 'SourceArticle',
         ];
-
-        \Publish\FilesHelps\to_do($tab, 'test_event');
+        $rand_id = time() .  "-" . bin2hex(random_bytes(6));
+        \Publish\FilesHelps\to_do($tab, 'test_event', $rand_id);
 
         $reportsPath = sys_get_temp_dir() . '/publish_reports_phpunit/reports_by_day';
         $found = false;

@@ -89,7 +89,7 @@ function shouldAddedToWikidata($lang, $title)
     return True;
 }
 
-function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret)
+function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id)
 {
     $LinkTowd = [];
     // ---
@@ -124,7 +124,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
         // ---
         $file_name = get_errors_file($LinkTowd['error'], "wd_errors");
         // ---
-        to_do($tab3, $file_name);
+        to_do($tab3, $file_name, $rand_id);
         // --
         InsertPublishReports($title, $user, $lang, $sourcetitle, $file_name, $tab3);
     }
@@ -168,7 +168,7 @@ function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle, $m
     return $is_user_page;
 }
 
-function processEdit($request, $access, $text, $user, $tab)
+function processEdit($request, $access, $text, $user, $tab, $rand_id)
 {
     $sourcetitle = $tab['sourcetitle'];
     $lang = $tab['lang'];
@@ -194,7 +194,7 @@ function processEdit($request, $access, $text, $user, $tab)
     $to_do_file = "";
 
     if ($Success === 'Success') {
-        $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
+        $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id);
         // ---
         $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle, $mdwiki_revid);
         // ---
@@ -208,7 +208,7 @@ function processEdit($request, $access, $text, $user, $tab)
     // ---
     $tab['result_to_cx'] = $editit;
     // ---
-    to_do($tab, $to_do_file);
+    to_do($tab, $to_do_file, $rand_id);
     // --
     InsertPublishReports($title, $user, $lang, $sourcetitle, $to_do_file, $tab);
     // ---
