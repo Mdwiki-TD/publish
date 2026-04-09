@@ -5,6 +5,7 @@
     bootstrap="tests/bootstrap.php"
     colors="true"
     stopOnFailure="false"
+    testdox="true"
     cacheDirectory=".phpunit.cache"
     executionOrder="depends,defects"
     beStrictAboutOutputDuringTests="true"
