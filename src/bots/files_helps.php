@@ -9,27 +9,12 @@ use function Publish\FilesHelps\check_dirs;
 
 use function Publish\Helps\pub_test_print;
 
-// $rand_id = rand(0, 999999999);
-$rand_id = time() .  "-" . bin2hex(random_bytes(6));
-
-$main_dir_by_day = check_dirs($rand_id, "reports_by_day");
-
-function to_do($tab, $file_name)
+function to_do($tab, $file_name, $rand_id)
 {
-    global $main_dir_by_day; // $main_dir,
+    $main_dir_by_day = check_dirs($rand_id, 'reports_by_day');
     // ---
     $tab['time'] = time();
     $tab['time_date'] = date("Y-m-d H:i:s");
-    // ---
-    /*
-    try {
-        // dump $tab to file in folder to_do
-        $file_j = $main_dir . "/$file_name.json";
-        // ---
-        file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    } catch (\Exception $e) {
-        pub_test_print($e->getMessage());
-    }*/
     // ---
     try {
         // dump $tab to file in folder to_do

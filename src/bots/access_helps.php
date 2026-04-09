@@ -7,7 +7,7 @@ use function Publish\AccessHelps\get_access_from_db;
 use function Publish\AccessHelps\del_access_from_db;
 */
 
-include_once __DIR__ . '/../include.php';
+include_once __DIR__ . '/../su/include.php';
 
 use function Publish\MdwikiSql\execute_query;
 use function Publish\MdwikiSql\fetch_query;
@@ -31,15 +31,12 @@ function get_access_from_db($user)
 
     // التحقق مما إذا كان قد تم العثور على نتائج
     if ($result) {
-        $result = $result[0];
         return [
-            'access_key' => decode_value($result['access_key']),
-            'access_secret' => decode_value($result['access_secret'])
+            'access_key' => decode_value($result[0]['access_key']),
+            'access_secret' => decode_value($result[0]['access_secret'])
         ];
-    } else {
-        // إذا لم يتم العثور على نتيجة، إرجاع null أو يمكنك تخصيص رد معين
-        return null;
     }
+    return [];
 }
 
 function del_access_from_db($user)

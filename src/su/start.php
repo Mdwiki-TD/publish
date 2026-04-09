@@ -1,10 +1,4 @@
 <?php
-// Check if the request is a POST request
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Method Not Allowed
-    echo json_encode(['error' => 'Only POST requests are allowed']);
-    exit;
-}
 
 use function Publish\EditProcess\text_changes;
 use function Publish\Helps\pub_test_print;
@@ -12,10 +6,9 @@ use function Publish\AccessHelps\get_access_from_db;
 use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\EditProcess\processEdit;
 use function Publish\FilesHelps\to_do;
-// use function Publish\Helps\get_url_curl;
 use function Publish\Revids\get_revid_db;
 use function Publish\Revids\get_revid;
-use function Publish\AddToDb\InsertPublishReports; // InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
+use function Publish\AddToDb\InsertPublishReports;
 
 function make_summary($revid, $sourcetitle, $to, $hashtag)
 {
@@ -50,7 +43,7 @@ function determineHashtag($title, $user)
     return $hashtag;
 }
 
-function handleNoAccess($user, $tab)
+function handleNoAccess($user, $tab, $rand_id)
 {
     $error = ['code' => 'noaccess', 'info' => 'noaccess'];
     // ---
@@ -58,7 +51,7 @@ function handleNoAccess($user, $tab)
     // ---
     $tab['result_to_cx'] = $editit;
     // ---
-    to_do($tab, "noaccess");
+    to_do($tab, "noaccess", $rand_id);
     // ---
     InsertPublishReports($tab['title'], $user, $tab['lang'], $tab['sourcetitle'], "noaccess", $tab);
     // ---
@@ -71,7 +64,7 @@ function handleNoAccess($user, $tab)
 }
 
 
-function start2($request, $user, $access, $tab)
+function start2($request, $user, $access, $tab, $rand_id)
 {
     // ---
     /*
@@ -114,7 +107,7 @@ function start2($request, $user, $access, $tab)
         $text = $newtext;
     }
     // ---
-    $editit = processEdit($request, $access, $text, $user, $tab);
+    $editit = processEdit($request, $access, $text, $user, $tab, $rand_id);
     // ---
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
@@ -127,6 +120,8 @@ function start2($request, $user, $access, $tab)
 
 function start($request)
 {
+    // ---
+    $rand_id = time() .  "-" . bin2hex(random_bytes(6));
     // ---
     $user = formatUser($request['user'] ?? '');
     $title = formatTitle($request['title'] ?? '');
@@ -144,14 +139,13 @@ function start($request)
     // ---
     $access = get_access_from_db_new($user);
     // ---
-    if ($access === null) {
+    if (empty($access)) {
         $access = get_access_from_db($user);
     }
     // ---
-    if ($access == null) {
-        handleNoAccess($user, $tab);
+    if (empty($access)) {
+        handleNoAccess($user, $tab, $rand_id);
     } else {
-        start2($request, $user, $access, $tab);
+        start2($request, $user, $access, $tab, $rand_id);
     }
 }
-start($_POST);

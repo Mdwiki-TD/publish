@@ -24,3 +24,6 @@ test.php
 publish_reports_data/db.py
 publish_reports_data/reports/db.py
 publish_reports_data/reports/plan.md
+*.zip
+load_env.php
+/.phpunit.cache

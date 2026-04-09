@@ -20,7 +20,7 @@ Add `?test` query parameter to any request to enable verbose error reporting and
 
 ### Request Flow
 1. `src/index.php` - Entry point, includes dependencies via `include.php`
-2. `src/start.php` - Main `start()` function orchestrates the publish workflow:
+2. `src/su/start.php` - Main `start()` function orchestrates the publish workflow:
    - Validates user access credentials from database
    - Gets revision ID for source article
    - Pre-processes wikitext via `fix_refs` (loaded from external path)

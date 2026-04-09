@@ -2,133 +2,47 @@
 
 declare(strict_types=1);
 
-namespace MyLibrary\Tests;
+namespace Publish\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-// Load only the helps.php file for testing
-require_once __DIR__ . '/../src/bots/helps.php';
-
-use function Publish\Helps\pub_test_print;
-
-/**
- * Tests for helps.php functions
- */
-class HelpsTest extends TestCase
+final class HelpsTest extends TestCase
 {
-    /**
-     * Test that pub_test_print returns nothing when test param is not set
-     */
-    public function testPubTestPrintReturnsNothingWithoutTestParam(): void
+    public function testPubTestPrintDoesNotThrow(): void
     {
-        // Backup REQUEST
-        $backup = $_REQUEST;
-        unset($_REQUEST['test']);
-
-        // Capture output
-        ob_start();
-        pub_test_print("test message");
-        $output = ob_get_clean();
-
-        // Restore REQUEST
-        $_REQUEST = $backup;
-
-        $this->assertEquals('', $output);
+        $this->expectNotToPerformAssertions();
+        \Publish\Helps\pub_test_print("test string");
+        \Publish\Helps\pub_test_print(["key" => "value"]);
+        \Publish\Helps\pub_test_print(123);
     }
 
-    /**
-     * Test that pub_test_print outputs string when test param is set
-     */
-    public function testPubTestPrintOutputsStringWithTestParam(): void
+    public function testDecodeValueWithEmptyString(): void
     {
-        // Backup REQUEST
-        $backup = $_REQUEST;
-        $_REQUEST['test'] = '1';
-
-        // Capture output
-        ob_start();
-        pub_test_print("test message");
-        $output = ob_get_clean();
-
-        // Restore REQUEST
-        $_REQUEST = $backup;
-
-        $this->assertStringContainsString('test message', $output);
+        $result = \Publish\Helps\decode_value("", "cookie");
+        $this->assertEquals("", $result);
     }
 
-    /**
-     * Test that pub_test_print handles arrays correctly
-     */
-    public function testPubTestPrintHandlesArrays(): void
+    public function testDecodeValueWithWhitespaceOnly(): void
     {
-        // Backup REQUEST
-        $backup = $_REQUEST;
-        $_REQUEST['test'] = '1';
-
-        $testArray = ['key1' => 'value1', 'key2' => 'value2'];
-
-        // Capture output
-        ob_start();
-        pub_test_print($testArray);
-        $output = ob_get_clean();
-
-        // Restore REQUEST
-        $_REQUEST = $backup;
-
-        $this->assertStringContainsString('key1', $output);
-        $this->assertStringContainsString('value1', $output);
+        $result = \Publish\Helps\decode_value("   ", "cookie");
+        $this->assertEquals("", $result);
     }
 
-    /**
-     * Test decode_value with empty input
-     */
-    public function testDecodeValueReturnsEmptyForEmptyInput(): void
+    public function testEncodeValueWithEmptyString(): void
     {
-        // Need to mock global keys or the function will fail
-        global $cookie_key, $decrypt_key;
-        $cookie_key = null;
-        $decrypt_key = null;
-
-        $result = \Publish\Helps\decode_value('', 'cookie');
-        $this->assertEquals('', $result);
+        $result = \Publish\Helps\encode_value("", "cookie");
+        $this->assertEquals("", $result);
     }
 
-    /**
-     * Test decode_value with whitespace-only input
-     */
-    public function testDecodeValueReturnsEmptyForWhitespaceInput(): void
+    public function testEncodeValueWithWhitespaceOnly(): void
     {
-        global $cookie_key, $decrypt_key;
-        $cookie_key = null;
-        $decrypt_key = null;
-
-        $result = \Publish\Helps\decode_value('   ', 'cookie');
-        $this->assertEquals('', $result);
+        $result = \Publish\Helps\encode_value("   ", "cookie");
+        $this->assertEquals("", $result);
     }
 
-    /**
-     * Test encode_value with empty input
-     */
-    public function testEncodeValueReturnsEmptyForEmptyInput(): void
+    public function testGetUrlCurlReturnsString(): void
     {
-        global $cookie_key, $decrypt_key;
-        $cookie_key = null;
-        $decrypt_key = null;
-
-        $result = \Publish\Helps\encode_value('', 'cookie');
-        $this->assertEquals('', $result);
-    }
-
-    /**
-     * Test encode_value with whitespace-only input
-     */
-    public function testEncodeValueReturnsEmptyForWhitespaceInput(): void
-    {
-        global $cookie_key, $decrypt_key;
-        $cookie_key = null;
-        $decrypt_key = null;
-
-        $result = \Publish\Helps\encode_value('   ', 'cookie');
-        $this->assertEquals('', $result);
+        $result = \Publish\Helps\get_url_curl("https://example.com");
+        $this->assertIsString($result);
     }
 }

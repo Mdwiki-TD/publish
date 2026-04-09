@@ -3,10 +3,11 @@
 namespace Publish\WD;
 /*
 use function Publish\WD\LinkToWikidata;
+use function Publish\WD\GetTitleInfo;
 use function Publish\WD\GetQidForMdtitle;
 */
 
-include_once __DIR__ . '/../include.php';
+include_once __DIR__ . '/../su/include.php';
 
 use function Publish\GetToken\post_params;
 use function Publish\MdwikiSql\fetch_query;
@@ -29,28 +30,6 @@ function GetQidForMdtitle($title)
     return $result;
 }
 
-function GetTitleInfoOld($targettitle, $lang)
-{
-    // replace '/' with '%2F'
-    $targettitle = urlencode($targettitle);
-    // $targettitle = str_replace('/', '%2F', $targettitle);
-    // $targettitle = str_replace(' ', '_', $targettitle);
-    // ---
-    $url = "https://$lang.wikipedia.org/api/rest_v1/page/summary/$targettitle";
-    // ---
-    pub_test_print("GetTitleInfo url: $url");
-    // ---
-    try {
-        $result = get_url_curl($url);
-        pub_test_print("GetTitleInfo result: $result");
-        $result = json_decode($result, true);
-    } catch (\Exception $e) {
-        pub_test_print("GetTitleInfo: $e");
-        $result = null;
-    }
-    // ---
-    return $result;
-}
 
 function GetTitleInfo($targettitle, $lang)
 {
@@ -119,11 +98,11 @@ function getAccessCredentials($user, $access_key, $access_secret)
     if (!$access_key || !$access_secret) {
         $access = get_access_from_db_new($user);
         // ---
-        if ($access === null) {
+        if (empty($access)) {
             $access = get_access_from_db($user);
         }
         // ---
-        if ($access === null) {
+        if (empty($access)) {
             pub_test_print("user = $user");
             pub_test_print("access == null");
             return null;

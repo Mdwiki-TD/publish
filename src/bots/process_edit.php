@@ -14,7 +14,8 @@ use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
 use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\AccessHelps\get_access_from_db;
-use function Publish\AddToDb\InsertPublishReports; // InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
+use function Publish\AddToDb\InsertPublishReports;
+use function Publish\WD\GetTitleInfo;
 
 function get_errors_file($editit, $place_holder)
 {
@@ -56,11 +57,12 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user, $original_err
 
     // Retry with "Mr. Ibrahem" credentials - get fresh credentials from database
     $fallback_access = get_access_from_db_new('Mr. Ibrahem');
-    if ($fallback_access === null) {
+
+    if (empty($fallback_access)) {
         $fallback_access = get_access_from_db('Mr. Ibrahem');
     }
 
-    if ($fallback_access !== null) {
+    if (!empty($fallback_access)) {
         $fallback_access_key = $fallback_access['access_key'];
         $fallback_access_secret = $fallback_access['access_secret'];
 
@@ -76,9 +78,29 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user, $original_err
     return $LinkTowd;
 }
 
-function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret)
+function shouldAddedToWikidata($lang, $title)
+{
+    $page_informations = GetTitleInfo($title, $lang);
+    if (!$page_informations) {
+        return false;
+    }
+    $page_namespace = $page_informations["ns"] ?? null;
+    // ---
+    if ($page_namespace == 2) {
+        // skip link to wd for user pages
+        return false;
+    }
+    return true;
+}
+
+function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id)
 {
     $LinkTowd = [];
+    // ---
+    if (!shouldAddedToWikidata($lang, $title)) {
+        // skip link to wd for user pages
+        return $LinkTowd;
+    }
     // ---
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
@@ -106,7 +128,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
         // ---
         $file_name = get_errors_file($LinkTowd['error'], "wd_errors");
         // ---
-        to_do($tab3, $file_name);
+        to_do($tab3, $file_name, $rand_id);
         // --
         InsertPublishReports($title, $user, $lang, $sourcetitle, $file_name, $tab3);
     }
@@ -150,7 +172,7 @@ function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle, $m
     return $is_user_page;
 }
 
-function processEdit($request, $access, $text, $user, $tab)
+function processEdit($request, $access, $text, $user, $tab, $rand_id)
 {
     $sourcetitle = $tab['sourcetitle'];
     $lang = $tab['lang'];
@@ -176,7 +198,7 @@ function processEdit($request, $access, $text, $user, $tab)
     $to_do_file = "";
 
     if ($Success === 'Success') {
-        $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret);
+        $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id);
         // ---
         $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle, $mdwiki_revid);
         // ---
@@ -190,7 +212,7 @@ function processEdit($request, $access, $text, $user, $tab)
     // ---
     $tab['result_to_cx'] = $editit;
     // ---
-    to_do($tab, $to_do_file);
+    to_do($tab, $to_do_file, $rand_id);
     // --
     InsertPublishReports($title, $user, $lang, $sourcetitle, $to_do_file, $tab);
     // ---

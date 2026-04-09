@@ -7,7 +7,7 @@ use function Publish\AccessHelpsNew\get_access_from_db_new;
 use function Publish\AccessHelpsNew\del_access_from_db_new;
 */
 
-include_once __DIR__ . '/../include.php';
+include_once __DIR__ . '/../su/include.php';
 
 use function Publish\MdwikiSql\execute_query;
 use function Publish\MdwikiSql\fetch_query;
@@ -59,18 +59,14 @@ function get_access_from_db_new($user)
 
     $user_id = get_user_id($user);
     //---
-    if (!$user_id) {
-        return null;
-    }
+    if (!$user_id) return [];
 
     // تنفيذ الاستعلام وتمرير اسم المستخدم كمعامل
     $result = fetch_query($query, [$user_id]);
 
     // التحقق مما إذا كان قد تم العثور على نتائج
 
-    if (!$result) {
-        return null;
-    }
+    if (!$result) return [];
 
     $result = $result[0];
     // ---
