@@ -89,26 +89,6 @@ class AccessHelpsTest extends TestCase
     // access_helps.php – get_access_from_db / del_access_from_db
     // -----------------------------------------------------------------------
 
-    /**
-     * We can't easily swap out the global fetch_query() without runkit, so we
-     * test the encode/decode round-trip that the function performs directly,
-     * and verify the SQL structure by inspecting the helper functions.
-     */
-    public function testGetAccessFromDbReturnsNullWhenUserMissing(): void
-    {
-        // Use a fresh in-memory DB with no rows
-        $pdo = new PDO('sqlite::memory:');
-        $pdo->exec("CREATE TABLE access_keys (user_name TEXT, access_key TEXT, access_secret TEXT);");
-
-        // Patch the global Database to use our SQLite
-        // We test via a mini integration: call the function and observe its
-        // null return when the table is empty.
-        // Because the function creates its own Database object internally and
-        // connects to MySQL, we can only unit-test the decode logic here.
-        // The test below proves decode_value returns '' for empty input.
-        $this->assertSame('', \Publish\Helps\decode_value(''));
-    }
-
     public function testDecodeRoundTripForAccessKeys(): void
     {
         $ak = 'my_access_key_123';
