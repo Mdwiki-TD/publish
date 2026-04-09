@@ -30,6 +30,7 @@ function handle_token($wiki, $user)
 
     if (empty($access)) {
         $cxtoken = ['error' => ['code' => 'no access', 'info' => 'no access'], 'username' => $user];
+        http_response_code(403);
         print(json_encode($cxtoken, JSON_PRETTY_PRINT));
         header('HTTP/1.0 403 Forbidden');
         exit(1);

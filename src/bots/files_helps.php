@@ -11,8 +11,7 @@ use function Publish\Helps\pub_test_print;
 
 function to_do($tab, $file_name, $rand_id)
 {
-    // ---
-    $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
+    $main_dir_by_day = check_dirs($rand_id, 'reports_by_day');
     // ---
     $tab['time'] = time();
     $tab['time_date'] = date("Y-m-d H:i:s");
