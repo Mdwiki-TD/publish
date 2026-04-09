@@ -26,3 +26,4 @@ publish_reports_data/reports/db.py
 publish_reports_data/reports/plan.md
 *.zip
 /src1
+src/load_env.php
