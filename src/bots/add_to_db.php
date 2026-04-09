@@ -8,8 +8,6 @@ use function Publish\AddToDb\retrieveCampaignCategories;
 use function Publish\AddToDb\InsertPublishReports; // InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
 */
 
-include_once __DIR__ . '/../su/include.php';
-
 use function Publish\MdwikiSql\fetch_query;
 use function Publish\MdwikiSql\execute_query;
 

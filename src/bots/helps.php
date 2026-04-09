@@ -8,8 +8,6 @@ use function Publish\Helps\encode_value;
 use function Publish\Helps\decode_value;
 */
 
-include_once __DIR__ . '/../su/include.php';
-
 use Defuse\Crypto\Crypto;
 
 function pub_test_print($s)

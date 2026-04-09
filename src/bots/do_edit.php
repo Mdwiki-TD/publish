@@ -7,8 +7,6 @@ use function Publish\DoEdit\publish_do_edit;
 use function Publish\DoEdit\get_edits_token;
 */
 
-include_once __DIR__ . '/../su/include.php';
-
 use MediaWiki\OAuthClient\Client;
 use MediaWiki\OAuthClient\ClientConfig;
 use MediaWiki\OAuthClient\Consumer;

@@ -7,8 +7,6 @@ use function Publish\WD\GetTitleInfo;
 use function Publish\WD\GetQidForMdtitle;
 */
 
-include_once __DIR__ . '/../su/include.php';
-
 use function Publish\GetToken\post_params;
 use function Publish\MdwikiSql\fetch_query;
 use function Publish\AccessHelps\get_access_from_db;
