@@ -16,13 +16,39 @@ class FilesHelpsAndRevidsTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        putenv('PUBLISH_REPORTS_PATH=' . sys_get_temp_dir() . '/publish_reports_phpunit');
+        $reportsPath = sys_get_temp_dir() . '/publish_reports_phpunit';
+        putenv('PUBLISH_REPORTS_PATH=' . $reportsPath);
 
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/files_helps.php';
+        require_once dirname(dirname(__DIR__)) . '/src/bots/files_helps.php';
+    }
 
-        // revids_bot.php has no top-level side-effects
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/revids_bot.php';
+    public function testToDoWritesJsonFile(): void
+    {
+        $tab = [
+            'title'       => 'TestArticle',
+            'lang'        => 'en',
+            'user'        => 'TestUser',
+            'sourcetitle' => 'SourceArticle',
+        ];
+
+        \Publish\FilesHelps\to_do($tab, 'test_event');
+
+        $reportsPath = sys_get_temp_dir() . '/publish_reports_phpunit/reports_by_day';
+        $found = false;
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($reportsPath, \FilesystemIterator::SKIP_DOTS)
+        );
+        foreach ($iterator as $file) {
+            if ($file->getExtension() === 'json') {
+                $found    = true;
+                $content  = json_decode(file_get_contents($file->getPathname()), true);
+                $this->assertArrayHasKey('time', $content);
+                $this->assertArrayHasKey('time_date', $content);
+                $this->assertSame('TestArticle', $content['title']);
+                break;
+            }
+        }
+        $this->assertTrue($found, 'Expected at least one JSON report file to be created');
     }
 
     // -----------------------------------------------------------------------
@@ -50,41 +76,6 @@ class FilesHelpsAndRevidsTest extends TestCase
     {
         $dir = \Publish\FilesHelps\check_dirs('readable-test-' . uniqid(), 'reports_by_day');
         $this->assertTrue(is_readable($dir));
-    }
-
-    // -----------------------------------------------------------------------
-    // to_do() – writes JSON file
-    // -----------------------------------------------------------------------
-
-    public function testToDoWritesJsonFile(): void
-    {
-        $tab = [
-            'title'       => 'TestArticle',
-            'lang'        => 'en',
-            'user'        => 'TestUser',
-            'sourcetitle' => 'SourceArticle',
-        ];
-
-        // to_do() uses the $main_dir_by_day global set at include-time.
-        // We call it and look for any .json file created today.
-        \Publish\FilesHelps\to_do($tab, 'test_event');
-
-        $reportsPath = sys_get_temp_dir() . '/publish_reports_phpunit/reports_by_day';
-        $found = false;
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($reportsPath, \FilesystemIterator::SKIP_DOTS)
-        );
-        foreach ($iterator as $file) {
-            if ($file->getExtension() === 'json') {
-                $found    = true;
-                $content  = json_decode(file_get_contents($file->getPathname()), true);
-                $this->assertArrayHasKey('time', $content);
-                $this->assertArrayHasKey('time_date', $content);
-                $this->assertSame('TestArticle', $content['title']);
-                break;
-            }
-        }
-        $this->assertTrue($found, 'Expected at least one JSON report file to be created');
     }
 
     // -----------------------------------------------------------------------
