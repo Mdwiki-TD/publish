@@ -34,7 +34,7 @@ final class WdTest extends TestCase
     {
         $result = \Publish\WD\GetTitleInfo("Korisnik:Doc James/Analna fistula", 'bs');
         $this->assertIsArray($result);
-        $expected = ['pageid' => 298895, 'ns' => 2, 'title' => "Mpikambana:Doc James/Fahaverezan'ny volo"];
+        $expected = ['pageid' => 531525, 'ns' => 2, 'title' => "Korisnik:Doc James/Analna fistula"];
         $this->assertSame($expected, $result);
     }
     public function testGetAccessCredentialsReturnsArrayWithKeys(): void
