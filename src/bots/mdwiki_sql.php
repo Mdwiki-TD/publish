@@ -173,8 +173,6 @@ function execute_query($sql_query, $params = null, $table_name = null)
 
     // Destroy the database object
     $db = null;
-
-    //---
     return $results;
 };
 function fetch_query(string $sql_query, ?array $params = null, $table_name = null): array
@@ -197,7 +195,5 @@ function fetch_query(string $sql_query, ?array $params = null, $table_name = nul
 
     // Destroy the database object
     $db = null;
-
-    //---
     return $results;
 };

@@ -43,10 +43,8 @@ function handle_token($wiki, $user)
     $err = $cxtoken['csrftoken_data']["error"]["code"] ?? null;
 
     if ($err == "mwoauth-invalid-authorization-invalid-user") {
-        // ---
         del_access_from_db_new($user);
         del_access_from_db($user);
-        // ---
         $cxtoken["del_access"] = true;
     }
 

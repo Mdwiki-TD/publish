@@ -17,17 +17,13 @@ if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
 function get_host()
 {
     // $hoste = get_host();
-    //---
     static $cached_host = null;
-    //---
     if ($cached_host !== null) {
         return $cached_host; // استخدم القيمة المحفوظة
     }
-    //---
     $hoste = ($_SERVER["SERVER_NAME"] == "localhost")
         ? "https://cdnjs.cloudflare.com"
         : "https://tools-static.wmflabs.org/cdnjs";
-    //---
     if ($hoste == "https://tools-static.wmflabs.org/cdnjs") {
         $url = "https://tools-static.wmflabs.org";
         $ch = curl_init($url);
@@ -58,9 +54,9 @@ function get_host()
 
     return $hoste;
 }
-//---
+
 $hoste = get_host();
-//---
+
 echo <<<HTML
 	<head>
 		<meta charset="UTF-8">
@@ -131,7 +127,6 @@ function add_time_badge($dir_time, $formattedDate)
 function addTodayBadge($dir_date)
 {
     // $dir_date = "$year-$month-$day";
-    // ---
     $today = date('Y-m-d'); // d M Y
 
     return $today === $dir_date ? ' <span class="badge text-bg-warning" style="float: right">Today</span>' : "";
@@ -207,44 +202,27 @@ function makeMonthsNav($currentYear, $currentMonth)
 
 function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
 {
-    // ---
     $formattedDate = "$year-$month-$day";
-    // ---
     // $todayBadge = addTodayBadge($formattedDate);
     $todayBadge = "";
-    // ---
     $dailyReports = scandir($dayReportDir);
-    // ---
     usort($dailyReports, function ($a, $b) use ($dayReportDir) {
         return filectime($dayReportDir . '/' . $b) - filectime($dayReportDir . '/' . $a);
     });
-    // ---
     $dailyReportLinks = "";
-    // ---
     $count = 0;
-    // ---
     foreach ($dailyReports as $report) {
         if ($report === '.' || $report === '..') continue;
-        // ---
         $oneReportDir = $dayReportDir . '/' . $report;
-        // ---
         $jsonFiles = glob($oneReportDir . '/*.json');
-        // ---
         if (!$jsonFiles) continue;
-        // ---
         $dir_time = filectime($oneReportDir);
-        // ---
         $time = add_time_badge($dir_time, $formattedDate);
-        // ---
         $user = "";
         $lang = "";
-        // ---
         $ul = '<ul class="list-group">';
-        // ---
         foreach ($jsonFiles as $jsonFile) {
-            // ---
             $name = basename($jsonFile);
-            // ---
             // if (empty($user) && $name == "success.json") {
             if (empty($user)) {
                 $json = json_decode(file_get_contents($jsonFile), true);
@@ -252,9 +230,7 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
                 $target_title = $json['title'] ?? '';
                 $lang = $json['lang'] ?? '';
             }
-            // ---
             // $url = "$monthDir/$day/$report/$name";
-            // ---
             $url_params = [
                 "report" => $report,
                 "year" => $year,
@@ -262,26 +238,19 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
                 "day" => $day,
                 "name" => $name,
             ];
-            // ---
             $url = "open_file.php?" . http_build_query($url_params);
-            // ---
             $ul .= <<<HTML
                 <li class="list-group-item">
                     <a target="_blank" href="$url">$name</a>
                 </li>
             HTML;
         }
-        // ---
         if (!empty($lang) && !empty($target_title)) {
             $lang = "<a href='https://$lang.wikipedia.org/wiki/$target_title' target='_blank'>$lang</a>";
         }
-        // ---
         $lang = $lang ? "$lang: " : "";
-        // ---
         $ul .= '</ul>';
-        // ---
         $count++;
-        // ---
         $dailyReportLinks .= <<<HTML
             <div class="col-md-3 p-2">
                 <div class="card">
@@ -298,9 +267,7 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
         // }
 
     }
-    // ---
     $retsult = "";
-    // ---
     if (!empty($dailyReportLinks)) {
         $retsult = <<<HTML
             <div class="card px-0 m-1 mt-3">
@@ -315,7 +282,6 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
             </div>
         HTML;
     }
-    // ---
     return $retsult;
 }
 function makeMonthReports($year, $month)
@@ -330,32 +296,21 @@ function makeMonthReports($year, $month)
     if (!is_dir($monthDirPath)) {
         return '<p>No reports available.</p>';
     }
-    // ---
     $MonthReportLinks = '';
-    // ---
     $daysDirs = scandir($monthDirPath);
-    // ---
     // sort days by name bigger first
     usort($daysDirs, function ($a, $b) {
         return strcmp($b, $a);
     });
-    // ---
     foreach ($daysDirs as $day) {
-        // ---
         if ($day === '.' || $day === '..') continue;
-        // ---
         $dayReportDir = $monthDirPath . '/' . $day;
-        // ---
         if (!is_dir($dayReportDir)) {
             continue;
         }
-        // ---
         $dailyReportLinks = makeDayReports($year, $month, $day, $dayReportDir, $monthDirPath);
-        // ---
         $MonthReportLinks .= $dailyReportLinks;
-        // ---
     }
-    // ---
     return $MonthReportLinks;
 }
 

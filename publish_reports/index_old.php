@@ -18,17 +18,13 @@ define('PUBLISH_REPORTS_DIR', __DIR__ . '/reports/');
 function get_host()
 {
     // $hoste = get_host();
-    //---
     static $cached_host = null;
-    //---
     if ($cached_host !== null) {
         return $cached_host; // استخدم القيمة المحفوظة
     }
-    //---
     $hoste = ($_SERVER["SERVER_NAME"] == "localhost")
         ? "https://cdnjs.cloudflare.com"
         : "https://tools-static.wmflabs.org/cdnjs";
-    //---
     if ($hoste == "https://tools-static.wmflabs.org/cdnjs") {
         $url = "https://tools-static.wmflabs.org";
         $ch = curl_init($url);
@@ -59,9 +55,9 @@ function get_host()
 
     return $hoste;
 }
-//---
+
 $hoste = get_host();
-//---
+
 echo <<<HTML
 	<head>
 		<meta charset="UTF-8">
@@ -233,7 +229,6 @@ function makeMonthReports($year, $month)
 
         $dailyReportLinks = '';
         $count = 0;
-        // ---
         usort($dailyReports, function ($a, $b) use ($monthDir) {
             return filectime($monthDir . '/' . $b) - filectime($monthDir . '/' . $a);
         });
@@ -242,24 +237,15 @@ function makeMonthReports($year, $month)
 
         foreach ($dailyReports as $report) {
             $reportDir = $monthDir . '/' . $report;
-            // ---
             $jsonFiles = glob($reportDir . '/*.json');
-            // ---
             if (!$jsonFiles) continue;
-            // ---
             $dir_time = filectime($reportDir);
-            // ---
             $time = add_time_badge($dir_time);
-            // ---
             $user = "";
             $lang = "";
-            // ---
             $ul = '<ul class="list-group">';
-            // ---
             foreach ($jsonFiles as $jsonFile) {
-                // ---
                 $name = basename($jsonFile);
-                // ---
                 // if (empty($user) && $name == "success.json") {
                 if (empty($user)) {
                     $json = json_decode(file_get_contents($jsonFile), true);
@@ -267,7 +253,6 @@ function makeMonthReports($year, $month)
                     $target_title = $json['title'] ?? '';
                     $lang = $json['lang'] ?? '';
                 }
-                // ---
                 $url = REPORTS_DIR . "/$year/$month/$report/$name";
                 $ul .= <<<HTML
                         <li class="list-group-item">
@@ -275,13 +260,10 @@ function makeMonthReports($year, $month)
                         </li>
                     HTML;
             }
-            // ---
             if (!empty($lang) && !empty($target_title)) {
                 $lang = "<a href='https://$lang.wikipedia.org/wiki/$target_title' target='_blank'>$lang</a>";
             }
-            // ---
             $lang = $lang ? "$lang: " : "";
-            // ---
             if (!$jsonFiles) {
                 $ul .= <<<HTML
                     <li class="list-group-item">
@@ -289,11 +271,8 @@ function makeMonthReports($year, $month)
                     </li>
                 HTML;
             }
-            // ---
             $ul .= '</ul>';
-            // ---
             $count++;
-            // ---
             $dailyReportLinks .= <<<HTML
                     <div class="col-md-3 p-2">
                         <div class="card">
