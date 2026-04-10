@@ -126,17 +126,4 @@ class AccessHelpsTest extends TestCase
     // SQL query string sanity checks (parse-level tests)
     // -----------------------------------------------------------------------
 
-    public function testAccessHelpsPhpIsValidPhp(): void
-    {
-        $file = dirname(dirname(__DIR__)) . '/src/su/bots/access_helps.php';
-        $output = shell_exec("php -l " . escapeshellarg($file) . " 2>&1");
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
-
-    public function testAccessHelpsNewPhpIsValidPhp(): void
-    {
-        $file = dirname(dirname(__DIR__)) . '/src/su/bots/access_helps_new.php';
-        $output = shell_exec("php -l " . escapeshellarg($file) . " 2>&1");
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
 }

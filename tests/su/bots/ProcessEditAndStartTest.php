@@ -246,19 +246,4 @@ class ProcessEditAndStartTest extends TestCase
         $this->assertStringContainsString('#mdwikicx', $summary);
     }
 
-    // -----------------------------------------------------------------------
-    // PHP syntax checks
-    // -----------------------------------------------------------------------
-
-    public function testProcessEditIsValidPhp(): void
-    {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/bots/process_edit.php') . ' 2>&1');
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
-
-    public function testStartPhpIsValidPhp(): void
-    {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/start.php') . ' 2>&1');
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
 }

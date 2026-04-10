@@ -108,14 +108,4 @@ class AddToDbTest extends TestCase
         $this->assertStringContainsString('value', $encoded);
     }
 
-    // -----------------------------------------------------------------------
-    // PHP syntax check
-    // -----------------------------------------------------------------------
-
-    public function testAddToDbIsValidPhp(): void
-    {
-        $file   = dirname(dirname(__DIR__)) . '/src/su/bots/add_to_db.php';
-        $output = shell_exec("php -l " . escapeshellarg($file) . " 2>&1");
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
 }

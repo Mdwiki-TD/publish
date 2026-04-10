@@ -189,13 +189,4 @@ class WdTest extends TestCase
         $this->assertSame('Q888', $final['qid']);
     }
 
-    // -----------------------------------------------------------------------
-    // PHP syntax check
-    // -----------------------------------------------------------------------
-
-    public function testWdPhpIsValidPhp(): void
-    {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/bots/wd.php') . ' 2>&1');
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
 }

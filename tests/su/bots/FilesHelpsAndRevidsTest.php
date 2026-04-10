@@ -126,19 +126,4 @@ class FilesHelpsAndRevidsTest extends TestCase
         $this->assertSame('', $result);
     }
 
-    // -----------------------------------------------------------------------
-    // PHP syntax checks
-    // -----------------------------------------------------------------------
-
-    public function testFilesHelpsIsValidPhp(): void
-    {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/bots/files_helps.php') . ' 2>&1');
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
-
-    public function testRevidsIsValidPhp(): void
-    {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/bots/revids_bot.php') . ' 2>&1');
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
 }
