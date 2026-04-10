@@ -20,18 +20,14 @@ function GetQidForMdtitle($title)
     $query = <<<SQL
         SELECT qid FROM qids WHERE title = ?
     SQL;
-    // ---
     $params = [$title];
-    // ---
     $result = fetch_query($query, $params);
-    // ---
     return $result;
 }
 
 
 function GetTitleInfo($targettitle, $lang)
 {
-    // ---
     $params = [
         "action" => "query",
         "format" => "json",
@@ -39,11 +35,8 @@ function GetTitleInfo($targettitle, $lang)
         "utf8" => 1,
         "formatversion" => "2"
     ];
-    // ---
     $url = "https://$lang.wikipedia.org/w/api.php" . "?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-    // ---
     pub_test_print("GetTitleInfo url: $url");
-    // ---
     try {
         $result = get_url_curl($url);
         pub_test_print("GetTitleInfo result: $result");
@@ -54,14 +47,12 @@ function GetTitleInfo($targettitle, $lang)
         pub_test_print("GetTitleInfo: $e");
         $result = null;
     }
-    // ---
     return $result;
 }
 
 function LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_secret)
 {
     $https_domain = "https://www.wikidata.org";
-    // ---
     $apiParams = [
         "action" => "wbsetsitelink",
         "linktitle" => $targettitle,
@@ -73,33 +64,26 @@ function LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_se
         $apiParams["title"] = $sourcetitle;
         $apiParams["site"] = "enwiki";
     }
-    // ---
     $response = post_params($apiParams, $https_domain, $access_key, $access_secret);
-    // ---
     $Result = json_decode($response, true) ?? [];
-    // ---
     // if (isset($Result->error)) {
     if (isset($Result['error'])) {
         pub_test_print("post_params: Result->error: " . json_encode($Result['error']));
     }
-    // ---
     if ($Result == null) {
         pub_test_print("post_params: Error: " . json_last_error() . " " . json_last_error_msg());
         pub_test_print("response:");
         pub_test_print($response);
     }
-    // ---
     return $Result;
 }
 function getAccessCredentials($user, $access_key, $access_secret)
 {
     if (!$access_key || !$access_secret) {
         $access = get_access_from_db_new($user);
-        // ---
         if (empty($access)) {
             $access = get_access_from_db($user);
         }
-        // ---
         if (empty($access)) {
             pub_test_print("user = $user");
             pub_test_print("access == null");
@@ -108,7 +92,6 @@ function getAccessCredentials($user, $access_key, $access_secret)
         $access_key = $access['access_key'];
         $access_secret = $access['access_secret'];
     }
-    // ---
     return [$access_key, $access_secret];
 }
 

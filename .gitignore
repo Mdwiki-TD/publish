@@ -27,3 +27,4 @@ publish_reports_data/reports/plan.md
 *.zip
 load_env.php
 /.phpunit.cache
+/build/coverage-html

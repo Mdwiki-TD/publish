@@ -15,14 +15,11 @@ use function Publish\Helps\decode_value;
 function get_user_id($user)
 {
     static $user_ids_cache = [];
-    //---
     // Validate and sanitize username
     $user = trim($user);
-    //---
     if (isset($user_ids_cache[$user])) {
         return $user_ids_cache[$user];
     }
-    //---
     $query = "SELECT id, u_n FROM keys_new";
 
     $result = fetch_query($query);
@@ -30,7 +27,6 @@ function get_user_id($user)
     if (!$result) {
         return null;
     }
-    // ---
     foreach ($result as $row) {
         $user_id = $row['id'];
         $user_db = decode_value($row['u_n'], 'decrypt');
@@ -39,7 +35,6 @@ function get_user_id($user)
             return $user_id;
         }
     }
-    // ---
     return null;
 };
 
@@ -56,7 +51,6 @@ function get_access_from_db_new($user)
     SQL;
 
     $user_id = get_user_id($user);
-    //---
     if (!$user_id) return [];
 
     // تنفيذ الاستعلام وتمرير اسم المستخدم كمعامل
@@ -67,7 +61,6 @@ function get_access_from_db_new($user)
     if (!$result) return [];
 
     $result = $result[0];
-    // ---
     return [
         'access_key' => decode_value($result['a_k'], $key_type = "decrypt"),
         'access_secret' => decode_value($result['a_s'], $key_type = "decrypt")
@@ -83,10 +76,8 @@ function del_access_from_db_new($user)
     SQL;
 
     $user_id = get_user_id($user);
-    //---
     if (!$user_id) {
         return null;
     }
-    //---
     execute_query($query, [$user_id], "keys_new");
 }

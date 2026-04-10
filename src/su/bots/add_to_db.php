@@ -34,79 +34,60 @@ function retrieveCampaignCategories()
 
 function find_exists_or_update($title, $lang, $user, $target, $use_user_sql)
 {
-    // ---
     $table_name = $use_user_sql ? 'pages_users' : 'pages';
-    // ---
     $query = <<<SQL
         SELECT * FROM $table_name WHERE title = ? AND lang = ? AND user = ?
     SQL;
-    // ---
     $result = fetch_query($query, [$title, $lang, $user]);
-    // ---
     if (count($result) > 0) {
         $query = <<<SQL
             UPDATE $table_name SET target = ?, pupdate = DATE(NOW())
             WHERE title = ? AND lang = ? AND user = ? AND (target = "" OR target IS NULL)
         SQL;
-        // ---
         $params = [$target, $title, $lang, $user];
-        // ---
         execute_query($query, $params, $table_name);
     }
-    // ---
     return count($result) > 0;
 }
 
 function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, $to_users_table, $mdwiki_revid)
 {
     global $Words_table;
-    // ---
     $use_user_sql = false;
-    // ---
     $title = str_replace("_", " ", $title);
     $target = str_replace("_", " ", $target);
     $user   = str_replace("_", " ", $user);
-    // ---
     $tab = [
         'use_user_sql' => $use_user_sql,
         'to_users_table' => $to_users_table,
         // 'one_empty' => [],
     ];
-    // ---
     if (empty($user) || empty($title) || empty($lang)) {
         $tab['one_empty'] = ['title' => $title, 'lang' => $lang, 'user' => $user];
         return $tab;
     }
-    // ---
     $word = $Words_table[$title] ?? 0;
-    // ---
     if ($to_users_table) {
         $tab['use_user_sql'] = $to_users_table;
     } else {
         $user_t = str_replace("User:", "", $user);
         $user_t = str_replace("user:", "", $user_t);
-        // ---
         // if target contains user
         if (strpos($target, $user_t) !== false) {
             $tab['use_user_sql'] = true;
             // if ($user == "Mr. Ibrahem") return $tab;
         }
     }
-    // ---
     $exists = find_exists_or_update($title, $lang, $user, $target, $tab['use_user_sql']);
-    // ---
     if ($exists) {
         $tab['exists'] = "already_in";
         return $tab;
     }
-    // ---
     $table_name = ($tab['use_user_sql']) ? 'pages_users' : 'pages';
-    // ---
     $query = <<<SQL
         INSERT INTO $table_name (title, word, translate_type, cat, lang, user, pupdate, target, mdwiki_revid)
         SELECT ?, ?, ?, ?, ?, ?, DATE(NOW()), ?, ?
     SQL;
-    // ---
     $params = [
         $title,
         $word,
@@ -117,24 +98,19 @@ function InsertPageTarget($title, $tr_type, $cat, $lang, $user, $test, $target, 
         $target,
         $mdwiki_revid
     ];
-    // ---
     if (!empty($test)) {
         echo "<br>$query<br>";
     }
-    // ---
     execute_query($query, $params, $table_name);
-    // ---
     $tab['execute_query'] = true;
     // $tab['query'] = $query;
     // $tab['query_params'] = $params;
-    // ---
     return $tab;
 }
 
 
 function InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
 {
-    // ---
     // Validate required parameters
     /*
     if (empty($title) || empty($user) || empty($lang)) {
@@ -142,15 +118,10 @@ function InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data
         return false;
     }
     */
-    // ---
     $query = "INSERT INTO publish_reports (`date`, `title`, `user`, `lang`, `sourcetitle`, `result`, `data`) VALUES (NOW(), ?, ?, ?, ?, ?, ?)";
-    // ---
     $report_data = json_encode($data);
-    // ---
     // remove .json from $result
     $result = str_replace(".json", "", $result);
-    // ---
     $params = [$title, $user, $lang, $sourcetitle, $result, $report_data];
-    // ---
     execute_query($query, $params, "publish_reports");
 }

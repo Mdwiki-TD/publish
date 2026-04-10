@@ -20,7 +20,6 @@ use function Publish\WD\GetTitleInfo;
 function get_errors_file($editit, $place_holder)
 {
     $to_do_file = $place_holder;
-    // ---
     $errs_main = [
         "protectedpage",
         "titleblacklist",
@@ -30,17 +29,13 @@ function get_errors_file($editit, $place_holder)
         "abusefilter",
         "mwoauth-invalid-authorization",
     ];
-    // ---
     $errs_wd = [
         'Links to user pages' => "wd_user_pages",
         'get_csrftoken' => "wd_csrftoken",
         'protectedpage' => "wd_protectedpage",
     ];
-    // ---
     $errs = ($place_holder == "errors") ? $errs_main : $errs_wd;
-    // ---
     $c_text = json_encode($editit);
-    // ---
     foreach ($errs as $err) {
         if (strpos($c_text, $err) !== false) {
             $to_do_file = $err;
@@ -85,7 +80,6 @@ function shouldAddedToWikidata($lang, $title)
         return false;
     }
     $page_namespace = $page_informations["ns"] ?? null;
-    // ---
     if ($page_namespace == 2) {
         // skip link to wd for user pages
         return false;
@@ -95,17 +89,13 @@ function shouldAddedToWikidata($lang, $title)
 
 function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id)
 {
-    // ---
     if (!shouldAddedToWikidata($lang, $title)) {
         // skip link to wd for user pages
         return ["error" => "skip link to wd for user pages"];
     }
-    // ---
     $LinkTowd = [];
-    // ---
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
-        // ---
         // Check if the error is get_csrftoken failure and user is not already "Mr. Ibrahem"
         if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'get_csrftoken failed' && $user !== 'Mr. Ibrahem') {
             $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user, $LinkTowd['error']);
@@ -114,7 +104,6 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
     } catch (\Exception $e) {
         pub_test_print($e->getMessage());
     }
-    // ---
     if (isset($LinkTowd['error'])) {
         $tab3 = [
             'error' => $LinkTowd['error'],
@@ -126,14 +115,11 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
             'username' => $user
         ];
         // if str($LinkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
-        // ---
         $file_name = get_errors_file($LinkTowd['error'], "wd_errors");
-        // ---
         to_do($tab3, $file_name, $rand_id);
         // --
         InsertPublishReports($title, $user, $lang, $sourcetitle, $file_name, $tab3);
     }
-    // ---
     return $LinkTowd;
 }
 
@@ -158,18 +144,14 @@ function prepareApiParams($title, $summary, $text, $request)
 
 function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle, $mdwiki_revid)
 {
-    // ---
     $camp_to_cat = retrieveCampaignCategories();
     $cat = $camp_to_cat[$campaign] ?? '';
     $to_users_table = false;
-    // ---
     // if $wd_result has "abusefilter-warning-39" then $to_users_table = true
     if (strpos(json_encode($wd_result), "abusefilter-warning-39") !== false) {
         $to_users_table = true;
     }
-    // ---
     $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title, $to_users_table, $mdwiki_revid);
-    // ---
     return $is_user_page;
 }
 
@@ -200,22 +182,16 @@ function processEdit($request, $access, $text, $user, $tab, $rand_id)
 
     if ($Success === 'Success') {
         $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id);
-        // ---
         $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle, $mdwiki_revid);
-        // ---
         $to_do_file = "success";
-        // ---
     } else if ($is_captcha) {
         $to_do_file = "captcha";
     } else {
         $to_do_file = get_errors_file($editit, "errors");
     }
-    // ---
     $tab['result_to_cx'] = $editit;
-    // ---
     to_do($tab, $to_do_file, $rand_id);
     // --
     InsertPublishReports($title, $user, $lang, $sourcetitle, $to_do_file, $tab);
-    // ---
     return $editit;
 }

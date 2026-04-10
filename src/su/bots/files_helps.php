@@ -12,14 +12,11 @@ use function Publish\Helps\pub_test_print;
 function to_do($tab, $file_name, $rand_id)
 {
     $main_dir_by_day = check_dirs($rand_id, 'reports_by_day');
-    // ---
     $tab['time'] = time();
     $tab['time_date'] = date("Y-m-d H:i:s");
-    // ---
     try {
         // dump $tab to file in folder to_do
         $file_j = $main_dir_by_day . "/$file_name.json";
-        // ---
         file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (\Exception $e) {
         pub_test_print($e->getMessage());
@@ -28,52 +25,37 @@ function to_do($tab, $file_name, $rand_id)
 
 function check_dirs($rand_id, $reports_dir_main)
 {
-    // ---
     // /data/project/mdwiki/data/publish_reports
     $publish_reports_path = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
-    // ---
     if (empty($publish_reports_path)) {
         error_log("PUBLISH_REPORTS_PATH is not set");
-        // ---
         $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'development');
         $publish_reports_path = ($env === 'production')
             ? getenv("HOME") . "/data/publish_reports_data"
             : 'I:/mdwiki/publish-repo/publish_reports_data';
     };
-    // ---
     if (!is_dir($publish_reports_path)) {
         mkdir($publish_reports_path, 0755, true);
     }
-    // ---
     $reports_dir = "$publish_reports_path/$reports_dir_main/";
-    // ---
     if (!is_dir($reports_dir)) {
         mkdir($reports_dir, 0755, true);
     }
-    // ---
     $year_dir = $reports_dir . date("Y");
-    // ---
     if (!is_dir($year_dir)) {
         mkdir($year_dir, 0755, true);
     }
-    // ---
     $month_dir = $year_dir . "/" . date("m");
-    // ---
     if (!is_dir($month_dir)) {
         mkdir($month_dir, 0755, true);
     }
-    // ---
     $day_dir = $month_dir . "/" . date("d");
-    // ---
     if (!is_dir($day_dir)) {
         mkdir($day_dir, 0755, true);
     }
-    // ---
     $main1_dir = $day_dir . "/" . $rand_id;
-    // ---
     if (!is_dir($main1_dir)) {
         mkdir($main1_dir, 0755, true);
     }
-    // ---
     return $main1_dir;
 }

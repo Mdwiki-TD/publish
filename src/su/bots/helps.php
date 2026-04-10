@@ -12,9 +12,7 @@ use Defuse\Crypto\Crypto;
 
 function pub_test_print($s)
 {
-    //---
     if (!isset($_REQUEST['test'])) return;
-    //---
     if (gettype($s) == 'string') {
         echo "\n<br>\n$s";
     } else {
@@ -26,13 +24,10 @@ function pub_test_print($s)
 function decode_value($value, $key_type = "cookie")
 {
     global $cookie_key, $decrypt_key;
-    // ---
     if (empty(trim($value))) {
         return "";
     }
-    // ---
     $use_key = ($key_type == "decrypt") ? $decrypt_key : $cookie_key;
-    // ---
     try {
         $value = Crypto::decrypt($value, $use_key);
     } catch (\Exception $e) {
@@ -44,13 +39,10 @@ function decode_value($value, $key_type = "cookie")
 function encode_value($value, $key_type = "cookie")
 {
     global $cookie_key, $decrypt_key;
-    // ---
     $use_key = ($key_type == "decrypt") ? $decrypt_key : $cookie_key;
-    // ---
     if (empty(trim($value))) {
         return "";
     }
-    // ---
     try {
         $value = Crypto::encrypt($value, $use_key);
     } catch (\Exception $e) {

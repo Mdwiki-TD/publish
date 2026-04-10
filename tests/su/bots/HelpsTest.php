@@ -31,7 +31,6 @@ class HelpsTest extends TestCase
         $GLOBALS['cookie_key']  = self::$cookieKey;
         $GLOBALS['decrypt_key'] = self::$decryptKey;
 
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/helps.php';
     }
 
     protected function setUp(): void

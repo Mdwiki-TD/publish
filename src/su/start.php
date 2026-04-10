@@ -46,15 +46,10 @@ function determineHashtag($title, $user)
 function handleNoAccess($user, $tab, $rand_id)
 {
     $error = ['code' => 'noaccess', 'info' => 'noaccess'];
-    // ---
     $editit = ['error' => $error, 'edit' => ['error' => $error, 'username' => $user], 'username' => $user];
-    // ---
     $tab['result_to_cx'] = $editit;
-    // ---
     to_do($tab, "noaccess", $rand_id);
-    // ---
     InsertPublishReports($tab['title'], $user, $tab['lang'], $tab['sourcetitle'], "noaccess", $tab);
-    // ---
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
 
@@ -66,66 +61,44 @@ function handleNoAccess($user, $tab, $rand_id)
 
 function start2($request, $user, $access, $tab, $rand_id)
 {
-    // ---
     /*
     if ($user == "Mr. Ibrahem") {
         // log request
         if (!is_dir(__DIR__ . '/texts')) {
             mkdir(__DIR__ . '/texts', 0755, true);
         }
-        // ---
         file_put_contents(__DIR__ . '/texts/post.log.' . time(), print_r($request, true));
     }*/
-    // ---
     $text = $request['text'] ?? '';
-    // ---
     // $summary = $request['summary'] ?? '';
-    // ---
     $revid = get_revid($tab['sourcetitle']);
-    // ---
     if (empty($revid)) $revid = get_revid_db($tab['sourcetitle']);
-    // ---
     if (empty($revid)) {
         $tab['empty revid'] = 'Can not get revid from all_pages_revids.json';
         $revid = $request['revid'] ?? $request['revision'] ?? '';
     }
-    // ---
     $tab['revid'] = $revid;
-    // ---
     $hashtag = determineHashtag($tab['title'], $user);
-    // ---
     $tab['summary'] = make_summary($revid, $tab['sourcetitle'], $tab['lang'], $hashtag);
-    // ---
     // file_put_contents(__DIR__ . '/post.log', print_r(getallheaders(), true));
-    // ---
     $newtext = text_changes($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $revid);
-    // ---
     if (!empty($newtext)) {
-        // ---
         $tab['fix_refs'] = ($newtext != $text) ? 'yes' : 'no';
-        // ---
         $text = $newtext;
     }
-    // ---
     $editit = processEdit($request, $access, $text, $user, $tab, $rand_id);
-    // ---
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
-    // ---
     print(json_encode($editit, JSON_PRETTY_PRINT));
-    // ---
     // file_put_contents(__DIR__ . '/editit.json', json_encode($editit, JSON_PRETTY_PRINT));
 }
 
 
 function start($request)
 {
-    // ---
     $rand_id = time() .  "-" . bin2hex(random_bytes(6));
-    // ---
     $user = formatUser($request['user'] ?? '');
     $title = formatTitle($request['title'] ?? '');
-    // ---
     $tab = [
         'title' => $title,
         'summary' => "",
@@ -136,13 +109,10 @@ function start($request)
         'edit' => [],
         'sourcetitle' => $request['sourcetitle'] ?? ''
     ];
-    // ---
     $access = get_access_from_db_new($user);
-    // ---
     if (empty($access)) {
         $access = get_access_from_db($user);
     }
-    // ---
     if (empty($access)) {
         handleNoAccess($user, $tab, $rand_id);
     } else {

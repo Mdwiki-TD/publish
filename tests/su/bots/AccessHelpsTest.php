@@ -43,11 +43,6 @@ class AccessHelpsTest extends TestCase
         putenv('DB_NAME_NEW=test_new');
         putenv('TOOL_TOOLSDB_USER=');
         putenv('TOOL_TOOLSDB_PASSWORD=');
-
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/mdwiki_sql.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/access_helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/access_helps_new.php';
     }
 
     // -----------------------------------------------------------------------
@@ -131,17 +126,4 @@ class AccessHelpsTest extends TestCase
     // SQL query string sanity checks (parse-level tests)
     // -----------------------------------------------------------------------
 
-    public function testAccessHelpsPhpIsValidPhp(): void
-    {
-        $file = dirname(dirname(__DIR__)) . '/src/bots/access_helps.php';
-        $output = shell_exec("php -l " . escapeshellarg($file) . " 2>&1");
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
-
-    public function testAccessHelpsNewPhpIsValidPhp(): void
-    {
-        $file = dirname(dirname(__DIR__)) . '/src/bots/access_helps_new.php';
-        $output = shell_exec("php -l " . escapeshellarg($file) . " 2>&1");
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
 }

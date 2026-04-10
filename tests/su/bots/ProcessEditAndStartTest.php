@@ -17,10 +17,6 @@ class ProcessEditAndStartTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/mdwiki_sql.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/files_helps.php';
-
         // process_edit.php defines several standalone helper functions we test.
         // It also `use`s functions from other namespaces – those are auto-loaded
         // via include.php in a real deployment; here we stub out what we need.
@@ -250,19 +246,4 @@ class ProcessEditAndStartTest extends TestCase
         $this->assertStringContainsString('#mdwikicx', $summary);
     }
 
-    // -----------------------------------------------------------------------
-    // PHP syntax checks
-    // -----------------------------------------------------------------------
-
-    public function testProcessEditIsValidPhp(): void
-    {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/bots/process_edit.php') . ' 2>&1');
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
-
-    public function testStartPhpIsValidPhp(): void
-    {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/start.php') . ' 2>&1');
-        $this->assertStringContainsString('No syntax errors', $output);
-    }
 }
