@@ -11,7 +11,11 @@ if ($env === 'development' && file_exists(__DIR__ . '/load_env.php')) {
 include_once __DIR__ . '/config.php';
 include_once __DIR__ . '/cors.php';
 include_once __DIR__ . '/text_edit.php';
-include_once __DIR__ . '/start.php';
+include_once __DIR__ . '/utils/start_utils.php';
+
+include_once __DIR__ . '/process/process_db_log.php';
+include_once __DIR__ . '/process/process_edit.php';
+include_once __DIR__ . '/process/start.php';
 
 include_once __DIR__ . '/sql/access_helps.php';
 include_once __DIR__ . '/sql/add_to_db.php';

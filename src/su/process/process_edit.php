@@ -14,53 +14,9 @@ use function Publish\AccessHelps\get_user_access;
 use function Publish\WikiApi\GetTitleInfo;
 use function Publish\EditProcess\add_to_db;
 use function Publish\DoEdit\publish_do_edit;
+use function Publish\StartUtils\get_errors_file;
+use function Publish\StartUtils\prepareApiParams;
 
-function get_errors_file($editit, $place_holder)
-{
-    $to_do_file = $place_holder;
-    $errs_main = [
-        "protectedpage",
-        "titleblacklist",
-        "ratelimited",
-        "editconflict",
-        "spam filter",
-        "abusefilter",
-        "mwoauth-invalid-authorization",
-    ];
-    $errs_wd = [
-        'Links to user pages' => "wd_user_pages",
-        'get_csrftoken' => "wd_csrftoken",
-        'protectedpage' => "wd_protectedpage",
-    ];
-    $errs = ($place_holder == "errors") ? $errs_main : $errs_wd;
-    $c_text = json_encode($editit);
-    foreach ($errs as $err) {
-        if (strpos($c_text, $err) !== false) {
-            $to_do_file = $err;
-            break;
-        }
-    }
-    return $to_do_file;
-}
-
-function prepareApiParams($title, $summary, $text, $request)
-{
-    $apiParams = [
-        'action' => 'edit',
-        'title' => $title,
-        // 'section' => 'new',
-        'summary' => $summary,
-        'text' => $text,
-        'format' => 'json',
-    ];
-
-    // wpCaptchaId, wpCaptchaWord
-    if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
-        $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
-        $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
-    }
-    return $apiParams;
-}
 
 function shouldAddedToWikidata($lang, $title)
 {

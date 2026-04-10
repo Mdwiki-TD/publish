@@ -1,11 +1,5 @@
 <?php
 
-$oauthUrl = 'https://meta.wikimedia.org/w/index.php?title=Special:OAuth';
-
-// Make the api.php URL from the OAuth URL.
-$apiUrl = preg_replace('/index\.php.*/', 'api.php', $oauthUrl);
-$domain = $_SERVER['SERVER_NAME'] ?? 'localhost';
-
 use Defuse\Crypto\Key;
 
 // ----------------
