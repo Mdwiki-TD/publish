@@ -59,16 +59,24 @@ function get_errors_file($editit, $place_holder)
         "mwoauth-invalid-authorization",
     ];
     $errs_wd = [
-        'Links to user pages' => "wd_user_pages",
-        'get_csrftoken' => "wd_csrftoken",
-        'protectedpage' => "wd_protectedpage",
+        "Links to user pages" => "wd_user_pages",
+        "get_csrftoken" => "wd_csrftoken",
+        "protectedpage" => "wd_protectedpage",
     ];
-    $errs = ($place_holder == "errors") ? $errs_main : $errs_wd;
     $c_text = json_encode($editit);
-    foreach ($errs as $err) {
-        if (strpos($c_text, $err) !== false) {
-            $to_do_file = $err;
-            break;
+    if ($place_holder == "errors") {
+        foreach ($errs_main as $err) {
+            if (strpos($c_text, $err) !== false) {
+                $to_do_file = $err;
+                break;
+            }
+        }
+    } else {
+        foreach ($errs_wd as $pattern => $result) {
+            if (strpos($c_text, $pattern) !== false) {
+                $to_do_file = $result;
+                break;
+            }
         }
     }
     return $to_do_file;
