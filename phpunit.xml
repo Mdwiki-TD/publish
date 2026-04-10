@@ -7,7 +7,7 @@
     displayDetailsOnTestsThatTriggerWarnings="true"
     colors="true"
     stopOnFailure="false"
-    testdox="false"
+    testdox="true"
     cacheDirectory=".phpunit.cache"
     executionOrder="depends,defects"
     beStrictAboutOutputDuringTests="true"
