@@ -156,7 +156,7 @@ class StartUtilsTest extends TestCase
     {
         $editResult = ['error' => 'protectedpage'];
         $result = \Publish\StartUtils\get_errors_file($editResult, 'wd_errors');
-        $this->assertEquals('wd_errors', $result);
+        $this->assertEquals('wd_protectedpage', $result);
     }
 
 

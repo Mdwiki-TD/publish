@@ -64,8 +64,8 @@ class WdUnitTest extends TestCase
 
         $result = \Publish\WD\getAccessCredentials(
             'alice',
-            '',
-            '',
+            null,
+            null,
             $dbNew,
             $this->noop(),
             $this->noop()
@@ -110,7 +110,7 @@ class WdUnitTest extends TestCase
 
         $result = \Publish\WD\getAccessCredentials(
             'user',
-            'has_key',
+            '',
             '',
             $dbNew,
             $this->noop(),
@@ -131,10 +131,10 @@ class WdUnitTest extends TestCase
             'fr',
             'user',
             'z00',
-            '',
-            '',
+            'my_key',
+            'my_secret',
             $this->returns([['qid' => 'Q999']]),                           // getQid
-            $this->returns(['key', 'secret']),                            // getCreds
+            $this->noop(),                                                 // getCreds
             $this->returns(['success' => 1, 'pageinfo' => []]),           // linkIt
             $this->noop()
         );
@@ -150,10 +150,10 @@ class WdUnitTest extends TestCase
             'fr',
             'user',
             'z00',
-            '',
-            '',
+            'my_key',
+            'my_secret',
             $this->returns([['qid' => 'Q888']]),
-            $this->returns(['key', 'secret']),
+            $this->noop(),
             $this->returns(['error' => ['code' => 'protectedpage']]),
             $this->noop()
         );
@@ -172,7 +172,7 @@ class WdUnitTest extends TestCase
             '',
             '',
             $this->returns([]),
-            $this->returns(null),   // getCreds → null
+            $this->returns(null),
             $this->noop(),
             $this->noop()
         );
@@ -190,16 +190,19 @@ class WdUnitTest extends TestCase
             'de',
             'user',
             'Douglas Adams (de)',
-            '',
-            '',
+            'k',
+            's',
             $this->returns([['qid' => 'Q42']]),
-            $this->returns(['k', 's']),
+            $this->noop(),
             $this->capture($capturedArgs, ['success' => 1]),
             $this->noop()
         );
 
-        // $capturedArgs[0] = $qid
-        $this->assertSame('Q42', $capturedArgs[0]);
+        $this->assertIsArray($capturedArgs[0]);
+        $this->assertSame('wbsetsitelink', $capturedArgs[0]['action']);
+        $this->assertSame('Douglas Adams (de)', $capturedArgs[0]['linktitle']);
+        $this->assertSame('dewiki', $capturedArgs[0]['linksite']);
+        $this->assertSame('Q42', $capturedArgs[0]['id']);
     }
 
     public function testLinkToWikidataUsesEmptyQidWhenNotInDb(): void
@@ -211,15 +214,20 @@ class WdUnitTest extends TestCase
             'ja',
             'user',
             '未知',
-            '',
-            '',
-            $this->returns([]),        // No QID in DB
-            $this->returns(['k', 's']),
+            'k',
+            's',
+            $this->returns([]),
+            $this->noop(),
             $this->capture($capturedArgs, ['success' => 1]),
             $this->noop()
         );
 
-        $this->assertSame('', $capturedArgs[0]); // empty qid
+        $this->assertIsArray($capturedArgs[0]);
+        $this->assertSame('wbsetsitelink', $capturedArgs[0]['action']);
+        $this->assertSame('未知', $capturedArgs[0]['linktitle']);
+        $this->assertSame('jawiki', $capturedArgs[0]['linksite']);
+        $this->assertSame('UnknownTitle', $capturedArgs[0]['title']);
+        $this->assertSame('enwiki', $capturedArgs[0]['site']);
     }
 
     public function testLinkToWikidataAlwaysAttachesQidToResult(): void
@@ -229,14 +237,15 @@ class WdUnitTest extends TestCase
             'ar',
             'user',
             'title',
-            '',
-            '',
+            'my_key',
+            'my_secret',
             $this->returns([['qid' => 'Q77']]),
-            $this->returns(['k', 's']),
+            $this->noop(),
             $this->returns(['error' => ['code' => 'badtoken']]),
             $this->noop()
         );
 
+        $this->assertArrayHasKey('error', $result);
         $this->assertSame('Q77', $result['qid']);
     }
 }
