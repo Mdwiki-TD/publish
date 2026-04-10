@@ -64,8 +64,8 @@ class WdUnitTest extends TestCase
 
         $result = \Publish\WD\getAccessCredentials(
             'alice',
-            null,
-            null,
+            '',
+            '',
             $dbNew,
             $this->noop(),
             $this->noop()
@@ -79,9 +79,9 @@ class WdUnitTest extends TestCase
         $dbOld = $this->returns(['access_key' => 'old_k', 'access_secret' => 'old_s']);
 
         $result = \Publish\WD\getAccessCredentials(
-            'bob',
-            null,
-            null,
+            'user',
+            '',
+            '',
             $this->returns([]),
             $dbOld,
             $this->noop()
