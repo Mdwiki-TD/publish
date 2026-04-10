@@ -3,56 +3,18 @@
 namespace Publish\WD;
 /*
 use function Publish\WD\LinkToWikidata;
-use function Publish\WD\GetTitleInfo;
-use function Publish\WD\GetQidForMdtitle;
 */
 
-use function Publish\GetToken\post_params;
-use function Publish\MdwikiSql\fetch_query;
-use function Publish\AccessHelps\get_access_from_db;
-use function Publish\AccessHelpsNew\get_access_from_db_new;
+use function Publish\Sql\GetQidForMdtitle;
+use function Publish\MediaWikiClient\post_params;
+use function Publish\AccessHelps\get_user_access;
 use function Publish\Helps\pub_test_print;
-use function Publish\Helps\get_url_curl;
 
-
-function GetQidForMdtitle($title)
-{
-    $query = <<<SQL
-        SELECT qid FROM qids WHERE title = ?
-    SQL;
-    $params = [$title];
-    $result = fetch_query($query, $params);
-    return $result;
-}
-
-
-function GetTitleInfo($targettitle, $lang)
-{
-    $params = [
-        "action" => "query",
-        "format" => "json",
-        "titles" => $targettitle,
-        "utf8" => 1,
-        "formatversion" => "2"
-    ];
-    $url = "https://$lang.wikipedia.org/w/api.php" . "?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-    pub_test_print("GetTitleInfo url: $url");
-    try {
-        $result = get_url_curl($url);
-        pub_test_print("GetTitleInfo result: $result");
-        $result = json_decode($result, true);
-        // { "query": { "pages": [ { "pageid": 5049507, "ns": 2, "title": "利用者:Mr. Ibrahem/オランザピン/サミドルファン" } ] } }
-        $result = $result['query']['pages'][0];
-    } catch (\Exception $e) {
-        pub_test_print("GetTitleInfo: $e");
-        $result = null;
-    }
-    return $result;
-}
 
 function LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_secret)
 {
-    $https_domain = "https://www.wikidata.org";
+    $wikidata_domain = getenv('WIKIDATA_DOMAIN') ?: ($_ENV['WIKIDATA_DOMAIN'] ?? 'www.wikidata.org');
+    $https_domain = "https://$wikidata_domain";
     $apiParams = [
         "action" => "wbsetsitelink",
         "linktitle" => $targettitle,
@@ -80,10 +42,7 @@ function LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_se
 function getAccessCredentials($user, $access_key, $access_secret)
 {
     if (!$access_key || !$access_secret) {
-        $access = get_access_from_db_new($user);
-        if (empty($access)) {
-            $access = get_access_from_db($user);
-        }
+        $access = get_user_access($user);
         if (empty($access)) {
             pub_test_print("user = $user");
             pub_test_print("access == null");

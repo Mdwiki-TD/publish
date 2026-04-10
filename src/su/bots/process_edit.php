@@ -7,15 +7,13 @@ use function Publish\EditProcess\processEdit;
 */
 
 use function Publish\Helps\pub_test_print;
-use function Publish\DoEdit\publish_do_edit;
-use function Publish\AddToDb\InsertPageTarget;
-use function Publish\AddToDb\retrieveCampaignCategories;
+use function Publish\AddToDb\InsertPublishReports;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
-use function Publish\AccessHelpsNew\get_access_from_db_new;
-use function Publish\AccessHelps\get_access_from_db;
-use function Publish\AddToDb\InsertPublishReports;
-use function Publish\WD\GetTitleInfo;
+use function Publish\AccessHelps\get_user_access;
+use function Publish\WikiApi\GetTitleInfo;
+use function Publish\EditProcess\add_to_db;
+use function Publish\DoEdit\publish_do_edit;
 
 function get_errors_file($editit, $place_holder)
 {
@@ -45,17 +43,46 @@ function get_errors_file($editit, $place_holder)
     return $to_do_file;
 }
 
-function retryWithFallbackUser($sourcetitle, $lang, $title, $user, $original_error)
+function prepareApiParams($title, $summary, $text, $request)
+{
+    $apiParams = [
+        'action' => 'edit',
+        'title' => $title,
+        // 'section' => 'new',
+        'summary' => $summary,
+        'text' => $text,
+        'format' => 'json',
+    ];
+
+    // wpCaptchaId, wpCaptchaWord
+    if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
+        $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
+        $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
+    }
+    return $apiParams;
+}
+
+function shouldAddedToWikidata($lang, $title)
+{
+    $page_informations = GetTitleInfo($title, $lang);
+    if (!$page_informations) {
+        return false;
+    }
+    $page_namespace = $page_informations["ns"] ?? null;
+    if ($page_namespace == 2) {
+        // skip link to wd for user pages
+        return false;
+    }
+    return true;
+}
+
+function retryWithFallbackUser($sourcetitle, $lang, $title, $user)
 {
     $LinkTowd = [];
     pub_test_print("get_csrftoken failed for user: $user, retrying with Mr. Ibrahem");
 
     // Retry with "Mr. Ibrahem" credentials - get fresh credentials from database
-    $fallback_access = get_access_from_db_new('Mr. Ibrahem');
-
-    if (empty($fallback_access)) {
-        $fallback_access = get_access_from_db('Mr. Ibrahem');
-    }
+    $fallback_access = get_user_access('Mr. Ibrahem');
 
     if (!empty($fallback_access)) {
         $fallback_access_key = $fallback_access['access_key'];
@@ -73,32 +100,21 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user, $original_err
     return $LinkTowd;
 }
 
-function shouldAddedToWikidata($lang, $title)
-{
-    $page_informations = GetTitleInfo($title, $lang);
-    if (!$page_informations) {
-        return false;
-    }
-    $page_namespace = $page_informations["ns"] ?? null;
-    if ($page_namespace == 2) {
-        // skip link to wd for user pages
-        return false;
-    }
-    return true;
-}
-
-function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id)
+function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand_id)
 {
     if (!shouldAddedToWikidata($lang, $title)) {
         // skip link to wd for user pages
         return ["error" => "skip link to wd for user pages"];
     }
     $LinkTowd = [];
+    $access_key = $access['access_key'];
+    $access_secret = $access['access_secret'];
+
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access_key, $access_secret) ?? [];
         // Check if the error is get_csrftoken failure and user is not already "Mr. Ibrahem"
         if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'get_csrftoken failed' && $user !== 'Mr. Ibrahem') {
-            $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user, $LinkTowd['error']);
+            $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user);
         }
         // Log errors if they still exist after retry
     } catch (\Exception $e) {
@@ -123,39 +139,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $
     return $LinkTowd;
 }
 
-function prepareApiParams($title, $summary, $text, $request)
-{
-    $apiParams = [
-        'action' => 'edit',
-        'title' => $title,
-        // 'section' => 'new',
-        'summary' => $summary,
-        'text' => $text,
-        'format' => 'json',
-    ];
-
-    // wpCaptchaId, wpCaptchaWord
-    if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
-        $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
-        $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
-    }
-    return $apiParams;
-}
-
-function add_to_db($title, $lang, $user, $wd_result, $campaign, $sourcetitle, $mdwiki_revid)
-{
-    $camp_to_cat = retrieveCampaignCategories();
-    $cat = $camp_to_cat[$campaign] ?? '';
-    $to_users_table = false;
-    // if $wd_result has "abusefilter-warning-39" then $to_users_table = true
-    if (strpos(json_encode($wd_result), "abusefilter-warning-39") !== false) {
-        $to_users_table = true;
-    }
-    $is_user_page = InsertPageTarget($sourcetitle, 'lead', $cat, $lang, $user, "", $title, $to_users_table, $mdwiki_revid);
-    return $is_user_page;
-}
-
-function processEdit($request, $access, $text, $user, $tab, $rand_id)
+function processEdit($request, $access, $text, $user, $tab, $rand_id, $tr_type)
 {
     $sourcetitle = $tab['sourcetitle'];
     $lang = $tab['lang'];
@@ -166,12 +150,9 @@ function processEdit($request, $access, $text, $user, $tab, $rand_id)
 
     $apiParams = prepareApiParams($title, $summary, $text, $request);
 
-    $access_key = $access['access_key'];
-    $access_secret = $access['access_secret'];
-
     $apiParams["text"] = $text;
 
-    $editit = publish_do_edit($apiParams, $lang, $access_key, $access_secret);
+    $editit = publish_do_edit($apiParams, $lang, $access);
 
     $Success = $editit['edit']['result'] ?? '';
     $is_captcha = $editit['edit']['captcha'] ?? null;
@@ -180,9 +161,18 @@ function processEdit($request, $access, $text, $user, $tab, $rand_id)
 
     $to_do_file = "";
 
+    $words = $tab["words"];
+
     if ($Success === 'Success') {
-        $editit['LinkToWikidata'] = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access_key, $access_secret, $rand_id);
-        $editit['sql_result'] = add_to_db($title, $lang, $user, $editit['LinkToWikidata'], $campaign, $sourcetitle, $mdwiki_revid);
+        $linktowikidata = handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand_id);
+        $editit['LinkToWikidata'] = $linktowikidata;
+
+        $to_users_table = false;
+        // if $wd_result has "abusefilter-warning-39" then $to_users_table = true
+        if (strpos(json_encode($linktowikidata), "abusefilter-warning-39") !== false) {
+            $to_users_table = true;
+        }
+        $editit['sql_result'] = add_to_db($title, $lang, $user, $to_users_table, $campaign, $sourcetitle, $mdwiki_revid, $words, $tr_type);
         $to_do_file = "success";
     } else if ($is_captcha) {
         $to_do_file = "captcha";

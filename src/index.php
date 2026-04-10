@@ -8,8 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+include_once __DIR__ . '/su/include.php';
+
+use function Publish\Start\start;
+
 /*
-include_once __DIR__ . '/su/cors.php';
 
 use function Publish\CORS\is_allowed;
 
@@ -22,8 +25,5 @@ if (!$alowed) {
 }
 header("Access-Control-Allow-Origin: https://$alowed");
 */
-
-include_once __DIR__ . '/su/include.php';
-include_once __DIR__ . '/su/start.php';
 
 start($_POST);

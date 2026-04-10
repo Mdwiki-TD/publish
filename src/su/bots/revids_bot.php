@@ -8,7 +8,7 @@ use function Publish\Revids\get_revid;
 */
 
 use function Publish\Helps\pub_test_print;
-use function Publish\Helps\get_url_curl;
+use function Publish\CurlRequests\get_url_curl;
 
 function get_revid_db($sourcetitle)
 {

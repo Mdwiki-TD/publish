@@ -9,7 +9,6 @@ use function Publish\CORS\is_allowed;
 */
 
 
-
 function is_allowed()
 {
     $domains = ['medwiki.toolforge.org', 'mdwikicx.toolforge.org'];
