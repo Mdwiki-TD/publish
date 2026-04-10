@@ -28,10 +28,6 @@ class AddToDbTest extends TestCase
         // Point the source at our stub via the path constant the file checks
         // The file checks two hard-coded paths; neither will exist, so $Words_table = []
         // That is fine for our tests.
-
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/mdwiki_sql.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/add_to_db.php';
     }
 
     // -----------------------------------------------------------------------

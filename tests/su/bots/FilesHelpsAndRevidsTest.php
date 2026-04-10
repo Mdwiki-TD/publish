@@ -19,7 +19,7 @@ class FilesHelpsAndRevidsTest extends TestCase
         $reportsPath = sys_get_temp_dir() . '/publish_reports_phpunit';
         putenv('PUBLISH_REPORTS_PATH=' . $reportsPath);
 
-        require_once dirname(dirname(__DIR__)) . '/src/su/bots/files_helps.php';
+        require_once dirname(dirname(dirname(__DIR__))) . '/src/su/bots/files_helps.php';
     }
 
     public function testToDoWritesJsonFile(): void

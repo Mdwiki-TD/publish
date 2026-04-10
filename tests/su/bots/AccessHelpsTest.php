@@ -43,11 +43,6 @@ class AccessHelpsTest extends TestCase
         putenv('DB_NAME_NEW=test_new');
         putenv('TOOL_TOOLSDB_USER=');
         putenv('TOOL_TOOLSDB_PASSWORD=');
-
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/mdwiki_sql.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/access_helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/access_helps_new.php';
     }
 
     // -----------------------------------------------------------------------

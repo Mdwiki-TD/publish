@@ -17,10 +17,6 @@ class ProcessEditAndStartTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/mdwiki_sql.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/files_helps.php';
-
         // process_edit.php defines several standalone helper functions we test.
         // It also `use`s functions from other namespaces – those are auto-loaded
         // via include.php in a real deployment; here we stub out what we need.
