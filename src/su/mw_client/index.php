@@ -87,9 +87,10 @@ function post_params($apiParams, $https_domain, $access_key, $access_secret)
     }
 
     $apiParams["format"] = "json";
-    $apiParams["token"] = $csrftoken;
 
     pub_test_print("post_params: apiParams:" . json_encode($apiParams, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+
+    $apiParams["token"] = $csrftoken;
 
     $response = $client->makeOAuthCall($accessToken, $apiUrl, true, $apiParams);
 
