@@ -109,7 +109,11 @@ function del_access_from_db_new($user)
 function get_user_access($user)
 {
     $access = get_access_from_db_new($user);
-    if (empty($access)) {
+    if (
+        empty($access)
+        || empty($access['access_key'] ?? '')
+        || empty($access['access_secret'] ?? '')
+    ) {
         $access = get_access_from_db($user);
     }
     return $access;
