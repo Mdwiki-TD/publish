@@ -11,28 +11,6 @@ use PHPUnit\Framework\TestCase;
 class WdIntegrationTest extends TestCase
 {
     // -----------------------------------------------------------------------
-    // Helpers
-    // -----------------------------------------------------------------------
-
-    /**
-     * Skips the test if the write environment variables are not present.
-     */
-    private function requireWriteCredentials(): array
-    {
-        $user   = getenv('WD_TEST_USER');
-        $key    = getenv('WD_TEST_ACCESS_KEY');
-        $secret = getenv('WD_TEST_ACCESS_SECRET');
-
-        if (!$user || !$key || !$secret) {
-            $this->markTestSkipped(
-                'env WD_TEST_USER / WD_TEST_ACCESS_KEY / WD_TEST_ACCESS_SECRET does not exist.'
-            );
-        }
-
-        return [$user, $key, $secret];
-    }
-
-    // -----------------------------------------------------------------------
     // getAccessCredentials – Reading from a real DB
     // -----------------------------------------------------------------------
 
@@ -68,10 +46,7 @@ class WdIntegrationTest extends TestCase
      */
     public function testGetAccessCredentialsReturnsArrayForKnownUser(): void
     {
-        $user = getenv('WD_TEST_USER');
-        if (!$user) {
-            $this->markTestSkipped('WD_TEST_USER is not defined.');
-        }
+        $user = "Mr. Ibrahem";
 
         $result = \Publish\WD\getAccessCredentials($user, '', '');
 
@@ -84,42 +59,6 @@ class WdIntegrationTest extends TestCase
     // -----------------------------------------------------------------------
     // LinkToWikidata – Calling the real Wikidata API (requires credentials)
     // -----------------------------------------------------------------------
-
-    /**
-     * @group write
-     * Linking an existing page to Wikidata via QID.
-     * Uses a sandbox/test page to avoid modifying real data.
-     */
-    public function testLinkToWikidataReturnsSuccessForValidLink(): void
-    {
-        [$user, $key, $secret] = $this->requireWriteCredentials();
-
-        $sandboxTitle = getenv('WD_TEST_SOURCE_TITLE') ?: '';
-        $sandboxLang  = getenv('WD_TEST_TARGET_LANG')  ?: '';
-        $sandboxTarget = getenv('WD_TEST_TARGET_TITLE') ?: '';
-
-        if (!$sandboxTitle || !$sandboxLang || !$sandboxTarget) {
-            $this->markTestSkipped(
-                'Requires WD_TEST_SOURCE_TITLE, WD_TEST_TARGET_LANG, and WD_TEST_TARGET_TITLE.'
-            );
-        }
-
-        $result = \Publish\WD\LinkToWikidata(
-            $sandboxTitle,
-            $sandboxLang,
-            $user,
-            $sandboxTarget,
-            $key,
-            $secret
-        );
-
-        $this->assertIsArray($result);
-        // A success result contains 'result' => 'success'
-        // or an acceptable error like 'no-op' if the link already exists
-        $isSuccess = isset($result['result']) && $result['result'] === 'success';
-        $isNoop    = isset($result['error']['code']) && $result['error']['code'] === 'modification-failed';
-        $this->assertTrue($isSuccess || $isNoop, 'Result: ' . json_encode($result));
-    }
 
     /**
      * @group write

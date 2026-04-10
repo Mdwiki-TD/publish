@@ -88,10 +88,9 @@ function get_access_from_db_new($user)
 
     if (!$result) return [];
 
-    $result = $result[0];
     return [
-        'access_key' => decode_value($result['a_k'], "decrypt"),
-        'access_secret' => decode_value($result['a_s'], "decrypt")
+        'access_key' => decode_value($result[0]['a_k'], "decrypt"),
+        'access_secret' => decode_value($result[0]['a_s'], "decrypt")
     ];
 }
 

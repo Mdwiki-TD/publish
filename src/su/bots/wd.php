@@ -13,16 +13,21 @@ use function Publish\Helps\pub_test_print;
 
 function getAccessCredentials($user, $access_key, $access_secret)
 {
-    if (!$access_key || !$access_secret) {
-        $access = get_user_access($user);
-        if (empty($access)) {
-            pub_test_print("user = $user");
-            pub_test_print("access == null");
-            return null;
-        }
-        $access_key = $access['access_key'];
-        $access_secret = $access['access_secret'];
+    if ($access_key && $access_secret) {
+        return [$access_key, $access_secret];
     }
+
+    $access = get_user_access($user);
+
+    if (empty($access)) {
+        pub_test_print("user = $user");
+        pub_test_print("access == null");
+        return null;
+    }
+
+    $access_key = $access['access_key'];
+    $access_secret = $access['access_secret'];
+
     return [$access_key, $access_secret];
 }
 
