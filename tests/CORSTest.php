@@ -6,7 +6,7 @@ namespace Publish\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-include_once dirname(__DIR__) . '/src/bots/cors.php';
+include_once dirname(__DIR__) . '/src/su/cors.php';
 
 final class CORSTest extends TestCase
 {

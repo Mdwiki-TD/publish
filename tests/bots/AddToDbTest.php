@@ -29,9 +29,9 @@ class AddToDbTest extends TestCase
         // The file checks two hard-coded paths; neither will exist, so $Words_table = []
         // That is fine for our tests.
 
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/mdwiki_sql.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/add_to_db.php';
+        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/helps.php';
+        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/mdwiki_sql.php';
+        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/add_to_db.php';
     }
 
     // -----------------------------------------------------------------------
@@ -118,7 +118,7 @@ class AddToDbTest extends TestCase
 
     public function testAddToDbIsValidPhp(): void
     {
-        $file   = dirname(dirname(__DIR__)) . '/src/bots/add_to_db.php';
+        $file   = dirname(dirname(__DIR__)) . '/src/su/bots/add_to_db.php';
         $output = shell_exec("php -l " . escapeshellarg($file) . " 2>&1");
         $this->assertStringContainsString('No syntax errors', $output);
     }

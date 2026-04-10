@@ -19,7 +19,7 @@ class FilesHelpsAndRevidsTest extends TestCase
         $reportsPath = sys_get_temp_dir() . '/publish_reports_phpunit';
         putenv('PUBLISH_REPORTS_PATH=' . $reportsPath);
 
-        require_once dirname(dirname(__DIR__)) . '/src/bots/files_helps.php';
+        require_once dirname(dirname(__DIR__)) . '/src/su/bots/files_helps.php';
     }
 
     public function testToDoWritesJsonFile(): void
@@ -132,13 +132,13 @@ class FilesHelpsAndRevidsTest extends TestCase
 
     public function testFilesHelpsIsValidPhp(): void
     {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/bots/files_helps.php') . ' 2>&1');
+        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/bots/files_helps.php') . ' 2>&1');
         $this->assertStringContainsString('No syntax errors', $output);
     }
 
     public function testRevidsIsValidPhp(): void
     {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/bots/revids_bot.php') . ' 2>&1');
+        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/bots/revids_bot.php') . ' 2>&1');
         $this->assertStringContainsString('No syntax errors', $output);
     }
 }

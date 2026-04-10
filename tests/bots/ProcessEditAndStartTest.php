@@ -17,9 +17,9 @@ class ProcessEditAndStartTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/helps.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/mdwiki_sql.php';
-        // require_once dirname(dirname(__DIR__)) . '/src/bots/files_helps.php';
+        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/helps.php';
+        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/mdwiki_sql.php';
+        // require_once dirname(dirname(__DIR__)) . '/src/su/bots/files_helps.php';
 
         // process_edit.php defines several standalone helper functions we test.
         // It also `use`s functions from other namespaces – those are auto-loaded
@@ -256,7 +256,7 @@ class ProcessEditAndStartTest extends TestCase
 
     public function testProcessEditIsValidPhp(): void
     {
-        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/bots/process_edit.php') . ' 2>&1');
+        $output = shell_exec('php -l ' . escapeshellarg(dirname(dirname(__DIR__)) . '/src/su/bots/process_edit.php') . ' 2>&1');
         $this->assertStringContainsString('No syntax errors', $output);
     }
 

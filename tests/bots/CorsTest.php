@@ -5,7 +5,7 @@ namespace Tests\Bots;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for src/bots/cors.php
+ * Tests for src/su/cors.php
  *
  * The file declares Publish\CORS\is_allowed(), which checks whether the
  * incoming request originates from one of the whitelisted domains.
@@ -21,7 +21,7 @@ class CorsTest extends TestCase
     private function loadCors(): void
     {
         // Include only once per process; subsequent includes are no-ops.
-        require_once dirname(dirname(__DIR__)) . '/src/bots/cors.php';
+        require_once dirname(dirname(__DIR__)) . '/src/su/cors.php';
     }
 
     // -------------------------------------------------------------------------
