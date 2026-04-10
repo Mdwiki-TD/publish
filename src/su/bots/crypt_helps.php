@@ -10,29 +10,28 @@ use function Publish\CryptHelps\decode_value;
 use Defuse\Crypto\Crypto;
 
 
-function decode_value($value, $key_type = "cookie")
+function decode_value($value)
 {
-    global $cookie_key, $decrypt_key;
+    global $decrypt_key;
 
     if (empty(trim($value))) return "";
 
-    $use_key = ($key_type == "decrypt") ? $decrypt_key : $cookie_key;
+    $key = $decrypt_key ?: $GLOBALS['decrypt_key'];
     try {
-        return Crypto::decrypt($value, $use_key);
+        return Crypto::decrypt($value, $key);
     } catch (\Exception $e) {
         return "";
     }
 }
 
-function encode_value($value, $key_type = "cookie")
+function encode_value($value)
 {
-    global $cookie_key, $decrypt_key;
+    global $decrypt_key;
     if (empty(trim($value))) return "";
 
-    $use_key = ($key_type == "decrypt") ? $decrypt_key : $cookie_key;
-
+    $key = $decrypt_key ?: $GLOBALS['decrypt_key'];
     try {
-        return Crypto::encrypt($value, $use_key);
+        return Crypto::encrypt($value, $key);
     } catch (\Exception $e) {
         return "";
     };

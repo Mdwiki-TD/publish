@@ -6,7 +6,6 @@ use Defuse\Crypto\Key;
 // ----------------
 $CONSUMER_KEY        = getenv("CONSUMER_KEY") ?: '';
 $CONSUMER_SECRET     = getenv("CONSUMER_SECRET") ?: '';
-$_cookie_key_str     = getenv("COOKIE_KEY") ?: '';
 $_decrypt_key_str    = getenv("DECRYPT_KEY") ?: '';
 // ----------------
 // ----------------
@@ -18,5 +17,4 @@ if ((empty($CONSUMER_KEY) || empty($CONSUMER_SECRET)) && getenv("APP_ENV") === "
     exit(0);
 }
 
-$cookie_key  = $_cookie_key_str ? Key::loadFromAsciiSafeString($_cookie_key_str) : null;
 $decrypt_key = $_decrypt_key_str ? Key::loadFromAsciiSafeString($_decrypt_key_str) : null;

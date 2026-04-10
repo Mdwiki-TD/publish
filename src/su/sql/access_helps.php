@@ -30,7 +30,7 @@ function get_user_id($user)
     }
     foreach ($result as $row) {
         $user_id = $row['id'];
-        $user_db = decode_value($row['u_n'], 'decrypt');
+        $user_db = decode_value($row['u_n']);
         if ($user_db == $user) {
             $user_ids_cache[$user] = $user_id;
             return $user_id;
@@ -89,8 +89,8 @@ function get_access_from_db_new($user)
     if (!$result) return [];
 
     return [
-        'access_key' => decode_value($result[0]['a_k'], "decrypt"),
-        'access_secret' => decode_value($result[0]['a_s'], "decrypt")
+        'access_key' => decode_value($result[0]['a_k']),
+        'access_secret' => decode_value($result[0]['a_s'])
     ];
 }
 

@@ -25,15 +25,12 @@ use PDO;
 class AccessHelpsTest extends TestCase
 {
     private static PDO $pdo;
-    private static Key $cookieKey;
     private static Key $decryptKey;
 
     public static function setUpBeforeClass(): void
     {
-        self::$cookieKey  = Key::createNewRandomKey();
         self::$decryptKey = Key::createNewRandomKey();
 
-        $GLOBALS['cookie_key']  = self::$cookieKey;
         $GLOBALS['decrypt_key'] = self::$decryptKey;
 
         // Set environment variables to prevent MySQL connection attempts
@@ -48,16 +45,11 @@ class AccessHelpsTest extends TestCase
     // Helpers
     // -----------------------------------------------------------------------
 
-    /** Encrypt a value with the cookie key (simulates what store_access does) */
-    private function cookieEnc(string $v): string
-    {
-        return \Publish\CryptHelps\encode_value($v, 'cookie');
-    }
 
     /** Encrypt a value with the decrypt key (simulates keys_new storage) */
     private function decryptEnc(string $v): string
     {
-        return \Publish\CryptHelps\encode_value($v, 'decrypt');
+        return \Publish\CryptHelps\encode_value($v);
     }
 
     /** Inject the SQLite PDO into a fresh Database instance via reflection */
@@ -78,8 +70,8 @@ class AccessHelpsTest extends TestCase
         $ak = 'my_access_key_123';
         $as = 'my_access_secret_456';
 
-        $encAk = $this->cookieEnc($ak);
-        $encAs = $this->cookieEnc($as);
+        $encAk = $this->decryptEnc($ak);
+        $encAs = $this->decryptEnc($as);
 
         // Simulates what delete_user_access does after fetching encrypted values
         $decoded = [
@@ -106,9 +98,9 @@ class AccessHelpsTest extends TestCase
         $encAs = $this->decryptEnc($as);
         $encUn = $this->decryptEnc($un);
 
-        $this->assertSame($ak, \Publish\CryptHelps\decode_value($encAk, 'decrypt'));
-        $this->assertSame($as, \Publish\CryptHelps\decode_value($encAs, 'decrypt'));
-        $this->assertSame($un, \Publish\CryptHelps\decode_value($encUn, 'decrypt'));
+        $this->assertSame($ak, \Publish\CryptHelps\decode_value($encAk));
+        $this->assertSame($as, \Publish\CryptHelps\decode_value($encAs));
+        $this->assertSame($un, \Publish\CryptHelps\decode_value($encUn));
     }
 
     public function testGetUserIdWithCacheHit(): void

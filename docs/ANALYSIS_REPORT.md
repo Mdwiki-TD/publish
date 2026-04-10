@@ -192,7 +192,7 @@ if (isset($_REQUEST['test'])) {
 $query = "SELECT id, u_n FROM keys_new";
 $result = fetch_query($query);
 foreach ($result as $row) {
-    $user_db = decode_value($row['u_n'], 'decrypt');
+    $user_db = decode_value($row['u_n']);
     if ($user_db == $user) {
 ```
 
@@ -393,7 +393,7 @@ file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_
 **Description:** Extensive use of global variables for configuration:
 
 -   `$consumerKey`, `$consumerSecret`, `$gUserAgent`
--   `$cookie_key`, `$decrypt_key`
+-   `$decrypt_key`
 -   `$rand_id`, `$main_dir_by_day`
 -   `$user_ids_cache`
 

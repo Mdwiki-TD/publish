@@ -37,8 +37,10 @@ function LinkIt($apiParams, $access_key, $access_secret)
     $https_domain = "https://$wikidata_domain";
 
     $response = post_params($apiParams, $https_domain, $access_key, $access_secret);
-
-    $Result = json_decode($response, true) ?? [];
+    $Result = json_decode($response, true);
+    if (!is_array($Result)) {
+        $Result = [];
+    }
     if (isset($Result['error'])) {
         pub_test_print("post_params: Result->error: " . json_encode($Result['error']));
     }
