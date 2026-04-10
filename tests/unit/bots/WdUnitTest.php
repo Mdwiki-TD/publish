@@ -127,10 +127,10 @@ class WdUnitTest extends TestCase
     public function testLinkToWikidataReturnsSuccessOnApiSuccess(): void
     {
         $result = \Publish\WD\LinkToWikidata(
-            'Paracetamol',
+            'z00',
             'fr',
             'user',
-            'Paracétamol',
+            'z00',
             '',
             '',
             $this->returns([['qid' => 'Q999']]),                           // getQid
@@ -146,10 +146,10 @@ class WdUnitTest extends TestCase
     public function testLinkToWikidataPassesThroughApiError(): void
     {
         $result = \Publish\WD\LinkToWikidata(
-            'Paracetamol',
+            'z00',
             'fr',
             'user',
-            'Paracétamol',
+            'z00',
             '',
             '',
             $this->returns([['qid' => 'Q888']]),
@@ -168,7 +168,7 @@ class WdUnitTest extends TestCase
             'Title',
             'es',
             'ghost_user',
-            'Título',
+            'z00',
             '',
             '',
             $this->returns([]),
@@ -186,7 +186,7 @@ class WdUnitTest extends TestCase
         $capturedArgs = null;
 
         \Publish\WD\LinkToWikidata(
-            'Douglas Adams',
+            'Douglas Adams1',
             'de',
             'user',
             'Douglas Adams (de)',
