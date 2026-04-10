@@ -17,6 +17,7 @@ use function Publish\Helps\pub_test_print;
 
 function get_client($domain)
 {
+    $domain = parse_url($domain, PHP_URL_HOST);
     $CONSUMER_KEY        = getenv("CONSUMER_KEY") ?: '';
     $CONSUMER_SECRET     = getenv("CONSUMER_SECRET") ?: '';
     $oauthUrl = "https://$domain/w/index.php?title=Special:OAuth";
@@ -67,8 +68,8 @@ function get_csrftoken($client, $access_key, $access_secret, $apiUrl)
 
 function post_params($apiParams, $https_domain, $access_key, $access_secret)
 {
-    $apiUrl = "$https_domain/w/api.php";
     $client = get_client($https_domain);
+    $apiUrl = "$https_domain/w/api.php";
 
     $accessToken = new Token($access_key, $access_secret);
 
