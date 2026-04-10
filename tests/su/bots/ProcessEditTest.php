@@ -78,6 +78,44 @@ final class ProcessEditTest extends TestCase
         $this->assertEquals('wd_errors', $result);
     }
 
+
+    public function testGetErrorsFileReturnsPlaceholderForNoMatch(): void
+    {
+        $result = \Publish\EditProcess\get_errors_file(['edit' => ['result' => 'Success']], 'errors');
+        $this->assertSame('errors', $result);
+    }
+
+    public function testGetErrorsFileDetectsProtectedPage(): void
+    {
+        $result = \Publish\EditProcess\get_errors_file(['error' => ['code' => 'protectedpage']], 'errors');
+        $this->assertSame('protectedpage', $result);
+    }
+
+    public function testGetErrorsFileDetectsRateLimited(): void
+    {
+        $result = \Publish\EditProcess\get_errors_file(['error' => ['code' => 'ratelimited']], 'errors');
+        $this->assertSame('ratelimited', $result);
+    }
+
+    public function testGetErrorsFileDetectsAbuseFilter(): void
+    {
+        $result = \Publish\EditProcess\get_errors_file(['error' => 'abusefilter triggered'], 'errors');
+        $this->assertSame('abusefilter', $result);
+    }
+
+    public function testGetErrorsFileDetectsWdCsrftoken(): void
+    {
+        $result = \Publish\EditProcess\get_errors_file(['error' => 'get_csrftoken failed'], 'wd_errors');
+        $this->assertSame('wd_csrftoken', $result);
+    }
+
+    public function testGetErrorsFileDetectsWdUserPages(): void
+    {
+        $result = \Publish\EditProcess\get_errors_file(['error' => 'Links to user pages is not allowed'], 'wd_errors');
+        $this->assertSame('wd_user_pages', $result);
+    }
+
+
     public function testPrepareApiParamsReturnsCorrectStructure(): void
     {
         $title = 'Test Page';
@@ -105,5 +143,29 @@ final class ProcessEditTest extends TestCase
 
         $this->assertEquals('12345', $result['wpCaptchaId']);
         $this->assertEquals('answer', $result['wpCaptchaWord']);
+    }
+
+    public function testPrepareApiParamsBasicFields(): void
+    {
+        $params = \Publish\EditProcess\prepareApiParams('MyTitle', 'My summary', 'Article body', []);
+        $this->assertSame('edit', $params['action']);
+        $this->assertSame('MyTitle', $params['title']);
+        $this->assertSame('json', $params['format']);
+        $this->assertArrayNotHasKey('wpCaptchaId', $params);
+    }
+
+    public function testPrepareApiParamsIncludesCaptchaWhenPresent(): void
+    {
+        $request = ['wpCaptchaId' => 'abc123', 'wpCaptchaWord' => 'xkcd'];
+        $params  = \Publish\EditProcess\prepareApiParams('T', 'S', 'B', $request);
+        $this->assertSame('abc123', $params['wpCaptchaId']);
+        $this->assertSame('xkcd', $params['wpCaptchaWord']);
+    }
+
+    public function testPrepareApiParamsOmitsCaptchaWhenPartiallyPresent(): void
+    {
+        $params = \Publish\EditProcess\prepareApiParams('T', 'S', 'B', ['wpCaptchaId' => 'only-id']);
+        $this->assertArrayNotHasKey('wpCaptchaId', $params);
+        $this->assertArrayNotHasKey('wpCaptchaWord', $params);
     }
 }

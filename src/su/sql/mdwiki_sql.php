@@ -5,7 +5,9 @@ namespace Publish\MdwikiSql;
 
 use PDO;
 use PDOException;
+
 use function Publish\Helps\pub_test_print;
+use function Publish\MdwikiSql\get_dbname;
 
 class Database
 {
@@ -125,34 +127,6 @@ class Database
     }
 }
 
-function get_dbname($table_name)
-{
-    // Load from configuration file or define as class constant
-    $table_db_mapping = [
-        'DB_NAME_NEW' => [
-            "missing",
-            "missing_by_qids",
-            "exists_by_qids",
-            "publish_reports",
-            "login_attempts",
-            "logins",
-            "publish_reports_stats",
-            "all_qids_titles"
-        ],
-        'DB_NAME' => [] // default
-    ];
-
-    if ($table_name) {
-        foreach ($table_db_mapping as $db => $tables) {
-            if (in_array($table_name, $tables)) {
-                return $db;
-            }
-        }
-    }
-
-    return 'DB_NAME'; // default
-}
-
 function execute_query($sql_query, $params = null, $table_name = null)
 {
 
@@ -175,6 +149,7 @@ function execute_query($sql_query, $params = null, $table_name = null)
     $db = null;
     return $results;
 };
+
 function fetch_query(string $sql_query, ?array $params = null, $table_name = null): array
 {
 

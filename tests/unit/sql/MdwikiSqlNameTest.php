@@ -1,13 +1,55 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Publish\Tests;
+namespace Tests\Bots;
 
 use PHPUnit\Framework\TestCase;
 
-final class MdwikiSqlTest extends TestCase
+/**
+ * Tests for table_name.php
+ *
+ *   - get_dbname()          – routing logic to DB_NAME / DB_NAME_NEW
+ */
+class MdwikiSqlNameTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        // Set
+    }
+
+    // -------------------------------------------------------------------------
+    // get_dbname()
+    // -------------------------------------------------------------------------
+
+    public function testGetDbnameDefaultForUnknownTable(): void
+    {
+        $result = \Publish\MdwikiSql\get_dbname('some_random_table');
+        $this->assertSame('DB_NAME', $result);
+    }
+
+    public function testGetDbnameForPublishReports(): void
+    {
+        $result = \Publish\MdwikiSql\get_dbname('publish_reports');
+        $this->assertSame('DB_NAME_NEW', $result);
+    }
+
+    public function testGetDbnameForMissingTable(): void
+    {
+        $result = \Publish\MdwikiSql\get_dbname('missing');
+        $this->assertSame('DB_NAME_NEW', $result);
+    }
+
+    public function testGetDbnameForLoginAttempts(): void
+    {
+        $result = \Publish\MdwikiSql\get_dbname('login_attempts');
+        $this->assertSame('DB_NAME_NEW', $result);
+    }
+
+    public function testGetDbnameNullReturnsDefault(): void
+    {
+        $result = \Publish\MdwikiSql\get_dbname(null);
+        $this->assertSame('DB_NAME', $result);
+    }
+
     public function testGetDbnameReturnsDefaultForUnknownTable(): void
     {
         $result = \Publish\MdwikiSql\get_dbname('unknown_table');

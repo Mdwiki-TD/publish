@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Publish\Tests;
+namespace Publish\Tests\Bots;
 
 use PHPUnit\Framework\TestCase;
 

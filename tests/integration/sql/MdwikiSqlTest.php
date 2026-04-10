@@ -7,11 +7,10 @@ use PDO;
 use Publish\MdwikiSql\Database;
 
 /**
- * Tests for src/bots/mdwiki_sql.php
+ * Tests for mdwiki_sql.php
  *
  * Strategy: use an in-memory SQLite database injected via reflection so that
  * no real MySQL server is required.  Tests cover:
- *   - get_dbname()          – routing logic to DB_NAME / DB_NAME_NEW
  *   - Database::executequery() – SELECT returns rows; INSERT/UPDATE returns []
  *   - Database::fetchquery()   – always returns rows for SELECT
  *   - execute_query() / fetch_query() – thin wrappers (tested via SQLite shim)
@@ -26,40 +25,6 @@ class MdwikiSqlTest extends TestCase
         putenv('DB_NAME_NEW=test_new');
         putenv('TOOL_TOOLSDB_USER=');
         putenv('TOOL_TOOLSDB_PASSWORD=');
-    }
-
-    // -------------------------------------------------------------------------
-    // get_dbname()
-    // -------------------------------------------------------------------------
-
-    public function testGetDbnameDefaultForUnknownTable(): void
-    {
-        $result = \Publish\MdwikiSql\get_dbname('some_random_table');
-        $this->assertSame('DB_NAME', $result);
-    }
-
-    public function testGetDbnameForPublishReports(): void
-    {
-        $result = \Publish\MdwikiSql\get_dbname('publish_reports');
-        $this->assertSame('DB_NAME_NEW', $result);
-    }
-
-    public function testGetDbnameForMissingTable(): void
-    {
-        $result = \Publish\MdwikiSql\get_dbname('missing');
-        $this->assertSame('DB_NAME_NEW', $result);
-    }
-
-    public function testGetDbnameForLoginAttempts(): void
-    {
-        $result = \Publish\MdwikiSql\get_dbname('login_attempts');
-        $this->assertSame('DB_NAME_NEW', $result);
-    }
-
-    public function testGetDbnameNullReturnsDefault(): void
-    {
-        $result = \Publish\MdwikiSql\get_dbname(null);
-        $this->assertSame('DB_NAME', $result);
     }
 
     // -------------------------------------------------------------------------

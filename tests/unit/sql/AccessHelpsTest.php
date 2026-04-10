@@ -8,7 +8,6 @@ use PDO;
 
 /**
  * Tests for src/bots/access_helps.php  (namespace Publish\AccessHelps)
- *            src/bots/access_helps_new.php (namespace Publish\AccessHelpsNew)
  *
  * Both files rely on:
  *   - fetch_query() / execute_query() from mdwiki_sql.php
@@ -52,13 +51,13 @@ class AccessHelpsTest extends TestCase
     /** Encrypt a value with the cookie key (simulates what store_access does) */
     private function cookieEnc(string $v): string
     {
-        return \Publish\Helps\encode_value($v, 'cookie');
+        return \Publish\CryptHelps\encode_value($v, 'cookie');
     }
 
     /** Encrypt a value with the decrypt key (simulates keys_new storage) */
     private function decryptEnc(string $v): string
     {
-        return \Publish\Helps\encode_value($v, 'decrypt');
+        return \Publish\CryptHelps\encode_value($v, 'decrypt');
     }
 
     /** Inject the SQLite PDO into a fresh Database instance via reflection */
@@ -71,7 +70,7 @@ class AccessHelpsTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
-    // access_helps.php – get_access_from_db / del_access_from_db
+    // access_helps.php – delete_user_access / delete_user_access
     // -----------------------------------------------------------------------
 
     public function testDecodeRoundTripForAccessKeys(): void
@@ -82,10 +81,10 @@ class AccessHelpsTest extends TestCase
         $encAk = $this->cookieEnc($ak);
         $encAs = $this->cookieEnc($as);
 
-        // Simulates what get_access_from_db does after fetching encrypted values
+        // Simulates what delete_user_access does after fetching encrypted values
         $decoded = [
-            'access_key'    => \Publish\Helps\decode_value($encAk),
-            'access_secret' => \Publish\Helps\decode_value($encAs),
+            'access_key'    => \Publish\CryptHelps\decode_value($encAk),
+            'access_secret' => \Publish\CryptHelps\decode_value($encAs),
         ];
 
         $this->assertSame($ak, $decoded['access_key']);
@@ -93,12 +92,12 @@ class AccessHelpsTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
-    // access_helps_new.php – get_user_id, get_access_from_db_new
+    // access_helps.php – get_user_id, get_user_access
     // -----------------------------------------------------------------------
 
     public function testDecodeRoundTripForKeysNew(): void
     {
-        // Simulates what get_access_from_db_new does with decrypt key
+        // Simulates what get_user_access does with decrypt key
         $ak = 'new_access_key';
         $as = 'new_access_secret';
         $un = 'SomeUser';
@@ -107,9 +106,9 @@ class AccessHelpsTest extends TestCase
         $encAs = $this->decryptEnc($as);
         $encUn = $this->decryptEnc($un);
 
-        $this->assertSame($ak, \Publish\Helps\decode_value($encAk, 'decrypt'));
-        $this->assertSame($as, \Publish\Helps\decode_value($encAs, 'decrypt'));
-        $this->assertSame($un, \Publish\Helps\decode_value($encUn, 'decrypt'));
+        $this->assertSame($ak, \Publish\CryptHelps\decode_value($encAk, 'decrypt'));
+        $this->assertSame($as, \Publish\CryptHelps\decode_value($encAs, 'decrypt'));
+        $this->assertSame($un, \Publish\CryptHelps\decode_value($encUn, 'decrypt'));
     }
 
     public function testGetUserIdWithCacheHit(): void
