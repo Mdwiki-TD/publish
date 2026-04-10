@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 /*
-include_once __DIR__ . '/bots/cors.php';
+include_once __DIR__ . '/su/cors.php';
 
 use function Publish\CORS\is_allowed;
 

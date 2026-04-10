@@ -8,7 +8,9 @@ if ($env === 'development' && file_exists(__DIR__ . '/load_env.php')) {
     include_once __DIR__ . '/load_env.php';
 }
 
-include_once __DIR__ . '/../bots/include.php';
+include_once __DIR__ . '/cors.php';
+include_once __DIR__ . '/bots/include.php';
 
 include_once __DIR__ . '/text_edit.php';
-include_once __DIR__ . '/token_handler.php';
+include_once __DIR__ . '/cxtoken/token_handler.php';
+include_once __DIR__ . '/cxtoken/get_token.php';
