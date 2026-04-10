@@ -28,6 +28,12 @@ function retrieveCampaignCategories()
 
 function find_exists_or_update($title, $lang, $user, $target, $table_name)
 {
+    $allowed_tables = ['pages', 'pages_users']; // Add all valid table names
+    if (!in_array($table_name, $allowed_tables, true)) {
+        error_log("find_exists_or_update: Invalid table name: $table_name");
+        return 0;
+    }
+
     $query = <<<SQL
         SELECT * FROM $table_name WHERE title = ? AND lang = ? AND user = ?
     SQL;

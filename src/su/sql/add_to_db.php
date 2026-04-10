@@ -28,7 +28,11 @@ function InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data
 
 function InsertPageTarget($sourcetitle, $tr_type, $cat, $lang, $user, $target, $table_name, $mdwiki_revid, $words)
 {
-
+    $allowed_tables = ['pages', 'pages_users']; // Add all valid table names
+    if (!in_array($table_name, $allowed_tables, true)) {
+        error_log("find_exists_or_update: Invalid table name: $table_name");
+        return false;
+    }
     $query = <<<SQL
         INSERT INTO $table_name (title, word, translate_type, cat, lang, user, pupdate, target, mdwiki_revid)
         SELECT ?, ?, ?, ?, ?, ?, DATE(NOW()), ?, ?
