@@ -18,21 +18,25 @@ define('PUBLISH_REPORTS_DIR', __DIR__ . '/reports/');
 function get_host()
 {
     // $hoste = get_host();
+
     static $cached_host = null;
+
     if ($cached_host !== null) {
-        return $cached_host; // استخدم القيمة المحفوظة
+        return $cached_host; // Use the cached value
     }
+
     $hoste = ($_SERVER["SERVER_NAME"] == "localhost")
         ? "https://cdnjs.cloudflare.com"
         : "https://tools-static.wmflabs.org/cdnjs";
+
     if ($hoste == "https://tools-static.wmflabs.org/cdnjs") {
         $url = "https://tools-static.wmflabs.org";
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_NOBODY, true); // لا نريد تحميل الجسم
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // لمنع الطباعة
+        curl_setopt($ch, CURLOPT_NOBODY, true); // We don't want to download the body
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // To prevent printing
 
-        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // المهلة القصوى للاتصال
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Connection timeout
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
@@ -45,7 +49,7 @@ function get_host()
 
         curl_close($ch);
 
-        // إذا فشل الاتصال أو لم تكن الاستجابة ضمن 200–399، نستخدم cdnjs
+        // If the connection fails or the response is not within 200–399, use cdnjs
         if ($result === false || !empty($curlError) || $httpCode < 200 || $httpCode >= 400) {
             $hoste = "https://cdnjs.cloudflare.com";
         }
@@ -323,7 +327,9 @@ $reports = makeMonthReports($year, $month);
     <header class="mb-3 border-bottom">
         <nav id="mainnav" class="navbar navbar-expand-lg shadow">
             <div class="container-fluid" id="navbardiv">
-                <a class="navbar-brand mb-0 h1" href="/publish_reports" style="color:#0d6efd;">Publish Reports</a>
+                <a class="navbar-brand mb-0 h1" href="/publish_reports" style="color:#0d6efd;">
+                    Publish Reports
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>

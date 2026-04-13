@@ -1,0 +1,20 @@
+<?php
+
+use Defuse\Crypto\Key;
+
+// ----------------
+// ----------------
+$CONSUMER_KEY        = getenv("CONSUMER_KEY") ?: '';
+$CONSUMER_SECRET     = getenv("CONSUMER_SECRET") ?: '';
+$_decrypt_key_str    = getenv("DECRYPT_KEY") ?: '';
+// ----------------
+// ----------------
+
+if ((empty($CONSUMER_KEY) || empty($CONSUMER_SECRET)) && getenv("APP_ENV") === "production") {
+    header("HTTP/1.1 500 Internal Server Error");
+    error_log("Required configuration directives not found in environment variables!");
+    echo 'Required configuration directives not found';
+    exit(0);
+}
+
+$decrypt_key = $_decrypt_key_str ? Key::loadFromAsciiSafeString($_decrypt_key_str) : null;

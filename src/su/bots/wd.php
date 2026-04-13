@@ -3,98 +3,55 @@
 namespace Publish\WD;
 /*
 use function Publish\WD\LinkToWikidata;
-use function Publish\WD\GetTitleInfo;
-use function Publish\WD\GetQidForMdtitle;
 */
 
-use function Publish\GetToken\post_params;
-use function Publish\MdwikiSql\fetch_query;
-use function Publish\AccessHelps\get_access_from_db;
-use function Publish\AccessHelpsNew\get_access_from_db_new;
+use function Publish\Sql\GetQidForMdtitle;
+use function Publish\MediaWikiClient\post_params;
+use function Publish\AccessHelps\get_user_access;
 use function Publish\Helps\pub_test_print;
-use function Publish\Helps\get_url_curl;
 
 
-function GetQidForMdtitle($title)
+function getAccessCredentials($user, $access_key, $access_secret)
 {
-    $query = <<<SQL
-        SELECT qid FROM qids WHERE title = ?
-    SQL;
-    $params = [$title];
-    $result = fetch_query($query, $params);
-    return $result;
+    if ($access_key && $access_secret) {
+        return [$access_key, $access_secret];
+    }
+
+    $access = get_user_access($user);
+
+    if (empty($access)) {
+        pub_test_print("user = $user");
+        pub_test_print("access == null");
+        return null;
+    }
+
+    $access_key = $access['access_key'];
+    $access_secret = $access['access_secret'];
+
+    return [$access_key, $access_secret];
 }
 
-
-function GetTitleInfo($targettitle, $lang)
+function LinkIt($apiParams, $access_key, $access_secret)
 {
-    $params = [
-        "action" => "query",
-        "format" => "json",
-        "titles" => $targettitle,
-        "utf8" => 1,
-        "formatversion" => "2"
-    ];
-    $url = "https://$lang.wikipedia.org/w/api.php" . "?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-    pub_test_print("GetTitleInfo url: $url");
-    try {
-        $result = get_url_curl($url);
-        pub_test_print("GetTitleInfo result: $result");
-        $result = json_decode($result, true);
-        // { "query": { "pages": [ { "pageid": 5049507, "ns": 2, "title": "利用者:Mr. Ibrahem/オランザピン/サミドルファン" } ] } }
-        $result = $result['query']['pages'][0];
-    } catch (\Exception $e) {
-        pub_test_print("GetTitleInfo: $e");
-        $result = null;
-    }
-    return $result;
-}
+    $wikidata_domain = getenv('WIKIDATA_DOMAIN') ?: ($_ENV['WIKIDATA_DOMAIN'] ?? 'www.wikidata.org');
+    $https_domain = "https://$wikidata_domain";
 
-function LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_secret)
-{
-    $https_domain = "https://www.wikidata.org";
-    $apiParams = [
-        "action" => "wbsetsitelink",
-        "linktitle" => $targettitle,
-        "linksite" => "{$lang}wiki",
-    ];
-    if (!empty($qid)) {
-        $apiParams["id"] = $qid;
-    } else {
-        $apiParams["title"] = $sourcetitle;
-        $apiParams["site"] = "enwiki";
-    }
     $response = post_params($apiParams, $https_domain, $access_key, $access_secret);
-    $Result = json_decode($response, true) ?? [];
-    // if (isset($Result->error)) {
+    $Result = json_decode($response, true);
+    if (!is_array($Result)) {
+        $Result = [];
+    }
     if (isset($Result['error'])) {
         pub_test_print("post_params: Result->error: " . json_encode($Result['error']));
     }
-    if ($Result == null) {
+
+    if (empty($Result)) {
         pub_test_print("post_params: Error: " . json_last_error() . " " . json_last_error_msg());
         pub_test_print("response:");
         pub_test_print($response);
     }
     return $Result;
 }
-function getAccessCredentials($user, $access_key, $access_secret)
-{
-    if (!$access_key || !$access_secret) {
-        $access = get_access_from_db_new($user);
-        if (empty($access)) {
-            $access = get_access_from_db($user);
-        }
-        if (empty($access)) {
-            pub_test_print("user = $user");
-            pub_test_print("access == null");
-            return null;
-        }
-        $access_key = $access['access_key'];
-        $access_secret = $access['access_secret'];
-    }
-    return [$access_key, $access_secret];
-}
-
 function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $access_secret)
 {
     $qids = GetQidForMdtitle($sourcetitle);
@@ -106,7 +63,19 @@ function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $
     }
     list($access_key, $access_secret) = $credentials;
 
-    $link_result = LinkIt($qid, $lang, $sourcetitle, $targettitle, $access_key, $access_secret) ?? [];
+    $apiParams = [
+        "action" => "wbsetsitelink",
+        "linktitle" => $targettitle,
+        "linksite" => "{$lang}wiki",
+    ];
+    if (!empty($qid)) {
+        $apiParams["id"] = $qid;
+    } else {
+        $apiParams["title"] = $sourcetitle;
+        $apiParams["site"] = "enwiki";
+    }
+
+    $link_result = LinkIt($apiParams, $access_key, $access_secret) ?? [];
 
     $link_result["qid"] = $qid;
 

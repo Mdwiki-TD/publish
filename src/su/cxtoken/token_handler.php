@@ -3,10 +3,8 @@
 namespace Publish\TokenHandler;
 
 use function Publish\GetToken\get_cxtoken;
-use function Publish\AccessHelps\get_access_from_db;
-use function Publish\AccessHelpsNew\get_access_from_db_new;
-use function Publish\AccessHelps\del_access_from_db;
-use function Publish\AccessHelpsNew\del_access_from_db_new;
+use function Publish\AccessHelps\get_user_access;
+use function Publish\AccessHelps\delete_user_access;
 
 function handle_user_name($user)
 {
@@ -22,11 +20,7 @@ function handle_token($wiki, $user)
 {
     $user = handle_user_name($user);
 
-    $access = get_access_from_db_new($user);
-
-    if (empty($access)) {
-        $access = get_access_from_db($user);
-    }
+    $access = get_user_access($user);
 
     if (empty($access)) {
         $cxtoken = ['error' => ['code' => 'no access', 'info' => 'no access'], 'username' => $user];
@@ -43,8 +37,7 @@ function handle_token($wiki, $user)
     $err = $cxtoken['csrftoken_data']["error"]["code"] ?? null;
 
     if ($err == "mwoauth-invalid-authorization-invalid-user") {
-        del_access_from_db_new($user);
-        del_access_from_db($user);
+        delete_user_access($user);
         $cxtoken["del_access"] = true;
     }
 
