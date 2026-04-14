@@ -26,4 +26,32 @@ if (!$alowed) {
 header("Access-Control-Allow-Origin: https://$alowed");
 */
 
+
+function check_publish_secret_code()
+{
+    // load publish_secret_code from headers['X-Secret-Key']
+    $publish_secret_code = getenv('PUBLISH_SECRET_CODE');
+    if ($publish_secret_code === false) {
+        $publish_secret_code = $_ENV['PUBLISH_SECRET_CODE'] ?? '';
+    }
+
+    if ($publish_secret_code === '') {
+        return true;
+    }
+    $received_key = $_SERVER['HTTP_X_SECRET_KEY'] ?? '';
+
+    // if ($received_key === $publish_secret_code) {
+    if (hash_equals($publish_secret_code, $received_key)) {
+        return true;
+    }
+
+    return false;
+}
+
+if (!check_publish_secret_code()) {
+    http_response_code(403); // Forbidden
+    echo json_encode(['error' => 'Access denied. Invalid or missing secret key.']);
+    exit;
+}
+
 start($_POST);
