@@ -30,9 +30,14 @@ header("Access-Control-Allow-Origin: https://$alowed");
 function check_publish_secret_code()
 {
     // load publish_secret_code from headers['X-Secret-Key']
-    $publish_secret_code = getenv("PUBLISH_SECRET_CODE") ?: ($_ENV['PUBLISH_SECRET_CODE'] ?? '');
-    if (empty($publish_secret_code)) return true;
+    $publish_secret_code = getenv('PUBLISH_SECRET_CODE');
+    if ($publish_secret_code === false) {
+        $publish_secret_code = $_ENV['PUBLISH_SECRET_CODE'] ?? '';
+    }
 
+    if ($publish_secret_code === '') {
+        return true;
+    }
     $received_key = $_SERVER['HTTP_X_SECRET_KEY'] ?? '';
 
     // if ($received_key === $publish_secret_code) {
