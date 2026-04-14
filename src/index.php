@@ -27,7 +27,7 @@ header("Access-Control-Allow-Origin: https://$alowed");
 */
 
 
-function check_publish_secret_code($post_request)
+function check_publish_secret_code()
 {
     // load publish_secret_code from headers['X-Secret-Key']
     $publish_secret_code = getenv("PUBLISH_SECRET_CODE") ?: ($_ENV['PUBLISH_SECRET_CODE'] ?? '');
@@ -35,16 +35,17 @@ function check_publish_secret_code($post_request)
 
     $received_key = $_SERVER['HTTP_X_SECRET_KEY'] ?? '';
 
-    if ($received_key === $publish_secret_code) {
+    // if ($received_key === $publish_secret_code) {
+    if (hash_equals($publish_secret_code, $received_key)) {
         return true;
     }
 
     return false;
 }
 
-if (!check_publish_secret_code($_POST)) {
+if (!check_publish_secret_code()) {
     http_response_code(403); // Forbidden
-    echo json_encode(['error' => 'Access denied. Requests are only allowed from authorized domains.']);
+    echo json_encode(['error' => 'Access denied. Invalid or missing secret key.']);
     exit;
 }
 
