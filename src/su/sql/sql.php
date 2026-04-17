@@ -20,7 +20,7 @@ function GetQidForMdtitle($title)
 function retrieveCampaignCategories()
 {
     $camp_to_cats = [];
-    foreach (fetch_query('SELECT id, category, category2, campaign, depth, def FROM categories;') as $k => $tab) {
+    foreach (fetch_query('SELECT category, campaign FROM categories;') as $k => $tab) {
         $camp_to_cats[$tab['campaign']] = $tab['category'];
     };
     return $camp_to_cats;
