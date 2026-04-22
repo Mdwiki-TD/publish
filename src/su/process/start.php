@@ -20,7 +20,7 @@ function load_words_table()
 
     $word_file = __DIR__ . "/../../td/Tables/jsons/words.json";
     if (!file_exists($word_file)) {
-        $word_file = "I:/mdwiki/mdwiki/public_html/td/Tables/jsons/words.json";
+        $word_file = "I:/MD_TOOLS/MDWIKI_MAIN_REPO/public_html/td/Tables/jsons/words.json";
     }
     try {
         $file = file_get_contents($word_file);

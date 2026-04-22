@@ -11,7 +11,7 @@ This repository manages the final steps of publishing Wikipedia articles transla
 ### Running the application locally
 The main entry point is `src/index.php`. PHP is required. The application expects:
 - A local web server pointing to `src/` directory
-- Configuration files in `$HOME/confs/` (or `I:/mdwiki/mdwiki/confs/` for local development)
+- Configuration files in `$HOME/confs/` (or `I:/MD_TOOLS/MDWIKI_MAIN_REPO/confs/` for local development)
 
 ### Debug mode
 Add `?test` query parameter to any request to enable verbose error reporting and debug output.
