@@ -7,7 +7,7 @@ if (empty($publish_reports_path)) {
     $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'development');
     $publish_reports_path = ($env === 'production')
         ? getenv("HOME") . "/data/publish_reports_data"
-        : 'I:/mdwiki/publish-repo/publish_reports_data';
+        : 'I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/publish-repo/publish_reports_data';
 };
 
 define('PUBLISH_REPORTS_DIR_BY_DAY', $publish_reports_path . '/reports_by_day/');

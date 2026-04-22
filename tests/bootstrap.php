@@ -24,7 +24,7 @@ putenv('CONSUMER_KEY=test_consumer_key');
 putenv('CONSUMER_SECRET=test_consumer_secret');
 
 putenv('PUBLISH_REPORTS_PATH=' . sys_get_temp_dir() . '/publish_reports_phpunit');
-putenv('ALL_PAGES_REVIDS_PATH=I:/mdwiki/publish-repo/php-publish-repo/all_pages_revids.json');
+putenv('ALL_PAGES_REVIDS_PATH=I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/publish-repo/php-publish-repo/all_pages_revids.json');
 putenv('TEXT_WORK_FILE=I:/mdwiki/fix_refs_repo/src/work.php');
 
 // Provide placeholder keys that satisfy Defuse\Crypto\Key::loadFromAsciiSafeString()
