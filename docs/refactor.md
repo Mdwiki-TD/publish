@@ -77,7 +77,7 @@ echo "Unable to connect to the database. Please try again later.";
 **Locations:** Multiple files
 
 -   `src/su/include.php:25-29` - Conditional paths based on drive letter
--   `src/bots/files_helps.php:49` - `I:/mdwiki/publish-repo/php-publish-repo/src`
+-   `src/bots/files_helps.php:49` - `I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/publish-repo/php-publish-repo/src`
 -   `src/bots/add_to_db.php:16-19` - Fallback paths for words.json
 
 **Severity:** HIGH
@@ -325,7 +325,7 @@ if (substr(__DIR__, 0, 2) == 'I:') { ... }
 
 ```php
 if (substr(__DIR__, 0, 2) == 'I:') {
-    include_once 'I:/mdwiki/fix_refs_repo/work.php';
+    include_once 'I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/fix_refs_repo/work.php';
 } else {
     include_once __DIR__ . '/../fix_refs/work.php';
 }
