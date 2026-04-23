@@ -62,7 +62,7 @@ class AccessHelpsTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
-    // access_helps.php – delete_user_access / delete_user_access
+    // access_helps.php – del_access_from_db / del_access_from_db
     // -----------------------------------------------------------------------
 
     public function testDecodeRoundTripForAccessKeys(): void
@@ -73,7 +73,7 @@ class AccessHelpsTest extends TestCase
         $encAk = $this->decryptEnc($ak);
         $encAs = $this->decryptEnc($as);
 
-        // Simulates what delete_user_access does after fetching encrypted values
+        // Simulates what del_access_from_db does after fetching encrypted values
         $decoded = [
             'access_key'    => \Publish\CryptHelps\decode_value($encAk),
             'access_secret' => \Publish\CryptHelps\decode_value($encAs),
@@ -84,12 +84,12 @@ class AccessHelpsTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
-    // access_helps.php – get_user_id, get_user_access
+    // access_helps.php – get_access_from_db
     // -----------------------------------------------------------------------
 
     public function testDecodeRoundTripForKeysNew(): void
     {
-        // Simulates what get_user_access does with decrypt key
+        // Simulates what get_access_from_db does with decrypt key
         $ak = 'new_access_key';
         $as = 'new_access_secret';
         $un = 'SomeUser';

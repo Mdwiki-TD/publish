@@ -10,7 +10,7 @@ use function Publish\Helps\pub_test_print;
 use function Publish\AddToDb\InsertPublishReports;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
-use function Publish\AccessHelps\get_user_access;
+use function Publish\AccessHelps\get_access_from_db;
 use function Publish\WikiApi\GetTitleInfo;
 use function Publish\EditProcess\add_to_db;
 use function Publish\DoEdit\publish_do_edit;
@@ -38,7 +38,7 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user)
     pub_test_print("get_csrftoken failed for user: $user, retrying with Mr. Ibrahem");
 
     // Retry with "Mr. Ibrahem" credentials - get fresh credentials from database
-    $fallback_access = get_user_access('Mr. Ibrahem');
+    $fallback_access = get_access_from_db('Mr. Ibrahem');
 
     if (!empty($fallback_access)) {
         $fallback_access_key = $fallback_access['access_key'];
