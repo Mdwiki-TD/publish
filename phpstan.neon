@@ -8,13 +8,13 @@ parameters:
 
     # Scan directories for class definitions
     # scanDirectories:
-        # - I:/mdwiki/auth_repo/vendor/
+        # - I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/auth_repo/vendor/
 
     # Scan files for class definitions
     scanFiles:
         - src/su/include.php
         - src/vendor_load.php
-        # - I:/mdwiki/fix_refs_repo/work.php
+        # - I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/fix_refs_repo/work.php
 
     # bootstrap.php
     bootstrapFiles:

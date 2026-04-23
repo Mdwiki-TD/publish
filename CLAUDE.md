@@ -11,7 +11,7 @@ This repository manages the final steps of publishing Wikipedia articles transla
 ### Running the application locally
 The main entry point is `src/index.php`. PHP is required. The application expects:
 - A local web server pointing to `src/` directory
-- Configuration files in `$HOME/confs/` (or `I:/mdwiki/mdwiki/confs/` for local development)
+- Configuration files in `$HOME/confs/` (or `I:/MD_TOOLS/MDWIKI_MAIN_REPO/confs/` for local development)
 
 ### Debug mode
 Add `?test` query parameter to any request to enable verbose error reporting and debug output.
@@ -43,7 +43,7 @@ Add `?test` query parameter to any request to enable verbose error reporting and
 | `files_helps.php` | Logs results to JSON files in `publish_reports/reports_by_day/` |
 
 ### Dependencies
-- External `fix_refs` repository loaded from `I:/mdwiki/fix_refs_repo/work.php` (local) or `../fix_refs/work.php` (production)
+- External `fix_refs` repository loaded from `I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/fix_refs_repo/work.php` (local) or `../fix_refs/work.php` (production)
 - External `auth` repository for vendor autoloading via `vendor_load.php`
 - OAuth client library (`mediawiki/oauthclient`)
 - Encryption library (`defuse/php-encryption`) for token storage

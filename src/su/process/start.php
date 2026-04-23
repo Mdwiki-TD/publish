@@ -4,7 +4,7 @@ namespace Publish\Start;
 
 use function Publish\EditProcess\text_changes;
 use function Publish\Helps\pub_test_print;
-use function Publish\AccessHelps\get_user_access;
+use function Publish\AccessHelps\get_access_from_db;
 use function Publish\EditProcess\processEdit;
 use function Publish\FilesHelps\to_do;
 use function Publish\Revids\get_revid_db;
@@ -20,7 +20,7 @@ function load_words_table()
 
     $word_file = __DIR__ . "/../../td/Tables/jsons/words.json";
     if (!file_exists($word_file)) {
-        $word_file = "I:/mdwiki/mdwiki/public_html/td/Tables/jsons/words.json";
+        $word_file = "I:/MD_TOOLS/MDWIKI_MAIN_REPO/public_html/td/Tables/jsons/words.json";
     }
     try {
         $file = file_get_contents($word_file);
@@ -63,7 +63,7 @@ function start($request)
         'edit' => [],
         'sourcetitle' => $request['sourcetitle'] ?? ''
     ];
-    $access = get_user_access($user);
+    $access = get_access_from_db($user);
 
     if (empty($access)) {
         handleNoAccess($user, $tab, $rand_id);

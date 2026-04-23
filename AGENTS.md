@@ -95,8 +95,8 @@ vendor/bin/phpstan analyse src --level=5
 
 ### External Dependencies
 
--   `fix_refs` repo: `I:/mdwiki/fix_refs_repo/work.php` (local) or `../fix_refs/work.php` (prod)
--   Config files: `$HOME/confs/` (prod) or `I:/mdwiki/mdwiki/confs/` (local)
+-   `fix_refs` repo: `I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/fix_refs_repo/work.php` (local) or `../fix_refs/work.php` (prod)
+-   Config files: `$HOME/confs/` (prod) or `I:/MD_TOOLS/MDWIKI_MAIN_REPO/confs/` (local)
 -   OAuth via `mediawiki/oauthclient`
 -   Encryption via `defuse/php-encryption`
 

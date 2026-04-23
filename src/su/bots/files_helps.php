@@ -32,7 +32,7 @@ function check_dirs($rand_id, $reports_dir_main)
         $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'development');
         $publish_reports_path = ($env === 'production')
             ? getenv("HOME") . "/data/publish_reports_data"
-            : 'I:/mdwiki/publish-repo/publish_reports_data';
+            : 'I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/publish-repo/publish_reports_data';
     };
     if (!is_dir($publish_reports_path)) {
         mkdir($publish_reports_path, 0755, true);

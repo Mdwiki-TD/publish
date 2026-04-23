@@ -7,7 +7,7 @@ use function Publish\WD\LinkToWikidata;
 
 use function Publish\Sql\GetQidForMdtitle;
 use function Publish\MediaWikiClient\post_params;
-use function Publish\AccessHelps\get_user_access;
+use function Publish\AccessHelps\get_access_from_db;
 use function Publish\Helps\pub_test_print;
 
 
@@ -17,7 +17,7 @@ function getAccessCredentials($user, $access_key, $access_secret)
         return [$access_key, $access_secret];
     }
 
-    $access = get_user_access($user);
+    $access = get_access_from_db($user);
 
     if (empty($access)) {
         pub_test_print("user = $user");
