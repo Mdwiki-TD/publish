@@ -7,8 +7,12 @@ use function Publish\CryptHelps\encode_value;
 use function Publish\CryptHelps\decode_value;
 */
 
+use Defuse\Crypto\Key;
 use Defuse\Crypto\Crypto;
 
+$_decrypt_key_str    = getenv("DECRYPT_KEY") ?: '';
+
+$decrypt_key = $_decrypt_key_str ? Key::loadFromAsciiSafeString($_decrypt_key_str) : null;
 
 function decode_value($value)
 {
