@@ -34,8 +34,10 @@ function load_words_table()
 
 function handleNoAccess($user, $tab, $rand_id)
 {
-    $error = ['code' => 'noaccess', 'info' => 'noaccess'];
-    $editit = ['error' => $error, 'edit' => ['error' => $error, 'username' => $user], 'username' => $user];
+    $editit = [
+        'error' => ['code' => 'noaccess', 'info' => 'noaccess'],
+        'username' => $user
+    ];
     $tab['result_to_cx'] = $editit;
 
     to_do($tab, "noaccess", $rand_id);
