@@ -46,7 +46,7 @@ class AccessHelpsTest extends TestCase
     // -----------------------------------------------------------------------
 
 
-    /** Encrypt a value with the decrypt key (simulates keys_new storage) */
+    /** Encrypt a value with the decrypt key */
     private function decryptEnc(string $v): string
     {
         return \Publish\CryptHelps\encode_value($v);
