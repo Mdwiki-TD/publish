@@ -29,6 +29,8 @@ function publish_do_edit($apiParams, $wiki, $access)
         true,
         $apiParams
     );
+
     $editResult = json_decode($req, true);
+
     return $editResult;
 }

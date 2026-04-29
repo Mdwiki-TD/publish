@@ -50,21 +50,21 @@ function add_to_db($target, $lang, $user, $to_users_table, $campaign, $sourcetit
     $use_user_sql = getUseUserSql($user, $target, $to_users_table);
     $table_name = ($use_user_sql) ? 'pages_users' : 'pages';
 
-    $sql_result = [
-        'use_user_sql' => $use_user_sql,
-        'to_users_table' => $to_users_table,
-    ];
-
     $exists = find_exists_or_update($sourcetitle, $lang, $user, $target, $table_name);
 
     if ($exists) {
-        $sql_result['exists'] = "already_in";
-        return $sql_result;
+        return [
+            'use_user_sql' => $use_user_sql,
+            'to_users_table' => $to_users_table,
+            'exists' => "already_in",
+        ];
     }
 
     InsertPageTarget($sourcetitle, $tr_type, $cat, $lang, $user, $target, $table_name, $mdwiki_revid, $words);
 
-    $sql_result['execute_query'] = true;
-
-    return $sql_result;
+    return [
+        'use_user_sql' => $use_user_sql,
+        'to_users_table' => $to_users_table,
+        'execute_query' => true,
+    ];
 }
