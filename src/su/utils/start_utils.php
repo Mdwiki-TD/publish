@@ -57,6 +57,7 @@ function get_errors_file($editit, $place_holder)
         "spam filter",
         "abusefilter",
         "mwoauth-invalid-authorization",
+        "mwoauth-invalid-authorization-invalid-user",
     ];
     $errs_wd = [
         "Links to user pages" => "wd_user_pages",

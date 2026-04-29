@@ -23,7 +23,7 @@ function handle_token($wiki, $user)
     $access = get_access_from_db($user);
 
     if (empty($access)) {
-        $cxtoken = ['error' => ['code' => 'no access', 'info' => 'no access'], 'username' => $user];
+        $cxtoken = ['error' => ['code' => 'noaccess', 'info' => 'noaccess'], 'username' => $user];
         http_response_code(403);
         print(json_encode($cxtoken, JSON_PRETTY_PRINT));
         header('HTTP/1.0 403 Forbidden');
@@ -36,7 +36,11 @@ function handle_token($wiki, $user)
 
     $err = $cxtoken['csrftoken_data']["error"]["code"] ?? null;
 
-    if ($err == "mwoauth-invalid-authorization-invalid-user") {
+    $invalid_authorization_errors = [
+        "mwoauth-invalid-authorization-invalid-user",
+        "mwoauth-invalid-authorization"
+    ];
+    if (in_array($err, $invalid_authorization_errors)) {
         del_access_from_db($user);
         $cxtoken["del_access"] = true;
     }
