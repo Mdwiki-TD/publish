@@ -21,7 +21,6 @@ include_once __DIR__ . '/sql/access_helps.php';
 include_once __DIR__ . '/sql/add_to_db.php';
 include_once __DIR__ . '/sql/mdwiki_sql.php';
 include_once __DIR__ . '/sql/sql.php';
-include_once __DIR__ . '/sql/table_name.php';
 
 include_once __DIR__ . '/mw_client/index.php';
 
