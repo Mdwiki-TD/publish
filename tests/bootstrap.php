@@ -15,8 +15,8 @@ putenv('APP_ENV=testing');
 putenv('WIKIDATA_DOMAIN=test.wikidata.org');
 
 putenv('DB_HOST_TOOLS=localhost:3306');
-putenv('DB_NAME=s54732__mdwiki');
-putenv('DB_NAME_NEW=s54732__mdwiki_new');
+putenv('DB_NAME=s54732__mdwikiz');
+
 putenv('TOOL_TOOLSDB_USER=root');
 putenv('TOOL_TOOLSDB_PASSWORD=root11');
 

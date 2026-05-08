@@ -36,7 +36,6 @@ class AccessHelpsTest extends TestCase
         // Set environment variables to prevent MySQL connection attempts
         putenv('DB_HOST_TOOLS=invalid');
         putenv('DB_NAME=test');
-        putenv('DB_NAME_NEW=test_new');
         putenv('TOOL_TOOLSDB_USER=');
         putenv('TOOL_TOOLSDB_PASSWORD=');
     }

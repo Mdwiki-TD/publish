@@ -7,7 +7,6 @@ use PDO;
 use PDOException;
 
 use function Publish\Helps\pub_test_print;
-use function Publish\MdwikiSql\get_dbname;
 
 class Database
 {
@@ -130,10 +129,10 @@ class Database
 function execute_query($sql_query, $params = null, $table_name = null)
 {
 
-    $dbname_var = get_dbname($table_name);
+
 
     // Create a new database object
-    $db = new Database($dbname_var);
+    $db = new Database('DB_NAME');
 
     // Execute a SQL query
     if ($params) {
@@ -153,10 +152,10 @@ function execute_query($sql_query, $params = null, $table_name = null)
 function fetch_query(string $sql_query, ?array $params = null, $table_name = null): array
 {
 
-    $dbname_var = get_dbname($table_name);
+
 
     // Create a new database object
-    $db = new Database($dbname_var);
+    $db = new Database('DB_NAME');
 
     // Execute a SQL query
     if ($params) {

@@ -303,7 +303,7 @@ if (empty($revid)) {
 **Description:** New PDO connection created for each query, destroyed after.
 
 ```php
-$db = new Database($_SERVER['SERVER_NAME'] ?? '', $dbname);
+$db = new Database('DB_NAME');
 // ... execute query ...
 $db = null;
 ```
