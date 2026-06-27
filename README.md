@@ -49,3 +49,9 @@ The main functions in `index.php` include:
 -   The script uses several helper functions from other included files, such as `fix_refs`, `DoChangesToText`, and `LinkToWikidata`.
 
 # License
+
+# End points
+
+| Endpoint | Method | Description |
+| -------- | ------ | ----------- |
+| `/`      | GET    | Main entry  |
