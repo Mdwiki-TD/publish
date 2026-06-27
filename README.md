@@ -52,6 +52,10 @@ The main functions in `index.php` include:
 
 # End points
 
-| Endpoint | Method | Description |
-| -------- | ------ | ----------- |
-| `/`      | GET    | Main entry  |
+| Endpoint                         | Method | Description                                                             |
+| -------------------------------- | ------ | ----------------------------------------------------------------------- |
+| `/src/index.php`                 | POST   | Publish a translated page to Wikipedia (requires `X-Secret-Key` header) |
+| `/src/token.php`                 | GET    | Get CSRF (cxtoken) for ContentTranslation on a target wiki              |
+| `/src/main.php`                  | GET    | Legacy redirect to `index.php` (used by ContentTranslation extension)   |
+| `/publish_reports/`              | GET    | Publish reports dashboard, grouped by year/month                        |
+| `/publish_reports/open_file.php` | GET    | Retrieve a specific JSON report file                                    |
