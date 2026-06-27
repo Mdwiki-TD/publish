@@ -28,3 +28,4 @@ publish_reports_data/reports/plan.md
 load_env.php
 /.phpunit.cache
 /build/coverage-html
+/.commandcode
