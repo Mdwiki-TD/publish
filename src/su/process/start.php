@@ -18,10 +18,14 @@ use function Publish\StartUtils\determineHashtag;
 function load_words_table()
 {
 
-    $word_file = __DIR__ . "/../../td/Tables/jsons/words.json";
-    if (!file_exists($word_file)) {
-        $word_file = "I:/MD_TOOLS/MDWIKI_MAIN_REPO/public_html/td/Tables/jsons/words.json";
+    $tables_path = getenv("TABLES_PATH") !== false ? getenv("TABLES_PATH") : ($_ENV["TABLES_PATH"] ?? "");
+    if (empty($tables_path)) {
+        $home = getenv('HOME') ?: ($_SERVER['HOME'] ?? "");
+        $tables_path = $home . "/public_html/td/Tables/";
     }
+
+    $word_file = "$tables_path/jsons/words.json";
+
     try {
         $file = file_get_contents($word_file);
         // $file = file_get_contents("https://mdwiki.toolforge.org/td/Tables/jsons/words.json");

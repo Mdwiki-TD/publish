@@ -27,12 +27,10 @@ function check_dirs($rand_id, $reports_dir_main)
 {
     // /data/project/mdwiki/data/publish_reports
     $publish_reports_path = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
+
     if (empty($publish_reports_path)) {
         error_log("PUBLISH_REPORTS_PATH is not set");
-        $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'development');
-        $publish_reports_path = ($env === 'production')
-            ? getenv("HOME") . "/data/publish_reports_data"
-            : 'I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/publish-repo/publish_reports_data';
+        $publish_reports_path = getenv("HOME") . "/data/publish_reports_data";
     };
     if (!is_dir($publish_reports_path)) {
         mkdir($publish_reports_path, 0755, true);
