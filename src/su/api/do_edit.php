@@ -22,6 +22,8 @@ function publish_do_edit($apiParams, $wiki, $access)
     $editToken = get_edits_token($client, $accessToken, $apiUrl);
 
     $apiParams['token'] = $editToken;
+    # Error details: The following tags are not allowed to be manually applied: contenttranslation and contenttranslation-v2
+    # $apiParams['tags'] = 'contenttranslation|contenttranslation-v2';
 
     $req = $client->makeOAuthCall(
         $accessToken,
