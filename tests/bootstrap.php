@@ -19,7 +19,6 @@ putenv('DB_NAME=s54732__mdwikiz');
 
 putenv('TOOL_TOOLSDB_USER=root');
 putenv('TOOL_TOOLSDB_PASSWORD=root11');
-
 putenv('CONSUMER_KEY=test_consumer_key');
 putenv('CONSUMER_SECRET=test_consumer_secret');
 
@@ -35,4 +34,5 @@ putenv('DECRYPT_KEY=def000001358577eb292b944a354cfe446413d532d4c18c963597a88ec1d
 
 $_SERVER['SERVER_NAME'] = 'localhost';
 
+// Load vendor autoloader
 include_once dirname(__DIR__) . '/src/su/include.php';
