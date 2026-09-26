@@ -3,37 +3,15 @@
 
 <?php
 
-// Enable error reporting for debugging
-if (isset($_REQUEST['test'])) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-}
-
 include_once __DIR__ . "/config.php";
+
 if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
     define("PUBLISH_REPORTS_DIR_BY_DAY", "/tmp");
 }
-function get_host()
-{
-    // $hoste = get_host();
 
-    static $cachedHost = null;
-
-    if ($cachedHost !== null) {
-        return $cachedHost; // Use the cached value
-    }
-
-    $hoste = ($_SERVER["SERVER_NAME"] == "localhost")
-        ? "https://cdnjs.cloudflare.com"
-        : "https://tools-static.wmflabs.org/cdnjs";
-
-    $cachedHost = $hoste;
-
-    return $hoste;
-}
-
-$hoste = get_host();
+$hoste = ($_SERVER["SERVER_NAME"] == "localhost")
+    ? "https://cdnjs.cloudflare.com"
+    : "https://tools-static.wmflabs.org/cdnjs";
 
 echo <<<HTML
 	<head>

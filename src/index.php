@@ -8,9 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-include_once __DIR__ . '/su/include.php';
-
 use function Publish\Start\start;
+
+include_once __DIR__ . '/su/include.php';
 
 /*
 

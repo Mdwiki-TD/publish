@@ -98,7 +98,7 @@ class Database
         }
     }
 
-    public function fetchquery($sqlQuery, $params = null)
+    public function fetchquery(string $sqlQuery, $params = null): array
     {
         try {
             $this->disableFullGroupByMode($sqlQuery);
@@ -126,7 +126,7 @@ class Database
     }
 }
 
-function execute_query($sqlQuery, $params = null, $tableName = null)
+function execute_query(string $sqlQuery, $params = null, $tableName = null)
 {
 
 
@@ -151,8 +151,6 @@ function execute_query($sqlQuery, $params = null, $tableName = null)
 
 function fetch_query(string $sqlQuery, ?array $params = null, $tableName = null): array
 {
-
-
 
     // Create a new database object
     $db = new Database('DB_NAME');
