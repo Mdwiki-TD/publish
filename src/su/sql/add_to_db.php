@@ -19,34 +19,34 @@ function InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data
     }
     */
     $query = "INSERT INTO publish_reports (`date`, `title`, `user`, `lang`, `sourcetitle`, `result`, `data`) VALUES (NOW(), ?, ?, ?, ?, ?, ?)";
-    $report_data = json_encode($data);
+    $reportData = json_encode($data);
     // remove .json from $result
     $result = str_replace(".json", "", $result);
-    $params = [$title, $user, $lang, $sourcetitle, $result, $report_data];
+    $params = [$title, $user, $lang, $sourcetitle, $result, $reportData];
     execute_query($query, $params, "publish_reports");
 }
 
-function InsertPageTarget($sourcetitle, $tr_type, $cat, $lang, $user, $target, $table_name, $mdwiki_revid, $words)
+function InsertPageTarget($sourcetitle, $trType, $cat, $lang, $user, $target, $tableName, $mdwikiRevid, $words)
 {
-    $allowed_tables = ['pages', 'pages_users']; // Add all valid table names
-    if (!in_array($table_name, $allowed_tables, true)) {
-        error_log("find_exists_or_update: Invalid table name: $table_name");
+    $allowedTables = ['pages', 'pages_users']; // Add all valid table names
+    if (!in_array($tableName, $allowedTables, true)) {
+        error_log("find_exists_or_update: Invalid table name: $tableName");
         return false;
     }
     $query = <<<SQL
-        INSERT INTO $table_name (title, word, translate_type, cat, lang, user, pupdate, target, mdwiki_revid)
+        INSERT INTO $tableName (title, word, translate_type, cat, lang, user, pupdate, target, mdwiki_revid)
         SELECT ?, ?, ?, ?, ?, ?, DATE(NOW()), ?, ?
     SQL;
 
     $params = [
         $sourcetitle,
         $words,
-        $tr_type,
+        $trType,
         $cat,
         $lang,
         $user,
         $target,
-        $mdwiki_revid
+        $mdwikiRevid
     ];
-    execute_query($query, $params, $table_name);
+    execute_query($query, $params, $tableName);
 }

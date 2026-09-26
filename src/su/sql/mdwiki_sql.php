@@ -18,9 +18,9 @@ class Database
     private $dbname;
     private $groupByModeDisabled = false;
 
-    public function __construct(string $dbname_var = 'DB_NAME')
+    public function __construct(string $dbnameVar = 'DB_NAME')
     {
-        $this->set_db($dbname_var);
+        $this->set_db($dbnameVar);
     }
 
     private function envVar(string $key)
@@ -36,10 +36,10 @@ class Database
 
         return "";
     }
-    private function set_db(string $dbname_var)
+    private function set_db(string $dbnameVar)
     {
         $this->host = $this->envVar('DB_HOST_TOOLS') ?: 'tools.db.svc.wikimedia.cloud';
-        $this->dbname = $this->envVar($dbname_var);
+        $this->dbname = $this->envVar($dbnameVar);
         $this->user = $this->envVar('TOOL_TOOLSDB_USER');
         $this->password = $this->envVar('TOOL_TOOLSDB_PASSWORD');
 
@@ -55,10 +55,10 @@ class Database
             exit();
         }
     }
-    public function disableFullGroupByMode($sql_query)
+    public function disableFullGroupByMode($sqlQuery)
     {
         // if the query contains "GROUP BY", disable ONLY_FULL_GROUP_BY, strtoupper() is for case insensitive
-        if (strpos(strtoupper($sql_query), 'GROUP BY') !== false && !$this->groupByModeDisabled) {
+        if (strpos(strtoupper($sqlQuery), 'GROUP BY') !== false && !$this->groupByModeDisabled) {
             try {
                 // More precise SQL mode modification
                 $this->db->exec("SET SESSION sql_mode=(SELECT REPLACE(@@SESSION.sql_mode,'ONLY_FULL_GROUP_BY',''))");
@@ -70,12 +70,12 @@ class Database
         }
     }
 
-    public function executequery($sql_query, $params = null)
+    public function executequery($sqlQuery, $params = null)
     {
         try {
-            $this->disableFullGroupByMode($sql_query);
+            $this->disableFullGroupByMode($sqlQuery);
 
-            $q = $this->db->prepare($sql_query);
+            $q = $this->db->prepare($sqlQuery);
             if ($params) {
                 $q->execute($params);
             } else {
@@ -83,8 +83,8 @@ class Database
             }
 
             // Check if the query starts with "SELECT"
-            $query_type = strtoupper(substr(trim((string) $sql_query), 0, 6));
-            if ($query_type === 'SELECT') {
+            $queryType = strtoupper(substr(trim((string) $sqlQuery), 0, 6));
+            if ($queryType === 'SELECT') {
                 // Fetch the results if it's a SELECT query
                 $result = $q->fetchAll(PDO::FETCH_ASSOC);
                 return $result;
@@ -93,17 +93,17 @@ class Database
                 return [];
             }
         } catch (PDOException $e) {
-            pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
+            pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sqlQuery);
             return [];
         }
     }
 
-    public function fetchquery($sql_query, $params = null)
+    public function fetchquery($sqlQuery, $params = null)
     {
         try {
-            $this->disableFullGroupByMode($sql_query);
+            $this->disableFullGroupByMode($sqlQuery);
 
-            $q = $this->db->prepare($sql_query);
+            $q = $this->db->prepare($sqlQuery);
             if ($params) {
                 $q->execute($params);
             } else {
@@ -114,8 +114,8 @@ class Database
             $result = $q->fetchAll(PDO::FETCH_ASSOC);
             return $result;
         } catch (PDOException $e) {
-            pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
-            // error_log("SQL Error: " . $e->getMessage() . " | Query: " . $sql_query);
+            pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sqlQuery);
+            // error_log("SQL Error: " . $e->getMessage() . " | Query: " . $sqlQuery);
             return [];
         }
     }
@@ -126,7 +126,7 @@ class Database
     }
 }
 
-function execute_query($sql_query, $params = null, $table_name = null)
+function execute_query($sqlQuery, $params = null, $tableName = null)
 {
 
 
@@ -136,9 +136,9 @@ function execute_query($sql_query, $params = null, $table_name = null)
 
     // Execute a SQL query
     if ($params) {
-        $results = $db->executequery($sql_query, $params);
+        $results = $db->executequery($sqlQuery, $params);
     } else {
-        $results = $db->executequery($sql_query);
+        $results = $db->executequery($sqlQuery);
     }
 
     // Print the results
@@ -149,7 +149,7 @@ function execute_query($sql_query, $params = null, $table_name = null)
     return $results;
 };
 
-function fetch_query(string $sql_query, ?array $params = null, $table_name = null): array
+function fetch_query(string $sqlQuery, ?array $params = null, $tableName = null): array
 {
 
 
@@ -159,9 +159,9 @@ function fetch_query(string $sql_query, ?array $params = null, $table_name = nul
 
     // Execute a SQL query
     if ($params) {
-        $results = $db->fetchquery($sql_query, $params);
+        $results = $db->fetchquery($sqlQuery, $params);
     } else {
-        $results = $db->fetchquery($sql_query);
+        $results = $db->fetchquery($sqlQuery);
     }
 
     // Print the results

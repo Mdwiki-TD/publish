@@ -4,10 +4,10 @@ namespace Publish\EditProcess;
 
 use function Publish\MdwikiSql\fetch_query;
 
-function get_lang_settings($lang_code)
+function get_lang_settings($langCode)
 {
     $query = "SELECT move_dots, expend, add_en_lang FROM language_settings where lang_code = ?";
-    $result = fetch_query($query, [$lang_code]);
+    $result = fetch_query($query, [$langCode]);
 
     if (!$result) {
         return null;
@@ -16,29 +16,29 @@ function get_lang_settings($lang_code)
     return $result;
 }
 
-function text_changes($sourcetitle, $title, $text, $lang, $mdwiki_revid)
+function text_changes($sourcetitle, $title, $text, $lang, $mdwikiRevid)
 {
     if (function_exists('\WpRefs\FixPage\fix_page_with_setting')) {
         $settings = get_lang_settings($lang) ?: [];
 
-        $move_dots = $settings['move_dots'] ?? null;
+        $moveDots = $settings['move_dots'] ?? null;
         $expand = $settings['expend'] ?? null;
-        $add_en_lang = $settings['add_en_lang'] ?? null;
+        $addEnLang = $settings['add_en_lang'] ?? null;
 
         $newtext = \WpRefs\FixPage\fix_page_with_setting(
             $sourcetitle,
             $title,
             $text,
             $lang,
-            $mdwiki_revid,
-            $move_dots,
+            $mdwikiRevid,
+            $moveDots,
             $expand,
-            $add_en_lang,
+            $addEnLang,
         );
         return $newtext;
     }
     if (function_exists('\WpRefs\FixPage\DoChangesToText1')) {
-        $text = \WpRefs\FixPage\DoChangesToText1($sourcetitle, $title, $text, $lang, $mdwiki_revid);
+        $text = \WpRefs\FixPage\DoChangesToText1($sourcetitle, $title, $text, $lang, $mdwikiRevid);
     }
     return $text;
 }

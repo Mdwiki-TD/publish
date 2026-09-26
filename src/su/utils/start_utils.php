@@ -46,10 +46,10 @@ function determineHashtag($title, $user)
 }
 
 
-function get_errors_file($editit, $place_holder)
+function get_errors_file($editit, $placeHolder)
 {
-    $to_do_file = $place_holder;
-    $errs_main = [
+    $toDoFile = $placeHolder;
+    $errsMain = [
         "protectedpage",
         "titleblacklist",
         "ratelimited",
@@ -59,28 +59,28 @@ function get_errors_file($editit, $place_holder)
         "mwoauth-invalid-authorization",
         "mwoauth-invalid-authorization-invalid-user",
     ];
-    $errs_wd = [
+    $errsWd = [
         "Links to user pages" => "wd_user_pages",
         "get_csrftoken" => "wd_csrftoken",
         "protectedpage" => "wd_protectedpage",
     ];
-    $c_text = json_encode($editit);
-    if ($place_holder == "errors") {
-        foreach ($errs_main as $err) {
-            if (strpos($c_text, $err) !== false) {
-                $to_do_file = $err;
+    $cText = json_encode($editit);
+    if ($placeHolder == "errors") {
+        foreach ($errsMain as $err) {
+            if (strpos($cText, $err) !== false) {
+                $toDoFile = $err;
                 break;
             }
         }
     } else {
-        foreach ($errs_wd as $pattern => $result) {
-            if (strpos($c_text, $pattern) !== false) {
-                $to_do_file = $result;
+        foreach ($errsWd as $pattern => $result) {
+            if (strpos($cText, $pattern) !== false) {
+                $toDoFile = $result;
                 break;
             }
         }
     }
-    return $to_do_file;
+    return $toDoFile;
 }
 
 function prepareApiParams($title, $summary, $text, $request)
