@@ -11,10 +11,10 @@ use function Publish\AccessHelps\get_access_from_db;
 use function Publish\Helps\pub_test_print;
 
 
-function getAccessCredentials($user, $access_key, $access_secret)
+function getAccessCredentials($user, $accessKey, $accessSecret)
 {
-    if ($access_key && $access_secret) {
-        return [$access_key, $access_secret];
+    if ($accessKey && $accessSecret) {
+        return [$accessKey, $accessSecret];
     }
 
     $access = get_access_from_db($user);
@@ -25,18 +25,18 @@ function getAccessCredentials($user, $access_key, $access_secret)
         return null;
     }
 
-    $access_key = $access['access_key'];
-    $access_secret = $access['access_secret'];
+    $accessKey = $access['access_key'];
+    $accessSecret = $access['access_secret'];
 
-    return [$access_key, $access_secret];
+    return [$accessKey, $accessSecret];
 }
 
-function LinkIt($apiParams, $access_key, $access_secret)
+function LinkIt($apiParams, $accessKey, $accessSecret)
 {
-    $wikidata_domain = getenv('WIKIDATA_DOMAIN') ?: ($_ENV['WIKIDATA_DOMAIN'] ?? 'www.wikidata.org');
-    $https_domain = "https://$wikidata_domain";
+    $wikidataDomain = getenv('WIKIDATA_DOMAIN') ?: ($_ENV['WIKIDATA_DOMAIN'] ?? 'www.wikidata.org');
+    $httpsDomain = "https://$wikidataDomain";
 
-    $response = post_params($apiParams, $https_domain, $access_key, $access_secret);
+    $response = post_params($apiParams, $httpsDomain, $accessKey, $accessSecret);
     $Result = json_decode($response, true);
     if (!is_array($Result)) {
         $Result = [];
@@ -52,16 +52,16 @@ function LinkIt($apiParams, $access_key, $access_secret)
     }
     return $Result;
 }
-function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $access_secret)
+function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $accessKey, $accessSecret)
 {
     $qids = GetQidForMdtitle($sourcetitle);
     $qid = $qids[0]['qid'] ?? '';
 
-    $credentials = getAccessCredentials($user, $access_key, $access_secret);
+    $credentials = getAccessCredentials($user, $accessKey, $accessSecret);
     if ($credentials === null) {
         return ['error' => 'Access credentials not found for user: ' . $user, 'qid' => $qid];
     }
-    list($access_key, $access_secret) = $credentials;
+    list($accessKey, $accessSecret) = $credentials;
 
     $apiParams = [
         "action" => "wbsetsitelink",
@@ -75,14 +75,14 @@ function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access_key, $
         $apiParams["site"] = "enwiki";
     }
 
-    $link_result = LinkIt($apiParams, $access_key, $access_secret) ?? [];
+    $linkResult = LinkIt($apiParams, $accessKey, $accessSecret) ?? [];
 
-    $link_result["qid"] = $qid;
+    $linkResult["qid"] = $qid;
 
-    if (isset($link_result['success']) && $link_result['success']) {
+    if (isset($linkResult['success']) && $linkResult['success']) {
         pub_test_print("success: true");
         return ['result' => "success", 'qid' => $qid];
     }
 
-    return $link_result;
+    return $linkResult;
 }

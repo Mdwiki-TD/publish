@@ -10,14 +10,14 @@ use function Publish\GetToken\get_cxtoken;
 use function Publish\Helps\pub_test_print;
 use function Publish\MediaWikiClient\post_params;
 
-function get_cxtoken($wiki, $access_key, $access_secret)
+function get_cxtoken($wiki, $accessKey, $accessSecret)
 {
-    $https_domain = "https://$wiki.wikipedia.org";
+    $httpsDomain = "https://$wiki.wikipedia.org";
     $apiParams = [
         'action' => 'cxtoken',
         'format' => 'json',
     ];
-    $response = post_params($apiParams, $https_domain, $access_key, $access_secret);
+    $response = post_params($apiParams, $httpsDomain, $accessKey, $accessSecret);
 
     $apiResult = json_decode($response, true);
 

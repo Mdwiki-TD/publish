@@ -3,63 +3,15 @@
 
 <?php
 
-// Enable error reporting for debugging
-if (isset($_REQUEST['test'])) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-}
-
 include_once __DIR__ . "/config.php";
+
 if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
     define("PUBLISH_REPORTS_DIR_BY_DAY", "/tmp");
 }
-function get_host()
-{
-    // $hoste = get_host();
 
-    static $cached_host = null;
-
-    if ($cached_host !== null) {
-        return $cached_host; // Use the cached value
-    }
-
-    $hoste = ($_SERVER["SERVER_NAME"] == "localhost")
-        ? "https://cdnjs.cloudflare.com"
-        : "https://tools-static.wmflabs.org/cdnjs";
-
-    if ($hoste == "https://tools-static.wmflabs.org/cdnjs") {
-        $url = "https://tools-static.wmflabs.org";
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_NOBODY, true); // We don't want to download the body
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // To prevent printing
-
-        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Connection timeout
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; CDN-Checker)');
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-
-        $result = curl_exec($ch);
-        $curlError = curl_error($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        curl_close($ch);
-
-        // If the connection fails or the response is not within 200–399, use cdnjs
-        if ($result === false || !empty($curlError) || $httpCode < 200 || $httpCode >= 400) {
-            $hoste = "https://cdnjs.cloudflare.com";
-        }
-    }
-
-    $cached_host = $hoste;
-
-    return $hoste;
-}
-
-$hoste = get_host();
+$hoste = ($_SERVER["SERVER_NAME"] == "localhost")
+    ? "https://cdnjs.cloudflare.com"
+    : "https://tools-static.wmflabs.org/cdnjs";
 
 echo <<<HTML
 	<head>
@@ -104,13 +56,13 @@ function getMonthDirectory()
     return getYearDirectory() . date('m') . '/';
 }
 
-function add_time_badge($dir_time, $formattedDate)
+function add_time_badge($dirTime, $formattedDate)
 {
     $today = date('Y-m-d'); // d M Y
     if ($today != $formattedDate) {
         return "";
     }
-    $diff = time() - $dir_time;
+    $diff = time() - $dirTime;
 
     if ($diff < 86400) {
         if ($diff < 60) {
@@ -124,16 +76,16 @@ function add_time_badge($dir_time, $formattedDate)
         }
     }
 
-    return date('H:i', $dir_time);
+    return date('H:i', $dirTime);
 }
 
 
-function addTodayBadge($dir_date)
+function addTodayBadge($dirDate)
 {
-    // $dir_date = "$year-$month-$day";
+    // $dirDate = "$year-$month-$day";
     $today = date('Y-m-d'); // d M Y
 
-    return $today === $dir_date ? ' <span class="badge text-bg-warning" style="float: right">Today</span>' : "";
+    return $today === $dirDate ? ' <span class="badge text-bg-warning" style="float: right">Today</span>' : "";
 }
 
 function makeYearsNav($currentYear)
@@ -220,8 +172,8 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
         $oneReportDir = $dayReportDir . '/' . $report;
         $jsonFiles = glob($oneReportDir . '/*.json');
         if (!$jsonFiles) continue;
-        $dir_time = filectime($oneReportDir);
-        $time = add_time_badge($dir_time, $formattedDate);
+        $dirTime = filectime($oneReportDir);
+        $time = add_time_badge($dirTime, $formattedDate);
         $user = "";
         $lang = "";
         $ul = '<ul class="list-group">';
@@ -231,26 +183,26 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
             if (empty($user)) {
                 $json = json_decode(file_get_contents($jsonFile), true);
                 $user = $json['user'] ?? '';
-                $target_title = $json['title'] ?? '';
+                $targetTitle = $json['title'] ?? '';
                 $lang = $json['lang'] ?? '';
             }
             // $url = "$monthDir/$day/$report/$name";
-            $url_params = [
+            $urlParams = [
                 "report" => $report,
                 "year" => $year,
                 "month" => $month,
                 "day" => $day,
                 "name" => $name,
             ];
-            $url = "open_file.php?" . http_build_query($url_params);
+            $url = "open_file.php?" . http_build_query($urlParams);
             $ul .= <<<HTML
                 <li class="list-group-item">
                     <a target="_blank" href="$url">$name</a>
                 </li>
             HTML;
         }
-        if (!empty($lang) && !empty($target_title)) {
-            $lang = "<a href='https://$lang.wikipedia.org/wiki/$target_title' target='_blank'>$lang</a>";
+        if (!empty($lang) && !empty($targetTitle)) {
+            $lang = "<a href='https://$lang.wikipedia.org/wiki/$targetTitle' target='_blank'>$lang</a>";
         }
         $lang = $lang ? "$lang: " : "";
         $ul .= '</ul>';

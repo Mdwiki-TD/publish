@@ -1,10 +1,10 @@
 <?PHP
 
-$vendor_path = __DIR__ . '/vendor/autoload.php';
-if (!file_exists($vendor_path)) {
-    $vendor_path = dirname(__DIR__) . '/vendor/autoload.php';
+$vendorPath = __DIR__ . '/vendor/autoload.php';
+if (!file_exists($vendorPath)) {
+    $vendorPath = dirname(__DIR__) . '/vendor/autoload.php';
 }
-if (!file_exists($vendor_path)) {
-    $vendor_path = dirname(__DIR__) . '/auth/vendor_load.php';
+if (!file_exists($vendorPath)) {
+    $vendorPath = dirname(__DIR__) . '/auth/vendor_load.php';
 }
-require $vendor_path;
+require $vendorPath;

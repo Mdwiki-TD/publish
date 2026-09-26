@@ -24,14 +24,14 @@ class FilesHelpsAndRevidsTest extends TestCase
 
     public function testToDoWritesJsonFile(): void
     {
-        $test_tab = [
+        $testTab = [
             'title'       => 'TestArticle',
             'lang'        => 'en',
             'user'        => 'TestUser',
             'sourcetitle' => 'SourceArticle',
         ];
-        $rand_id = time() .  "-" . bin2hex(random_bytes(6));
-        \Publish\FilesHelps\to_do($test_tab, 'test_event', $rand_id);
+        $randId = time() .  "-" . bin2hex(random_bytes(6));
+        \Publish\FilesHelps\to_do($testTab, 'test_event', $randId);
 
         $reportsPath = sys_get_temp_dir() . '/publish_reports_phpunit/reports_by_day';
         $found = false;

@@ -9,49 +9,49 @@ use function Publish\FilesHelps\check_dirs;
 
 use function Publish\Helps\pub_test_print;
 
-function to_do($tab, $file_name, $rand_id)
+function to_do($tab, $fileName, $randId)
 {
-    $main_dir_by_day = check_dirs($rand_id, 'reports_by_day');
+    $mainDirByDay = check_dirs($randId, 'reports_by_day');
     $tab['time'] = time();
     $tab['time_date'] = date("Y-m-d H:i:s");
     try {
         // dump $tab to file in folder to_do
-        $file_j = $main_dir_by_day . "/$file_name.json";
+        $file_j = $mainDirByDay . "/$fileName.json";
         file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     } catch (\Exception $e) {
         pub_test_print($e->getMessage());
     }
 }
 
-function check_dirs($rand_id, $reports_dir_main)
+function check_dirs($randId, $reportsDirMain)
 {
     // /data/project/mdwiki/data/publish_reports
-    $publish_reports_path = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
+    $publishReportsPath = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
 
-    if (empty($publish_reports_path)) {
+    if (empty($publishReportsPath)) {
         error_log("PUBLISH_REPORTS_PATH is not set");
-        $publish_reports_path = getenv("HOME") . "/data/publish_reports_data";
+        $publishReportsPath = getenv("HOME") . "/data/publish_reports_data";
     };
-    if (!is_dir($publish_reports_path)) {
-        mkdir($publish_reports_path, 0755, true);
+    if (!is_dir($publishReportsPath)) {
+        mkdir($publishReportsPath, 0755, true);
     }
-    $reports_dir = "$publish_reports_path/$reports_dir_main/";
-    if (!is_dir($reports_dir)) {
-        mkdir($reports_dir, 0755, true);
+    $reportsDir = "$publishReportsPath/$reportsDirMain/";
+    if (!is_dir($reportsDir)) {
+        mkdir($reportsDir, 0755, true);
     }
-    $year_dir = $reports_dir . date("Y");
-    if (!is_dir($year_dir)) {
-        mkdir($year_dir, 0755, true);
+    $yearDir = $reportsDir . date("Y");
+    if (!is_dir($yearDir)) {
+        mkdir($yearDir, 0755, true);
     }
-    $month_dir = $year_dir . "/" . date("m");
-    if (!is_dir($month_dir)) {
-        mkdir($month_dir, 0755, true);
+    $monthDir = $yearDir . "/" . date("m");
+    if (!is_dir($monthDir)) {
+        mkdir($monthDir, 0755, true);
     }
-    $day_dir = $month_dir . "/" . date("d");
-    if (!is_dir($day_dir)) {
-        mkdir($day_dir, 0755, true);
+    $dayDir = $monthDir . "/" . date("d");
+    if (!is_dir($dayDir)) {
+        mkdir($dayDir, 0755, true);
     }
-    $main1_dir = $day_dir . "/" . $rand_id;
+    $main1_dir = $dayDir . "/" . $randId;
     if (!is_dir($main1_dir)) {
         mkdir($main1_dir, 0755, true);
     }

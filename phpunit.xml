@@ -34,10 +34,10 @@
             <directory>tests</directory>
         </exclude>
     </source>
-    <coverage>
+    <!-- <coverage>
         <report>
             <html outputDirectory="build/coverage-html" />
             <text outputFile="php://stdout" showUncoveredFiles="false" />
         </report>
-    </coverage>
+    </coverage> -->
 </phpunit>

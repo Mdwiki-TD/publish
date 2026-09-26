@@ -16,23 +16,23 @@ class CryptHelpsTest extends TestCase
 {
     /** A real Defuse key used throughout the test suite */
     private static Key $decryptKey;
-    private static $previous_decrypt_key = null;
+    private static $previousDecryptKey = null;
 
     public static function setUpBeforeClass(): void
     {
-        self::$previous_decrypt_key = $GLOBALS['decrypt_key'] ?? null;
+        self::$previousDecryptKey = $GLOBALS['decrypt_key'] ?? null;
         // Generate fresh random keys; we inject them via $GLOBALS so that the
         // global variables set by config.php are available to crypt_helps.php.
         self::$decryptKey = Key::createNewRandomKey();
 
-        // crypt_helps.php reads $decrypt_key from the global scope.
+        // crypt_helps.php reads $decryptKey from the global scope.
         $GLOBALS['decrypt_key'] = self::$decryptKey;
     }
 
     public static function tearDownAfterClass(): void
     {
-        if (self::$previous_decrypt_key !== null) {
-            $GLOBALS['decrypt_key'] = self::$previous_decrypt_key;
+        if (self::$previousDecryptKey !== null) {
+            $GLOBALS['decrypt_key'] = self::$previousDecryptKey;
             return;
         }
         unset($GLOBALS['decrypt_key']);

@@ -30,17 +30,17 @@ function handle_token($wiki, $user)
         exit(1);
     }
 
-    $access_key = $access['access_key'];
-    $access_secret = $access['access_secret'];
-    $cxtoken = get_cxtoken($wiki, $access_key, $access_secret) ?? ['error' => 'no cxtoken'];
+    $accessKey = $access['access_key'];
+    $accessSecret = $access['access_secret'];
+    $cxtoken = get_cxtoken($wiki, $accessKey, $accessSecret) ?? ['error' => 'no cxtoken'];
 
     $err = $cxtoken['csrftoken_data']["error"]["code"] ?? null;
 
-    $invalid_authorization_errors = [
+    $invalidAuthorizationErrors = [
         "mwoauth-invalid-authorization-invalid-user",
         "mwoauth-invalid-authorization"
     ];
-    if (in_array($err, $invalid_authorization_errors)) {
+    if (in_array($err, $invalidAuthorizationErrors)) {
         del_access_from_db($user);
         $cxtoken["del_access"] = true;
     }

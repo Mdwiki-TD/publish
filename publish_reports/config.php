@@ -1,10 +1,17 @@
 <?php
 
-$publish_reports_path = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
+// Enable error reporting for debugging
+if (isset($_REQUEST['test'])) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
 
-if (empty($publish_reports_path)) {
+$publishReportsPath = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
+
+if (empty($publishReportsPath)) {
     error_log("PUBLISH_REPORTS_PATH is not set");
-    $publish_reports_path = getenv("HOME") . "/data/publish_reports_data";
+    $publishReportsPath = getenv("HOME") . "/data/publish_reports_data";
 };
 
-define('PUBLISH_REPORTS_DIR_BY_DAY', $publish_reports_path . '/reports_by_day/');
+define('PUBLISH_REPORTS_DIR_BY_DAY', $publishReportsPath . '/reports_by_day/');
