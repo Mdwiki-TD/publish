@@ -1,8 +1,8 @@
-# su/ - Core Application Module
+# app/ - Core Application Module
 
 ## Project Overview
 
-`su/` (short for "Start Up") is the core application module containing all business logic for the MDWiki Publish API. It orchestrates the entire publish workflow from request validation through Wikipedia API calls to result logging.
+`app/` (short for "Start Up") is the core application module containing all business logic for the MDWiki Publish API. It orchestrates the entire publish workflow from request validation through Wikipedia API calls to result logging.
 
 ### Purpose
 - Central include/bootstrap system for all application modules
@@ -21,7 +21,7 @@
 ## Project Structure
 
 ```
-su/
+app/
 ├── include.php        # Master bootstrap - loads all modules and external dependencies
 ├── config.php         # OAuth consumer key/secret from environment
 ├── cors.php           # CORS domain validation (referer/origin checking)

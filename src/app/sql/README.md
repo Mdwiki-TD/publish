@@ -1,4 +1,4 @@
-# su/sql/ - Database Access Layer
+# app/sql/ - Database Access Layer
 
 ## Project Overview
 

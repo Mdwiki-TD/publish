@@ -1,4 +1,4 @@
-# su/utils/ - Shared Utility Functions
+# app/utils/ - Shared Utility Functions
 
 ## Project Overview
 

@@ -1,4 +1,4 @@
-# su/process/ - Edit Processing & Orchestration
+# app/process/ - Edit Processing & Orchestration
 
 ## Project Overview
 

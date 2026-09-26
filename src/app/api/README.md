@@ -1,4 +1,4 @@
-# su/api/ - Wikipedia API Layer
+# app/api/ - Wikipedia API Layer
 
 ## Project Overview
 
