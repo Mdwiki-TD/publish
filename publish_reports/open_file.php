@@ -34,11 +34,11 @@ if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name) || !preg_match('/^[a-zA-Z0-9_.-]+$
     exit;
 }
 
-$file_path = PUBLISH_REPORTS_DIR_BY_DAY . "/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
+$filePath = PUBLISH_REPORTS_DIR_BY_DAY . "/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
 
 $data = [];
-if (file_exists($file_path)) {
-    $data = json_decode(file_get_contents($file_path), true);
+if (file_exists($filePath)) {
+    $data = json_decode(file_get_contents($filePath), true);
 }
 
 echo json_encode($data);
