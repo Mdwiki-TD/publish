@@ -1,7 +1,7 @@
 <?PHP
 header('Content-Type: application/json; charset=utf-8');
 
-include_once __DIR__ . '/su/include.php';
+include_once __DIR__ . '/app/include.php';
 
 use function Publish\CORS\is_allowed;
 use function Publish\TokenHandler\handle_token;

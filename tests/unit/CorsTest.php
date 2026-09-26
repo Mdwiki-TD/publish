@@ -5,7 +5,7 @@ namespace Tests\Bots;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for src/su/cors.php
+ * Tests for src/app/cors.php
  *
  * The file declares Publish\CORS\is_allowed(), which checks whether the
  * incoming request originates from one of the whitelisted domains.

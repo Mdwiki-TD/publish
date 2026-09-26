@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 use function Publish\Start\start;
 
-include_once __DIR__ . '/su/include.php';
+include_once __DIR__ . '/app/include.php';
 
 /*
 

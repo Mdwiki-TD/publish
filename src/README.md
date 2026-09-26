@@ -32,7 +32,7 @@ src/
 ├── vendor_load.php    # Composer autoloader resolution (multi-path fallback)
 ├── pup2.html          # Static HTML page (publish UI)
 ├── reports.html       # Static HTML page (reports viewer)
-└── su/                # Core application module ("Start Up")
+└── app/                # Core application module ("Start Up")
     ├── include.php    # Master include file - loads all modules
     ├── config.php     # OAuth consumer key/secret from environment
     ├── cors.php       # CORS domain validation
@@ -60,13 +60,13 @@ src/
 ```
 POST /index.php
   → CORS/secret key validation
-  → su/process/start.php::start()
+  → app/process/start.php::start()
     → Validate user access (database lookup)
     → Get source revision ID
     → Preprocess wikitext (fix_refs)
-    → su/process/process_edit.php::processEdit()
-      → su/api/do_edit.php::publish_do_edit() (OAuth edit to Wikipedia)
-      → On success: su/bots/wd.php::LinkToWikidata()
+    → app/process/process_edit.php::processEdit()
+      → app/api/do_edit.php::publish_do_edit() (OAuth edit to Wikipedia)
+      → On success: app/bots/wd.php::LinkToWikidata()
       → Log to database and JSON files
     → Return JSON response
 ```
@@ -124,7 +124,7 @@ The codebase uses a **functional/procedural architecture** with PSR-4 namespaced
 
 ### 1. Hardcoded Credentials in `load_env.php`
 ```php
-// src/su/load_env.php
+// src/app/load_env.php
 putenv('TOOL_TOOLSDB_USER=root');
 putenv('TOOL_TOOLSDB_PASSWORD=root11');
 putenv('COOKIE_KEY=def000008f0992f...');
@@ -135,7 +135,7 @@ putenv('DECRYPT_KEY=def000001358577e...');
 
 ### 2. CORS Validation Bypass via `strpos`
 ```php
-// src/su/cors.php
+// src/app/cors.php
 if (strpos($referer, $domain) !== false || strpos($origin, $domain) !== false)
 ```
 **Risk:** Medium - An attacker can bypass CORS by using a referer like `https://evil.com/?medwiki.toolforge.org`.
@@ -150,14 +150,14 @@ Good: Uses `hash_equals()` for timing-safe comparison. However, when `PUBLISH_SE
 
 ### 4. SQL Injection via Table Name
 ```php
-// src/su/sql/sql.php
+// src/app/sql/sql.php
 $query = "SELECT * FROM $table_name WHERE title = ? AND lang = ? AND user = ?";
 ```
 **Risk:** Low-Medium - While there's an allowlist check, the table name is interpolated into SQL. The allowlist mitigates this, but it's an unsafe pattern.
 
 ### 5. Error Message Disclosure
 ```php
-// src/su/sql/mdwiki_sql.php
+// src/app/sql/mdwiki_sql.php
 echo "Unable to connect to the database. Please try again later.";
 pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
 ```
