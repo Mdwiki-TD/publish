@@ -18,25 +18,25 @@ use function Publish\StartUtils\determineHashtag;
 function load_words_table()
 {
 
-    $tables_path = getenv("TABLES_PATH") !== false ? getenv("TABLES_PATH") : ($_ENV["TABLES_PATH"] ?? "");
-    if (empty($tables_path)) {
+    $tablesPath = getenv("TABLES_PATH") !== false ? getenv("TABLES_PATH") : ($_ENV["TABLES_PATH"] ?? "");
+    if (empty($tablesPath)) {
         $home = getenv('HOME') ?: ($_SERVER['HOME'] ?? "");
-        $tables_path = $home . "/public_html/td/Tables/";
+        $tablesPath = $home . "/public_html/td/Tables/";
     }
 
-    $word_file = "$tables_path/jsons/words.json";
+    $wordFile = "$tablesPath/jsons/words.json";
 
     try {
-        $file = file_get_contents($word_file);
+        $file = file_get_contents($wordFile);
         // $file = file_get_contents("https://mdwiki.toolforge.org/td/Tables/jsons/words.json");
-        $Words_table = json_decode($file, true);
+        $WordsTable = json_decode($file, true);
     } catch (\Exception $e) {
-        $Words_table = [];
+        $WordsTable = [];
     }
-    return $Words_table;
+    return $WordsTable;
 }
 
-function handleNoAccess($user, $tab, $rand_id)
+function handleNoAccess($user, $tab, $randId)
 {
     $error = ['code' => 'noaccess', 'info' => 'noaccess'];
     $editit = [
@@ -46,7 +46,7 @@ function handleNoAccess($user, $tab, $rand_id)
     ];
     $tab['result_to_cx'] = $editit;
 
-    to_do($tab, "noaccess", $rand_id);
+    to_do($tab, "noaccess", $randId);
     InsertPublishReports($tab['title'], $user, $tab['lang'], $tab['sourcetitle'], "noaccess", $tab);
 
     pub_test_print("\n<br>");
@@ -57,7 +57,7 @@ function handleNoAccess($user, $tab, $rand_id)
 
 function start($request)
 {
-    $rand_id = time() .  "-" . bin2hex(random_bytes(6));
+    $randId = time() .  "-" . bin2hex(random_bytes(6));
     $user = formatUser($request['user'] ?? '');
     $title = formatTitle($request['title'] ?? '');
     $tab = [
@@ -74,14 +74,14 @@ function start($request)
     $access = get_access_from_db($user);
 
     if (empty($access)) {
-        handleNoAccess($user, $tab, $rand_id);
+        handleNoAccess($user, $tab, $randId);
         return;
     }
 
-    $Words_table = load_words_table();
-    $tab['words'] = $Words_table[$title] ?? 0;
+    $WordsTable = load_words_table();
+    $tab['words'] = $WordsTable[$title] ?? 0;
 
-    $tr_type = $request['tr_type'] ?? 'lead';
+    $trType = $request['tr_type'] ?? 'lead';
 
     $text = $request['text'] ?? '';
     $revid = get_revid($tab['sourcetitle']);
@@ -105,10 +105,10 @@ function start($request)
         $text = $newtext;
     }
 
-    $edit_result = processEdit($request, $access, $text, $user, $tab, $rand_id, $tr_type);
+    $editResult = processEdit($request, $access, $text, $user, $tab, $randId, $trType);
 
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");
 
-    print(json_encode($edit_result, JSON_PRETTY_PRINT));
+    print(json_encode($editResult, JSON_PRETTY_PRINT));
 }

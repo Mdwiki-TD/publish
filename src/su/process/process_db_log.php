@@ -10,26 +10,26 @@ use function Publish\AddToDb\InsertPageTarget;
 use function Publish\Sql\retrieveCampaignCategories;
 use function Publish\Sql\find_exists_or_update;
 
-function getUseUserSql($user, $target, $to_users_table)
+function getUseUserSql($user, $target, $toUsersTable)
 {
 
-    $use_user_sql = false;
+    $useUserSql = false;
 
-    if ($to_users_table) {
-        $use_user_sql = $to_users_table;
+    if ($toUsersTable) {
+        $useUserSql = $toUsersTable;
     } else {
         $user_t = str_replace("User:", "", $user);
         $user_t = str_replace("user:", "", $user_t);
         // if target contains user
         if (strpos($target, $user_t) !== false) {
-            $use_user_sql = true;
+            $useUserSql = true;
         }
     }
 
-    return $use_user_sql;
+    return $useUserSql;
 }
 
-function add_to_db($target, $lang, $user, $to_users_table, $campaign, $sourcetitle, $mdwiki_revid, $words, $tr_type)
+function add_to_db($target, $lang, $user, $toUsersTable, $campaign, $sourcetitle, $mdwikiRevid, $words, $trType)
 {
 
     $sourcetitle = str_replace("_", " ", $sourcetitle);
@@ -39,32 +39,32 @@ function add_to_db($target, $lang, $user, $to_users_table, $campaign, $sourcetit
     if (empty($user) || empty($sourcetitle) || empty($lang)) {
         return [
             'use_user_sql' => false,
-            'to_users_table' => $to_users_table,
+            'to_users_table' => $toUsersTable,
             'one_empty' => ['title' => $sourcetitle, 'lang' => $lang, 'user' => $user],
         ];
     }
 
-    $camp_to_cat = retrieveCampaignCategories();
-    $cat = $camp_to_cat[$campaign] ?? '';
+    $campToCat = retrieveCampaignCategories();
+    $cat = $campToCat[$campaign] ?? '';
 
-    $use_user_sql = getUseUserSql($user, $target, $to_users_table);
-    $table_name = ($use_user_sql) ? 'pages_users' : 'pages';
+    $useUserSql = getUseUserSql($user, $target, $toUsersTable);
+    $tableName = ($useUserSql) ? 'pages_users' : 'pages';
 
-    $exists = find_exists_or_update($sourcetitle, $lang, $user, $target, $table_name);
+    $exists = find_exists_or_update($sourcetitle, $lang, $user, $target, $tableName);
 
     if ($exists) {
         return [
-            'use_user_sql' => $use_user_sql,
-            'to_users_table' => $to_users_table,
+            'use_user_sql' => $useUserSql,
+            'to_users_table' => $toUsersTable,
             'exists' => "already_in",
         ];
     }
 
-    InsertPageTarget($sourcetitle, $tr_type, $cat, $lang, $user, $target, $table_name, $mdwiki_revid, $words);
+    InsertPageTarget($sourcetitle, $trType, $cat, $lang, $user, $target, $tableName, $mdwikiRevid, $words);
 
     return [
-        'use_user_sql' => $use_user_sql,
-        'to_users_table' => $to_users_table,
+        'use_user_sql' => $useUserSql,
+        'to_users_table' => $toUsersTable,
         'execute_query' => true,
     ];
 }
