@@ -16,10 +16,10 @@ function is_allowed()
     $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
     $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
-    $is_allowed = false;
+    $isAllowed = false;
     foreach ($domains as $domain) {
         if (strpos($referer, $domain) !== false || strpos($origin, $domain) !== false) {
-            $is_allowed = $domain;
+            $isAllowed = $domain;
             break;
         }
     }
@@ -27,5 +27,5 @@ function is_allowed()
     // log $_SERVER to file
     // file_put_contents(__DIR__ . '/cors.log', print_r($_SERVER, true));
 
-    return $is_allowed;
+    return $isAllowed;
 }

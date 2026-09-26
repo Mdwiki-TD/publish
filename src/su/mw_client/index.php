@@ -34,10 +34,10 @@ function get_client($domain)
     return $client;
 }
 
-function getAccessToken($access_key, $access_secret)
+function getAccessToken($accessKey, $accessSecret)
 {
 
-    $accessToken = new Token($access_key, $access_secret);
+    $accessToken = new Token($accessKey, $accessSecret);
     return $accessToken;
 }
 
@@ -53,9 +53,9 @@ function get_edits_token($client, $accessToken, $apiUrl)
     return $data->query->tokens->csrftoken;
 }
 
-function get_csrftoken($client, $access_key, $access_secret, $apiUrl)
+function get_csrftoken($client, $accessKey, $accessSecret, $apiUrl)
 {
-    $accessToken = getAccessToken($access_key, $access_secret);
+    $accessToken = getAccessToken($accessKey, $accessSecret);
     $response = $client->makeOAuthCall($accessToken, "$apiUrl?action=query&meta=tokens&format=json");
     $data = json_decode($response, true);
     if ($data == null || !isset($data['query']['tokens']['csrftoken'])) {
@@ -66,22 +66,22 @@ function get_csrftoken($client, $access_key, $access_secret, $apiUrl)
     return $data;
 }
 
-function post_params($apiParams, $https_domain, $access_key, $access_secret)
+function post_params($apiParams, $httpsDomain, $accessKey, $accessSecret)
 {
-    $client = get_client($https_domain);
-    $apiUrl = "$https_domain/w/api.php";
+    $client = get_client($httpsDomain);
+    $apiUrl = "$httpsDomain/w/api.php";
 
-    $accessToken = new Token($access_key, $access_secret);
+    $accessToken = new Token($accessKey, $accessSecret);
 
-    $csrftoken_data = get_csrftoken($client, $access_key, $access_secret, $apiUrl);
+    $csrftokenData = get_csrftoken($client, $accessKey, $accessSecret, $apiUrl);
 
-    $csrftoken = $csrftoken_data['query']['tokens']['csrftoken'] ?? null;
+    $csrftoken = $csrftokenData['query']['tokens']['csrftoken'] ?? null;
 
     if ($csrftoken == null) {
         $data = [
             'error' => 'get_csrftoken failed',
             "rand" => rand(),
-            "csrftoken_data" => $csrftoken_data
+            "csrftoken_data" => $csrftokenData
         ];
         return json_encode($data, JSON_PRETTY_PRINT);
     }
