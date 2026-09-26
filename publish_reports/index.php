@@ -28,32 +28,6 @@ function get_host()
         ? "https://cdnjs.cloudflare.com"
         : "https://tools-static.wmflabs.org/cdnjs";
 
-    if ($hoste == "https://tools-static.wmflabs.org/cdnjs") {
-        $url = "https://tools-static.wmflabs.org";
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_NOBODY, true); // We don't want to download the body
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // To prevent printing
-
-        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Connection timeout
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; CDN-Checker)');
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-
-        $result = curl_exec($ch);
-        $curlError = curl_error($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        curl_close($ch);
-
-        // If the connection fails or the response is not within 200–399, use cdnjs
-        if ($result === false || !empty($curlError) || $httpCode < 200 || $httpCode >= 400) {
-            $hoste = "https://cdnjs.cloudflare.com";
-        }
-    }
-
     $cachedHost = $hoste;
 
     return $hoste;
