@@ -19,10 +19,10 @@ function get_host()
 {
     // $hoste = get_host();
 
-    static $cached_host = null;
+    static $cachedHost = null;
 
-    if ($cached_host !== null) {
-        return $cached_host; // Use the cached value
+    if ($cachedHost !== null) {
+        return $cachedHost; // Use the cached value
     }
 
     $hoste = ($_SERVER["SERVER_NAME"] == "localhost")
@@ -55,7 +55,7 @@ function get_host()
         }
     }
 
-    $cached_host = $hoste;
+    $cachedHost = $hoste;
 
     return $hoste;
 }
@@ -105,9 +105,9 @@ function getMonthDirectory()
     return getYearDirectory() . date('m') . '/';
 }
 
-function add_time_badge($dir_time)
+function add_time_badge($dirTime)
 {
-    $diff = time() - $dir_time;
+    $diff = time() - $dirTime;
 
     if ($diff < 86400) {
         if ($diff < 60) {
@@ -121,14 +121,14 @@ function add_time_badge($dir_time)
         }
     }
 
-    return date('H:i', $dir_time);
+    return date('H:i', $dirTime);
 }
 
 
-function addTodayBadge($dir_date)
+function addTodayBadge($dirDate)
 {
     $today = date('d M Y');
-    $lastModified = date('d M Y', strtotime($dir_date));
+    $lastModified = date('d M Y', strtotime($dirDate));
 
     return $today === $lastModified ? ' <span class="badge text-bg-warning" style="float: right">Today</span>' : "";
 }
@@ -243,8 +243,8 @@ function makeMonthReports($year, $month)
             $reportDir = $monthDir . '/' . $report;
             $jsonFiles = glob($reportDir . '/*.json');
             if (!$jsonFiles) continue;
-            $dir_time = filectime($reportDir);
-            $time = add_time_badge($dir_time);
+            $dirTime = filectime($reportDir);
+            $time = add_time_badge($dirTime);
             $user = "";
             $lang = "";
             $ul = '<ul class="list-group">';
@@ -254,7 +254,7 @@ function makeMonthReports($year, $month)
                 if (empty($user)) {
                     $json = json_decode(file_get_contents($jsonFile), true);
                     $user = $json['user'] ?? '';
-                    $target_title = $json['title'] ?? '';
+                    $targetTitle = $json['title'] ?? '';
                     $lang = $json['lang'] ?? '';
                 }
                 $url = REPORTS_DIR . "/$year/$month/$report/$name";
@@ -264,8 +264,8 @@ function makeMonthReports($year, $month)
                         </li>
                     HTML;
             }
-            if (!empty($lang) && !empty($target_title)) {
-                $lang = "<a href='https://$lang.wikipedia.org/wiki/$target_title' target='_blank'>$lang</a>";
+            if (!empty($lang) && !empty($targetTitle)) {
+                $lang = "<a href='https://$lang.wikipedia.org/wiki/$targetTitle' target='_blank'>$lang</a>";
             }
             $lang = $lang ? "$lang: " : "";
             if (!$jsonFiles) {
