@@ -32,7 +32,7 @@ class syntaxTest extends TestCase
         return $files;
     }
 
-   #[DataProvider('someDataProviderMethod')]
+   #[DataProvider('phpFilesProvider')]
     public function testPhpFileHasValidSyntax(string $filePath): void
     {
         $output = shell_exec('php -l ' . escapeshellarg($filePath) . ' 2>&1');

@@ -1,15 +1,10 @@
 <?php
 
 namespace Publish\AddToDb;
-/*
-
-use function Publish\AddToDb\InsertPublishReports;
-use function Publish\AddToDb\InsertPageTarget;
-*/
 
 use function Publish\MdwikiSql\execute_query;
 
-function InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data)
+function InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data): bool
 {
     // Validate required parameters
     /*
@@ -23,14 +18,14 @@ function InsertPublishReports($title, $user, $lang, $sourcetitle, $result, $data
     // remove .json from $result
     $result = str_replace(".json", "", $result);
     $params = [$title, $user, $lang, $sourcetitle, $result, $reportData];
-    execute_query($query, $params, "publish_reports");
+    return execute_query($query, $params);
 }
 
-function InsertPageTarget($sourcetitle, $trType, $cat, $lang, $user, $target, $tableName, $mdwikiRevid, $words)
+function InsertPageTarget($sourcetitle, $trType, $cat, $lang, $user, $target, $tableName, $mdwikiRevid, $words): bool
 {
     $allowedTables = ['pages', 'pages_users']; // Add all valid table names
     if (!in_array($tableName, $allowedTables, true)) {
-        error_log("find_exists_or_update: Invalid table name: $tableName");
+        error_log("InsertPageTarget: Invalid table name: $tableName");
         return false;
     }
     $query = <<<SQL
@@ -48,5 +43,5 @@ function InsertPageTarget($sourcetitle, $trType, $cat, $lang, $user, $target, $t
         $target,
         $mdwikiRevid
     ];
-    execute_query($query, $params, $tableName);
+    return execute_query($query, $params);
 }

@@ -4,18 +4,13 @@ namespace Publish\MdwikiSql;
 
 use Publish\MdwikiSql\Database;
 
-function execute_query(string $sqlQuery, $params = null, $tableName = null)
+function execute_query(string $sqlQuery, ?array $params = null): bool
 {
-
     // Create a new database object
     $db = new Database('DB_NAME');
 
     // Execute a SQL query
-    if ($params) {
-        $results = $db->executequery($sqlQuery, $params);
-    } else {
-        $results = $db->executequery($sqlQuery);
-    }
+    $results = $db->executequery($sqlQuery, $params);
 
     // Print the results
     // foreach ($results as $row) echo $row['column1'] . " " . $row['column2'] . "<br>";
@@ -24,19 +19,13 @@ function execute_query(string $sqlQuery, $params = null, $tableName = null)
     $db = null;
     return $results;
 };
-
-function fetch_query(string $sqlQuery, ?array $params = null, $tableName = null): array
+function fetch_query(string $sqlQuery, ?array $params = null): array
 {
-
     // Create a new database object
     $db = new Database('DB_NAME');
 
     // Execute a SQL query
-    if ($params) {
-        $results = $db->fetchquery($sqlQuery, $params);
-    } else {
-        $results = $db->fetchquery($sqlQuery);
-    }
+    $results = $db->fetchquery($sqlQuery, $params);
 
     // Print the results
     // foreach ($results as $row) echo $row['column1'] . " " . $row['column2'] . "<br>";

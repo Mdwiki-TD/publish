@@ -1,11 +1,6 @@
 <?php
 
 namespace Publish\GetToken;
-/*
-
-use function Publish\GetToken\get_cxtoken;
-
-*/
 
 use function Publish\Helps\pub_test_print;
 use function Publish\MediaWikiClient\post_params;
