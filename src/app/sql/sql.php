@@ -2,12 +2,6 @@
 
 namespace Publish\Sql;
 
-/*
-use function Publish\Sql\GetQidForMdtitle;
-use function Publish\Sql\retrieveCampaignCategories;
-use function Publish\Sql\find_exists_or_update;
-*/
-
 use function Publish\MdwikiSql\fetch_query;
 use function Publish\MdwikiSql\execute_query;
 
@@ -41,12 +35,12 @@ function find_exists_or_update($title, $lang, $user, $target, $tableName)
     $result = fetch_query($query, [$title, $lang, $user]);
 
     if (count($result) > 0) {
-        $query = <<<SQL
+        $updateQuery = <<<SQL
             UPDATE $tableName SET target = ?, pupdate = DATE(NOW())
             WHERE title = ? AND lang = ? AND user = ? AND (target = "" OR target IS NULL)
         SQL;
         $params = [$target, $title, $lang, $user];
-        execute_query($query, $params, $tableName);
+        execute_query($updateQuery, $params, $tableName);
     }
     return count($result) > 0;
 }
