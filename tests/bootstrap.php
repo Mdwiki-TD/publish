@@ -14,11 +14,11 @@ putenv('APP_ENV=testing');
 putenv('WIKIDATA_DOMAIN=test.wikidata.org');
 
 # database informations
-putenv('DB_HOST_TOOLS=localhost:3306');
-putenv('DB_NAME=s54732__mdwikiz');
+// putenv('DB_HOST_TOOLS=localhost:3306');
+// putenv('DB_NAME=s54732__mdwikiz');
 
-putenv('TOOL_TOOLSDB_USER=root');
-putenv('TOOL_TOOLSDB_PASSWORD=root11');
+// putenv('TOOL_TOOLSDB_USER=root');
+// putenv('TOOL_TOOLSDB_PASSWORD=root11');
 
 # OAuth keys
 putenv('CONSUMER_KEY=test_consumer_key');

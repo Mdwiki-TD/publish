@@ -6,6 +6,7 @@ use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use FilesystemIterator;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class syntaxTest extends TestCase
 {
@@ -31,9 +32,7 @@ class syntaxTest extends TestCase
         return $files;
     }
 
-    /**
-     * @dataProvider phpFilesProvider
-     */
+   #[DataProvider('someDataProviderMethod')]
     public function testPhpFileHasValidSyntax(string $filePath): void
     {
         $output = shell_exec('php -l ' . escapeshellarg($filePath) . ' 2>&1');
