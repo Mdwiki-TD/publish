@@ -18,8 +18,10 @@ jobs:
         with:
           php-version: '8.2'
           tools: composer
+          coverage: none # Disable code coverage caching
 
       - name: Install dependencies
+        # --no-cache: Disables Composer's package cache completely
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Run PHPStan
