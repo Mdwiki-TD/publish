@@ -230,7 +230,7 @@ The encryption key is loaded at file include time into a module-level variable, 
 | MED-003 | Hardcoded admin fallback `"Mr. Ibrahem"` for Wikidata linking | `process/process_edit.php:41` |
 | MED-004 | Directory permissions 0755 (world-readable) for report files | `bots/files_helps.php:38-58` |
 | MED-005 | No transaction wrapping for multi-step DB operations | `sql/add_to_db.php` |
-| MED-006 | `rand()` used in error responses (weak, unnecessary) | `mw_client/index.php:83` |
+| MED-006 | `rand()` used in error responses (weak, unnecessary) | `MediaWikiClient/index.php:83` |
 | MED-007 | Inconsistent null/empty/error return types across all modules | Multiple files |
 | MED-008 | `$wiki` parameter not validated before URL construction | `api/do_edit.php`, `cxtoken/get_token.php` |
 | MED-009 | `all_pages_revids.json` (89KB) parsed on every request | `bots/revids_bot.php:45` |

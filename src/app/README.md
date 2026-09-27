@@ -43,7 +43,7 @@ app/
 ├── cxtoken/           # ContentTranslation token management
 │   ├── get_token.php      # CX token retrieval from Wikipedia
 │   └── token_handler.php  # Token orchestration with error handling
-├── mw_client/         # MediaWiki OAuth client wrapper
+├── MediaWikiClient/         # MediaWiki OAuth client wrapper
 │   └── index.php      # OAuth client, tokens, CSRF, POST operations
 ├── process/           # Edit processing & orchestration
 │   ├── start.php          # Main workflow orchestrator
@@ -79,7 +79,7 @@ include.php (bootstrap)
   │   ├── access_helps.php → Token storage
   │   ├── add_to_db.php → Record insertion
   │   └── sql.php → General queries
-  ├── mw_client/index.php → OAuth client
+  ├── MediaWikiClient/index.php → OAuth client
   ├── api/
   │   ├── do_edit.php → Edit execution
   │   └── wiki_api.php → Title queries

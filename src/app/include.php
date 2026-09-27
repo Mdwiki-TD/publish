@@ -23,7 +23,7 @@ include_once __DIR__ . '/Database.php';
 include_once __DIR__ . '/sql/mdwiki_sql.php';
 include_once __DIR__ . '/sql/sql.php';
 
-include_once __DIR__ . '/mw_client/index.php';
+include_once __DIR__ . '/MediaWikiClient/index.php';
 
 include_once __DIR__ . '/api/do_edit.php';
 include_once __DIR__ . '/api/wiki_api.php';

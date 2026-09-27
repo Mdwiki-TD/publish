@@ -41,7 +41,7 @@ src/
     ├── api/           # Wikipedia API interaction layer
     ├── bots/          # Utility/helper modules
     ├── cxtoken/       # ContentTranslation token management
-    ├── mw_client/     # MediaWiki OAuth client wrapper
+    ├── MediaWikiClient/     # MediaWiki OAuth client wrapper
     ├── process/       # Edit orchestration and processing
     ├── sql/           # Database access layer
     └── utils/         # Shared utility functions

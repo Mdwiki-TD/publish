@@ -18,7 +18,7 @@ src/
 │   │   ├── get_token.php
 │   │   ├── README.md
 │   │   └── token_handler.php
-│   ├── mw_client/
+│   ├── MediaWikiClient/
 │   │   ├── index.php
 │   │   └── README.md
 │   ├── process/

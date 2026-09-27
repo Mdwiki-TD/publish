@@ -1,4 +1,4 @@
-# app/mw_client/ - MediaWiki OAuth Client Wrapper
+# app/MediaWikiClient/ - MediaWiki OAuth Client Wrapper
 
 ## Project Overview
 

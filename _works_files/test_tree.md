@@ -7,7 +7,7 @@ tests/
 │   │   ├── CurlRequestsTest.php
 │   │   └── WdIntegrationTest.php
 │   ├── cxtoken/
-│   ├── mw_client/
+│   ├── MediaWikiClient/
 │   ├── process/
 │   │   ├── ProcessEditTest.php
 │   │   └── StartTest.php
@@ -22,7 +22,7 @@ tests/
 │   │   ├── HelpsTest.php
 │   │   └── WdUnitTest.php
 │   ├── cxtoken/
-│   ├── mw_client/
+│   ├── MediaWikiClient/
 │   ├── process/
 │   ├── sql/
 │   │   ├── AccessHelpsTest.php
