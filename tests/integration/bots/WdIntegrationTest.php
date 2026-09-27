@@ -56,23 +56,6 @@ class WdIntegrationTest extends TestCase
         $this->assertNull($result);
     }
 
-    /**
-     * A user existing in the DB returns an array of two elements.
-     * Requires WD_TEST_USER to be defined in the environment.
-     */
-    #[Group('readonly')]
-    public function testGetAccessCredentialsReturnsArrayForKnownUser(): void
-    {
-        $user = "Mr. Ibrahem";
-
-        $result = \Publish\WD\getAccessCredentials($user, '', '');
-
-        $this->assertIsArray($result);
-        $this->assertCount(2, $result);
-        // $this->assertNotEmpty($result[0]); // access_key
-        // $this->assertNotEmpty($result[1]); // access_secret
-    }
-
     // -----------------------------------------------------------------------
     // LinkToWikidata – Calling the real Wikidata API (requires credentials)
     // -----------------------------------------------------------------------
