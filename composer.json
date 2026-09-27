@@ -33,7 +33,7 @@
     "require-dev": {
         "phpunit/phpunit": "^11.5",
         "phpstan/phpstan": "^2.1",
-        "johnkary/phpunit-speedtrap": "*"
+        "johnkary/phpunit-speedtrap": "^1.0"
     },
     "require": {
         "mediawiki/oauthclient": "^1.2",
