@@ -52,7 +52,10 @@ class Database
             error_log($e->getMessage());
             // Display a generic message
             echo "Unable to connect to the database. Please try again later.";
-            exit();
+
+            if (getenv("APP_ENV") === "production") {
+                exit();
+            }
         }
     }
     public function disableFullGroupByMode($sqlQuery)
