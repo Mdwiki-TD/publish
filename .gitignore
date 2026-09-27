@@ -31,3 +31,4 @@ load_env.php
 /.commandcode
 .phpunit.cache/**
 report.xml
+z.php
