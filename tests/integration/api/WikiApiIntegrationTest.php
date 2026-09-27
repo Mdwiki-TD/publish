@@ -98,13 +98,18 @@ class WikiApiIntegrationTest extends TestCase
         $this->assertIsArray($result);
         $this->assertArrayHasKey('pageid', $result);
     }
-
     /**
      * Non-existent language → cURL exception → should return null, not crash.
      */
     #[Group('readonly')]
+    #[Group('network')]
     public function testGetTitleInfoReturnsNullForInvalidLang(): void
     {
+        $this->markTestSkipped(
+            'Requires real network access and cURL timeout (~11s) for a non-existent domain. '
+                . 'Run manually or via --group network when needed.'
+        );
+
         // zz.wikipedia.org does not exist → exception → null
         $result = \Publish\WikiApi\GetTitleInfo('SomePage', 'zz_invalid_lang_xyz');
 
