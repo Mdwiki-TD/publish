@@ -32,7 +32,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5",
-        "phpstan/phpstan": "^2.1"
+        "phpstan/phpstan": "^2.1",
+        "johnkary/phpunit-speedtrap": "*"
     },
     "require": {
         "mediawiki/oauthclient": "^1.2",
