@@ -30,3 +30,4 @@ load_env.php
 /build/coverage-html
 /.commandcode
 .phpunit.cache/**
+report.xml
