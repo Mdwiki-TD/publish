@@ -1,4 +1,4 @@
-# su/bots/ - Utility & Helper Modules
+# app/bots/ - Utility & Helper Modules
 
 ## Project Overview
 

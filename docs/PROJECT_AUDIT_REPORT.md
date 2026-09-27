@@ -19,7 +19,7 @@ The MDWiki Publish Repository is a PHP backend service that publishes Wikipedia 
 - cURL for HTTP requests
 - PHPUnit 10 + PHPStan level 5 for quality assurance
 
-**Architecture:** The application follows a procedural pipeline pattern. A POST request enters through `index.php`, passes through CORS/secret-key validation, and flows through a sequential pipeline: access validation → revision lookup → wikitext preprocessing → OAuth edit → Wikidata linking → logging. All modules are loaded via manual `include_once` chains from `su/include.php`.
+**Architecture:** The application follows a procedural pipeline pattern. A POST request enters through `index.php`, passes through CORS/secret-key validation, and flows through a sequential pipeline: access validation → revision lookup → wikitext preprocessing → OAuth edit → Wikidata linking → logging. All modules are loaded via manual `include_once` chains from `app/include.php`.
 
 ---
 
@@ -43,7 +43,7 @@ All 9 modules share these patterns:
 
 1. **PSR-4 namespaced functions** - Every module declares a `Publish\*` namespace and exports standalone functions (not classes). This is unconventional but provides basic encapsulation.
 
-2. **Manual include chains** - `su/include.php` loads all 20+ files via `include_once`. No Composer autoloading is used for application code despite being configured in `composer.json`.
+2. **Manual include chains** - `app/include.php` loads all 20+ files via `include_once`. No Composer autoloading is used for application code despite being configured in `composer.json`.
 
 3. **Environment-based configuration** - All secrets loaded via `getenv()` with fallbacks to `$_ENV`. Production uses Toolforge environment, development uses `load_env.php`.
 
@@ -100,7 +100,7 @@ All 9 modules share these patterns:
 
 #### CRIT-001: Hardcoded Credentials in Version Control
 
-**File:** `src/su/load_env.php`
+**File:** `src/app/load_env.php`
 **Severity:** Critical
 
 ```php
@@ -160,7 +160,7 @@ if (!$alowed) { ... }
 
 #### HIGH-001: CORS Bypass via Substring Matching
 
-**File:** `src/su/cors.php:21`
+**File:** `src/app/cors.php:21`
 
 ```php
 if (strpos($referer, $domain) !== false || strpos($origin, $domain) !== false)
@@ -174,7 +174,7 @@ An attacker can bypass with `https://evil.com/?medwiki.toolforge.org` or `https:
 
 #### HIGH-002: SQL Query Exposure in Debug Mode
 
-**File:** `src/su/sql/mdwiki_sql.php:96`
+**File:** `src/app/sql/mdwiki_sql.php:96`
 
 ```php
 pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
@@ -188,7 +188,7 @@ When `?test` is in the URL, full SQL queries including table structure and error
 
 #### HIGH-003: No Input Validation on POST Data
 
-**File:** `src/su/process/start.php:57-68`
+**File:** `src/app/process/start.php:57-68`
 
 User-supplied `$_POST` data (`title`, `user`, `target`, `text`, `sourcetitle`, `campaign`) flows through the entire pipeline without any validation, length checks, or sanitization.
 
@@ -198,7 +198,7 @@ User-supplied `$_POST` data (`title`, `user`, `target`, `text`, `sourcetitle`, `
 
 #### HIGH-004: New Database Connection Per Query
 
-**File:** `src/su/sql/mdwiki_sql.php:129-150`
+**File:** `src/app/sql/mdwiki_sql.php:129-150`
 
 Both `execute_query()` and `fetch_query()` create a new `Database` instance (new PDO connection) per call, then immediately destroy it. A typical publish request makes 3-5 database calls.
 
@@ -208,7 +208,7 @@ Both `execute_query()` and `fetch_query()` create a new `Database` instance (new
 
 #### HIGH-005: Global Encryption Key State
 
-**File:** `src/su/bots/crypt_helps.php:13-15`
+**File:** `src/app/bots/crypt_helps.php:13-15`
 
 ```php
 $_decrypt_key_str = getenv("DECRYPT_KEY") ?: '';

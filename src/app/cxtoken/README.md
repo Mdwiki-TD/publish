@@ -1,4 +1,4 @@
-# su/cxtoken/ - ContentTranslation Token Management
+# app/cxtoken/ - ContentTranslation Token Management
 
 ## Project Overview
 
