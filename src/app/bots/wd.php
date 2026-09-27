@@ -1,9 +1,6 @@
 <?php
 
 namespace Publish\WD;
-/*
-use function Publish\WD\LinkToWikidata;
-*/
 
 use function Publish\Sql\GetQidForMdtitle;
 use function Publish\MediaWikiClient\post_params;

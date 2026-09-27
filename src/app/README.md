@@ -5,18 +5,20 @@
 `app/` (short for "Start Up") is the core application module containing all business logic for the MDWiki Publish API. It orchestrates the entire publish workflow from request validation through Wikipedia API calls to result logging.
 
 ### Purpose
-- Central include/bootstrap system for all application modules
-- OAuth consumer configuration
-- CORS domain validation
-- Environment variable loading (development mode)
-- Wikitext preprocessing via external `fix_refs` library
+
+-   Central include/bootstrap system for all application modules
+-   OAuth consumer configuration
+-   CORS domain validation
+-   Environment variable loading (development mode)
+-   Wikitext preprocessing via external `fix_refs` library
 
 ### Technologies
-- PHP 8.0+ with PSR-4 namespaced functions
-- `mediawiki/oauthclient` for OAuth 1.0a
-- `defuse/php-encryption` for token encryption
-- PDO for MySQL/MariaDB
-- cURL for HTTP requests
+
+-   PHP 8.0+ with PSR-4 namespaced functions
+-   `mediawiki/oauthclient` for OAuth 1.0a
+-   `defuse/php-encryption` for token encryption
+-   PDO for MySQL/MariaDB
+-   cURL for HTTP requests
 
 ## Project Structure
 
@@ -60,6 +62,7 @@ app/
 ## Architecture
 
 ### Module Dependency Graph
+
 ```
 include.php (bootstrap)
   ├── vendor_load.php → Composer autoloader
@@ -93,6 +96,7 @@ include.php (bootstrap)
 ```
 
 ### Request Processing Pipeline
+
 ```
 1. Entry point (index.php/token.php)
 2. CORS validation (cors.php)
@@ -112,20 +116,23 @@ include.php (bootstrap)
 ## Code Quality Review
 
 ### Design Patterns
-- **Bootstrap/Include pattern** - `include.php` loads all dependencies manually
-- **Procedural with namespaces** - Functions organized under `Publish\*` namespaces
-- **Gateway pattern** - `Database` class wraps PDO
-- **Pipeline pattern** - Request flows through sequential processing stages
+
+-   **Bootstrap/Include pattern** - `include.php` loads all dependencies manually
+-   **Procedural with namespaces** - Functions organized under `Publish\*` namespaces
+-   **Gateway pattern** - `Database` class wraps PDO
+-   **Pipeline pattern** - Request flows through sequential processing stages
 
 ### SOLID Compliance
-- **SRP:** Partial - each file has a focused purpose, but orchestration functions mix concerns
-- **OCP/LSP/ISP:** Not applicable (procedural architecture)
-- **DIP:** Not followed - functions directly instantiate dependencies
+
+-   **SRP:** Partial - each file has a focused purpose, but orchestration functions mix concerns
+-   **OCP/LSP/ISP:** Not applicable (procedural architecture)
+-   **DIP:** Not followed - functions directly instantiate dependencies
 
 ### Naming Conventions
-- Namespaces: `Publish\*` (PSR-4 compliant)
-- Functions: Mixed `camelCase` and `snake_case` (inconsistent)
-- Database methods: `executequery`/`fetchquery` (no underscores, inconsistent with wrapper functions)
+
+-   Namespaces: `Publish\*` (PSR-4 compliant)
+-   Functions: Mixed `camelCase` and `snake_case` (inconsistent)
+-   Database methods: `executequery`/`fetchquery` (no underscores, inconsistent with wrapper functions)
 
 ## Strengths
 
@@ -149,28 +156,30 @@ include.php (bootstrap)
 
 > **WARNING: These issues require immediate attention.**
 
-| Issue | Location | Risk |
-|-------|----------|------|
-| Hardcoded DB credentials and encryption keys | `load_env.php` | **Critical** |
-| CORS bypass via substring matching | `cors.php` | **High** |
-| Empty secret code bypasses auth | `index.php` | **High** |
-| SQL query exposure in debug mode | `mdwiki_sql.php` | **Medium** |
-| No input validation on POST data | `process/start.php` | **Medium** |
-| Hardcoded admin username | Multiple files | **Medium** |
-| File path injection risk | `bots/files_helps.php` | **Medium** |
-| Hardcoded Windows paths | `files_helps.php`, `start.php` | **Low** |
+| Issue                                        | Location                       | Risk         |
+| -------------------------------------------- | ------------------------------ | ------------ |
+| Hardcoded DB credentials and encryption keys | `load_env.php`                 | **Critical** |
+| CORS bypass via substring matching           | `cors.php`                     | **High**     |
+| Empty secret code bypasses auth              | `index.php`                    | **High**     |
+| SQL query exposure in debug mode             | `mdwiki_sql.php`               | **Medium**   |
+| No input validation on POST data             | `process/start.php`            | **Medium**   |
+| Hardcoded admin username                     | Multiple files                 | **Medium**   |
+| File path injection risk                     | `bots/files_helps.php`         | **Medium**   |
+| Hardcoded Windows paths                      | `files_helps.php`, `start.php` | **Low**      |
 
 ## Areas That Need Attention
-- **Security:** Remove `load_env.php` from version control, add to `.gitignore`
-- **Architecture:** Replace `include_once` chains with Composer autoloading
-- **Input validation:** Add centralized validation for all POST parameters
-- **Testing:** Increase unit test coverage for `process/` module
-- **Configuration:** Extract hardcoded values to environment variables
-- **Documentation:** Add inline documentation for complex functions
+
+-   **Security:** Remove `load_env.php` from version control, add to `.gitignore`
+-   **Architecture:** Replace `include_once` chains with Composer autoloading
+-   **Input validation:** Add centralized validation for all POST parameters
+-   **Testing:** Increase unit test coverage for `process/` module
+-   **Configuration:** Extract hardcoded values to environment variables
+-   **Documentation:** Add inline documentation for complex functions
 
 ## Improvement Plan
 
 ### Quick Fixes (1-2 days)
+
 1. Add `load_env.php` to `.gitignore`, rotate all exposed credentials
 2. Fix CORS validation to use `parse_url()` for exact host matching
 3. Return 403 when `PUBLISH_SECRET_CODE` is empty
@@ -178,6 +187,7 @@ include.php (bootstrap)
 5. Add return type declarations to all functions
 
 ### Medium-term (1-2 weeks)
+
 1. Replace `include_once` chains with Composer PSR-4 autoloading
 2. Add centralized input validation middleware
 3. Extract shared username normalization utility
@@ -185,6 +195,7 @@ include.php (bootstrap)
 5. Add request/response logging middleware
 
 ### Long-term (1-2 months)
+
 1. Refactor to class-based architecture with dependency injection
 2. Add comprehensive unit tests (target 80%+ coverage)
 3. Implement caching for QID lookups and word counts
@@ -193,30 +204,30 @@ include.php (bootstrap)
 
 ## Comprehensive Review
 
-| Metric | Score | Notes |
-|--------|-------|-------|
-| **Overall Rating** | 5/10 | Functional but needs hardening |
-| **Production Readiness** | 5/10 | Works but has security gaps |
-| **Security Score** | 4/10 | Credential exposure, CORS bypass |
-| **Technical Debt** | 6/10 | Procedural, inconsistent naming |
-| **Maintainability** | 5/10 | Readable but tightly coupled |
-| **Test Coverage** | 5/10 | Tests exist but gaps in core modules |
-| **Risk Assessment** | Medium-High | Credential exposure is critical |
+| Metric                   | Score       | Notes                                |
+| ------------------------ | ----------- | ------------------------------------ |
+| **Overall Rating**       | 5/10        | Functional but needs hardening       |
+| **Production Readiness** | 5/10        | Works but has security gaps          |
+| **Security Score**       | 4/10        | Credential exposure, CORS bypass     |
+| **Technical Debt**       | 6/10        | Procedural, inconsistent naming      |
+| **Maintainability**      | 5/10        | Readable but tightly coupled         |
+| **Test Coverage**        | 5/10        | Tests exist but gaps in core modules |
+| **Risk Assessment**      | Medium-High | Credential exposure is critical      |
 
 ## Environment Variables
 
-| Variable | Purpose | Required |
-|----------|---------|----------|
-| `APP_ENV` | Environment (`development`/`production`) | No (defaults to `development`) |
-| `DB_HOST_TOOLS` | Database host | Yes |
-| `DB_NAME` | Database name | Yes |
-| `TOOL_TOOLSDB_USER` | Database username | Yes |
-| `TOOL_TOOLSDB_PASSWORD` | Database password | Yes |
-| `CONSUMER_KEY` | MediaWiki OAuth consumer key | Yes |
-| `CONSUMER_SECRET` | MediaWiki OAuth consumer secret | Yes |
-| `DECRYPT_KEY` | Defuse encryption key for token storage | Yes |
-| `PUBLISH_SECRET_CODE` | API secret key for endpoint auth | No (bypasses auth if empty) |
-| `PUBLISH_REPORTS_PATH` | Path for JSON report files | No (has defaults) |
-| `ALL_PAGES_REVIDS_PATH` | Path to `all_pages_revids.json` | No (has defaults) |
-| `TEXT_WORK_FILE` | Path to `fix_refs/work.php` | No (has defaults) |
-| `WIKIDATA_DOMAIN` | Wikidata API domain | No (defaults to `www.wikidata.org`) |
+| Variable                | Purpose                                  | Required                            |
+| ----------------------- | ---------------------------------------- | ----------------------------------- |
+| `APP_ENV`               | Environment (`development`/`production`) | No (defaults to `development`)      |
+| `DB_HOST_TOOLS`         | Database host                            | Yes                                 |
+| `DB_NAME`               | Database name                            | Yes                                 |
+| `TOOL_TOOLSDB_USER`     | Database username                        | Yes                                 |
+| `TOOL_TOOLSDB_PASSWORD` | Database password                        | Yes                                 |
+| `CONSUMER_KEY`          | MediaWiki OAuth consumer key             | Yes                                 |
+| `CONSUMER_SECRET`       | MediaWiki OAuth consumer secret          | Yes                                 |
+| `DECRYPT_KEY`           | Defuse encryption key for token storage  | Yes                                 |
+| `PUBLISH_SECRET_CODE`   | API secret key for endpoint auth         | No (bypasses auth if empty)         |
+| `PUBLISH_REPORTS_PATH`  | Path for JSON report files               | No (has defaults)                   |
+| `ALL_PAGES_REVIDS_PATH` | Path to `all_pages_revids.json`          | No (has defaults)                   |
+| `TEXT_WORK_FILE`        | Path to `fix_refs/work.php`              | No (has defaults)                   |
+| `WIKIDATA_DOMAIN`       | Wikidata API domain                      | No (defaults to `www.wikidata.org`) |

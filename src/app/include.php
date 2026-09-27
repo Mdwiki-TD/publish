@@ -19,7 +19,7 @@ include_once __DIR__ . '/process/start.php';
 
 include_once __DIR__ . '/sql/access_helps.php';
 include_once __DIR__ . '/sql/add_to_db.php';
-include_once __DIR__ . '/sql/Database.php';
+include_once __DIR__ . '/Database.php';
 include_once __DIR__ . '/sql/mdwiki_sql.php';
 include_once __DIR__ . '/sql/sql.php';
 

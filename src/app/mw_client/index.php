@@ -1,13 +1,6 @@
 <?php
 
 namespace Publish\MediaWikiClient;
-/*
-use function Publish\MediaWikiClient\get_client;
-use function Publish\MediaWikiClient\getAccessToken;
-use function Publish\MediaWikiClient\get_csrftoken;
-use function Publish\MediaWikiClient\post_params;
-use function Publish\MediaWikiClient\get_edits_token;
-*/
 
 use MediaWiki\OAuthClient\Client;
 use MediaWiki\OAuthClient\ClientConfig;

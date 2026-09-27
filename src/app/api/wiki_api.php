@@ -1,9 +1,6 @@
 <?php
 
 namespace Publish\WikiApi;
-/*
-use function Publish\WikiApi\GetTitleInfo;
-*/
 
 use function Publish\Helps\pub_test_print;
 use function Publish\CurlRequests\get_url_curl;
