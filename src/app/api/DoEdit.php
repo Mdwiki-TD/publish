@@ -7,13 +7,11 @@ use function Publish\MediaWikiClient\getEditsToken;
 
 use MediaWiki\OAuthClient\Token;
 
-function publish_do_edit($apiParams, $wiki, $access)
+function publish_do_edit($apiParams, $wiki, Token $accessToken)
 {
     $client = get_client("$wiki.wikipedia.org");
 
     $apiUrl = "https://$wiki.wikipedia.org/w/api.php";
-
-    $accessToken = new Token($access["access_key"], $access["access_secret"]);
 
     $editToken = getEditsToken($client, $accessToken, $apiUrl);
 

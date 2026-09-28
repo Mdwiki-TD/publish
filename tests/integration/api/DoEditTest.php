@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 use function Publish\DoEdit\publish_do_edit;
+use MediaWiki\OAuthClient\Token;
 
 /**
  * Integration Tests for src/app/api/DoEdit.php
@@ -22,12 +23,17 @@ class DoEditTest extends TestCase
     #[Group('readonly')]
     public function testPublishDoEditEditsMainPage(): void
     {
-        $result = publish_do_edit('Main Page', 'en', 'Test edit', 'Test edit summary', 'Doc James');
+        $access = [
+            'access_key' => "access_key",
+            'access_secret' => "access_secret",
+        ];
+
+        $accessToken = new Token($access["access_key"], $access["access_secret"]);
+        $result = publish_do_edit('Main Page', 'en', $accessToken);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('edit', $result);
         $this->assertArrayHasKey('result', $result['edit']);
         $this->assertSame('Success', $result['edit']['result']);
     }
-
 }

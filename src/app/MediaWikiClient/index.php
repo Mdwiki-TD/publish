@@ -14,7 +14,7 @@ use function Publish\Helps\pub_test_print;
  *             OAuthHttpClientInterface) to preserve the exact old return type
  *             for any existing call sites that rely on it.
  */
-function get_client($domain): Client
+function get_client(string $domain): Client
 {
         $domain = parse_url($domain, PHP_URL_HOST);
         $CONSUMER_KEY        = getenv('CONSUMER_KEY') ?: '';

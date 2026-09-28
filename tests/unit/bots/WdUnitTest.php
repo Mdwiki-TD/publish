@@ -41,13 +41,16 @@ class WdUnitTest extends TestCase
 
     public function testLinkToWikidataReturnsErrorWhenNoCredentials(): void
     {
+        $access = [
+            'access_key' => "",
+            'access_secret' => "",  // empty access_secret
+        ];
         $result = \Publish\WD\LinkToWikidata(
             'Title',
             'es',
             'ghost_user',
             'z00',
-            '',
-            ''
+            $access,
         );
 
         $this->assertArrayHasKey('error', $result);
@@ -56,13 +59,16 @@ class WdUnitTest extends TestCase
 
     public function testLinkToWikidataReturnsErrorWhenOnlyOneKeyProvided(): void
     {
+        $access = [
+            'access_key' => "only_key",
+            'access_secret' => "",  // empty access_secret
+        ];
         $result = \Publish\WD\LinkToWikidata(
             'Title',
             'es',
             'user',
             'z00',
-            'only_key',
-            ''
+            $access
         );
 
         $this->assertArrayHasKey('error', $result);

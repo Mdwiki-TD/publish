@@ -49,8 +49,11 @@ function LinkIt($apiParams, $accessKey, $accessSecret)
     }
     return $Result;
 }
-function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $accessKey, $accessSecret)
+function LinkToWikidata($sourcetitle, $lang, $user, $targettitle, $access)
 {
+    $accessKey = $access['access_key'];
+    $accessSecret = $access['access_secret'];
+
     $qids = GetQidForMdtitle($sourcetitle);
     $qid = $qids[0]['qid'] ?? '';
 

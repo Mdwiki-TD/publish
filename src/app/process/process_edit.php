@@ -3,6 +3,7 @@
 namespace Publish\EditProcess;
 
 use Publish\AddToDb\PublishReportsRepository;
+use MediaWiki\OAuthClient\Token;
 
 use function Publish\Helps\pub_test_print;
 use function Publish\WD\LinkToWikidata;
@@ -38,10 +39,8 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user)
     $fallbackAccess = get_access_from_db('Mr. Ibrahem');
 
     if (!empty($fallbackAccess)) {
-        $fallbackAccessKey = $fallbackAccess['access_key'];
-        $fallbackAccessSecret = $fallbackAccess['access_secret'];
 
-        $LinkTowd = LinkToWikidata($sourcetitle, $lang, 'Mr. Ibrahem', $title, $fallbackAccessKey, $fallbackAccessSecret) ?? [];
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, 'Mr. Ibrahem', $title, $fallbackAccess) ?? [];
 
         // Add a note that fallback was used
         if (!isset($LinkTowd['error'])) {
@@ -60,11 +59,9 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
         return ["error" => "skip link to wd for user pages"];
     }
     $LinkTowd = [];
-    $accessKey = $access['access_key'];
-    $accessSecret = $access['access_secret'];
 
     try {
-        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $accessKey, $accessSecret) ?? [];
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access) ?? [];
         // Check if the error is getCsrfTokenData failure and user is not already "Mr. Ibrahem"
         if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'get_csrftoken failed' && $user !== 'Mr. Ibrahem') {
             $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user);
@@ -114,7 +111,8 @@ function processEdit($request, $access, $text, $user, $tab, $randId, $trType)
 
     $apiParams["text"] = $text;
 
-    $editit = publish_do_edit($apiParams, $lang, $access);
+    $accessToken = new Token($access["access_key"], $access["access_secret"]);
+    $editit = publish_do_edit($apiParams, $lang, $accessToken);
 
     $Success = $editit['edit']['result'] ?? '';
     $isCaptcha = $editit['edit']['captcha'] ?? null;
