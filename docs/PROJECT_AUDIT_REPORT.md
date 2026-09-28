@@ -108,7 +108,7 @@ All 9 modules share these patterns:
 putenv('TOOL_TOOLSDB_USER=root');
 putenv('TOOL_TOOLSDB_PASSWORD=root11');
 putenv('COOKIE_KEY=...');
-putenv('DECRYPT_KEY=...');
+putenv('CRYPTO_KEY=...');
 ```
 
 **Impact:** Database credentials and encryption keys are committed to Git history. Anyone with repository access can decrypt all stored OAuth tokens and access the database. Even if removed from HEAD, they persist in Git history.
@@ -116,7 +116,7 @@ putenv('DECRYPT_KEY=...');
 **Remediation:**
 
 1. Add `load_env.php` to `.gitignore` immediately
-2. Rotate ALL exposed credentials (DB password, DECRYPT_KEY, COOKIE_KEY)
+2. Rotate ALL exposed credentials (DB password, CRYPTO_KEY, COOKIE_KEY)
 3. Re-encrypt all OAuth tokens with the new key
 4. Use `git filter-branch` or BFG Repo Cleaner to purge from history
 
@@ -214,11 +214,11 @@ Both `execute_query()` and `fetch_query()` create a new `Database` instance (new
 **File:** `src/app/bots/crypt_helps.php:13-15`
 
 ```php
-$_decrypt_key_str = getenv("DECRYPT_KEY") ?: '';
+$_decrypt_key_str = getenv("CRYPTO_KEY") ?: '';
 $decrypt_key = $_decrypt_key_str ? Key::loadFromAsciiSafeString($_decrypt_key_str) : null;
 ```
 
-The encryption key is loaded at file include time into a module-level variable, then accessed via `global $decrypt_key` in functions. If `DECRYPT_KEY` is not set, all encryption/decryption silently returns empty strings.
+The encryption key is loaded at file include time into a module-level variable, then accessed via `global $decrypt_key` in functions. If `CRYPTO_KEY` is not set, all encryption/decryption silently returns empty strings.
 
 **Fix:** Load the key once in a class constructor or factory, validate it exists, and inject it where needed.
 

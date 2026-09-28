@@ -52,7 +52,7 @@ Includes fallback logic: if CSRF token retrieval fails, retries with admin crede
 
 Uses `defuse/php-encryption` for symmetric encryption of OAuth tokens:
 
--   `encode_value($value)` - Encrypts a string using the `DECRYPT_KEY`
+-   `encode_value($value)` - Encrypts a string using the `CRYPTO_KEY`
 -   `decode_value($value)` - Decrypts a string
 
 ## Code Quality Review
@@ -80,11 +80,11 @@ Uses `defuse/php-encryption` for symmetric encryption of OAuth tokens:
 1. **Global encryption key** (`crypt_helps.php`):
 
     ```php
-    $_decrypt_key_str = getenv("DECRYPT_KEY") ?: '';
+    $_decrypt_key_str = getenv("CRYPTO_KEY") ?: '';
     $decrypt_key = $_decrypt_key_str ? Key::loadFromAsciiSafeString($_decrypt_key_str) : null;
     ```
 
-    Loaded at file include time. If `DECRYPT_KEY` is not set, all encryption/decryption silently fails (returns empty string).
+    Loaded at file include time. If `CRYPTO_KEY` is not set, all encryption/decryption silently fails (returns empty string).
 
 2. **File path injection** (`files_helps.php`):
 
