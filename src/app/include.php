@@ -14,6 +14,7 @@ include_once __DIR__ . '/config.php';
 include_once __DIR__ . '/MediaWikiClient/index.php';
 
 # CurlRequests
+include_once __DIR__ . '/CurlRequests/HttpClientInterface.php';
 include_once __DIR__ . '/CurlRequests/CurlHttpClient.php';
 
 # AddToDb

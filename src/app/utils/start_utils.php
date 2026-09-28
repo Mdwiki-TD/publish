@@ -52,6 +52,7 @@ function get_errors_file($editit, $placeHolder)
     $errsWd = [
         "Links to user pages" => "wd_user_pages",
         "getCsrfTokenData" => "wd_csrftoken",
+        "get_csrftoken" => "wd_csrftoken",
         "protectedpage" => "wd_protectedpage",
     ];
     $cText = json_encode($editit);

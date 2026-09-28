@@ -3,8 +3,9 @@
 namespace Publish\DoEdit;
 
 use function Publish\MediaWikiClient\get_client;
-use function Publish\MediaWikiClient\getAccessToken;
 use function Publish\MediaWikiClient\getEditsToken;
+
+use MediaWiki\OAuthClient\Token;
 
 function publish_do_edit($apiParams, $wiki, $access)
 {
@@ -12,7 +13,7 @@ function publish_do_edit($apiParams, $wiki, $access)
 
     $apiUrl = "https://$wiki.wikipedia.org/w/api.php";
 
-    $accessToken = getAccessToken($access["access_key"], $access["access_secret"]);
+    $accessToken = new Token($access["access_key"], $access["access_secret"]);
 
     $editToken = getEditsToken($client, $accessToken, $apiUrl);
 

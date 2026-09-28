@@ -2,8 +2,9 @@
 
 namespace Publish\Revids;
 
+use Publish\CurlRequests\CurlHttpClient;
+
 use function Publish\Helps\pub_test_print;
-use function Publish\CurlRequests\get_url_curl;
 
 function get_revid_db($sourcetitle)
 {
@@ -16,7 +17,9 @@ function get_revid_db($sourcetitle)
         $json = file_get_contents($url);
     } else {
         $url = "https://mdwiki.toolforge.org/api.php?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-        $json = get_url_curl($url);
+
+        $client = new CurlHttpClient();
+        $json = $client->get($url) ?? '';
     }
     $json = json_decode($json, true);
     $results = array_column($json["results"] ?? [], "revid", "title");
