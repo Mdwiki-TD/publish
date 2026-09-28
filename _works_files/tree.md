@@ -4,8 +4,6 @@ src/
 │   ├── AddToDb/
 │   │   └── PublishReportsRepository.php
 │   ├── api/
-│   │   ├── DoEdit.php
-│   │   ├── README.md
 │   │   └── WikiApi.php
 │   ├── bots/
 │   │   ├── crypt_helps.php
@@ -16,25 +14,26 @@ src/
 │   │   ├── revids_bot.php
 │   │   └── wd.php
 │   ├── CurlRequests/
-│   │   └── CurlHttpClient.php
-│   ├── cxtoken/
-│   │   ├── get_token.php
-│   │   ├── README.md
-│   │   └── token_handler.php
-│   ├── files/
+│   │   ├── CurlHttpClient.php
+│   │   └── HttpClientInterface.php
+│   ├── Http/
+│   │   ├── CxTokenEndpoint.php
+│   │   └── PublishEndpoint.php
 │   ├── MediaWikiClient/
-│   │   ├── index.php
+│   │   ├── MediaWikiEditClient.php
+│   │   ├── MediaWikiOAuthClientAdapter.php
+│   │   ├── MediaWikiOAuthClientFactory.php
+│   │   ├── OAuthClientFactoryInterface.php
+│   │   ├── OAuthHttpClientInterface.php
 │   │   └── README.md
 │   ├── process/
 │   │   ├── EditProcessLog.php
 │   │   ├── ProcessEdit.php
-│   │   ├── README.md
-│   │   └── start.php
+│   │   └── StartController.php
 │   ├── sql/
 │   │   ├── access_helps.php
 │   │   ├── mdwiki_sql.php
-│   │   ├── README.md
-│   │   └── sql.php
+│   │   └── README.md
 │   ├── utils/
 │   │   ├── README.md
 │   │   └── start_utils.php

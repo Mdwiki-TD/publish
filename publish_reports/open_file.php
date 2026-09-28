@@ -1,7 +1,11 @@
 <?php
+// publish_reports/open_file.php
+// namespace PublishReports\Http;
+// class openFile
+
 header('Content-Type: application/json');
 
-include_once __DIR__ . "/config.php";
+include_once __DIR__ . "/reports_config.php";
 
 if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
     define("PUBLISH_REPORTS_DIR_BY_DAY", "/tmp");

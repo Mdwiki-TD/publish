@@ -2,11 +2,13 @@
 tests/
 ├── integration/
 │   ├── api/
-│   │   └── WikiApiIntegrationTest.php
+│   │   └── WikiApiTest.php
 │   ├── bots/
+│   │   ├── CurlHttpClientTest.php
 │   │   └── WdIntegrationTest.php
 │   ├── cxtoken/
-│   ├── mw_client/
+│   ├── MediaWikiClient/
+│   │   └── MediaWikiEditClientTest.php
 │   ├── process/
 │   │   ├── ProcessEditTest.php
 │   │   └── StartTest.php
@@ -16,16 +18,17 @@ tests/
 │   ├── api/
 │   ├── bots/
 │   │   ├── CryptHelpsTest.php
-│   │   ├── FilesHelpsAndRevidsTest.php
 │   │   ├── FilesHelpsTest.php
 │   │   ├── HelpsTest.php
+│   │   ├── RevidsTest.php
 │   │   └── WdUnitTest.php
 │   ├── cxtoken/
 │   ├── mw_client/
 │   ├── process/
+│   │   └── EditProcessTest.php
 │   ├── sql/
 │   │   ├── AccessHelpsTest.php
-│   │   └── AddToDbTest.php
+│   │   └── PublishReportsRepositoryTest.php
 │   ├── utils/
 │   │   └── StartUtilsTest.php
 │   └── CorsTest.php

@@ -8,7 +8,7 @@ if ($env === 'development' && file_exists(__DIR__ . '/load_env.php')) {
     include_once __DIR__ . '/load_env.php';
 }
 
-include_once __DIR__ . '/config.php';
+include_once __DIR__ . '/Settings.php';
 
 # MediaWikiClient
 include_once __DIR__ . '/MediaWikiClient/MediaWikiOAuthClientAdapter.php';
@@ -29,23 +29,24 @@ include_once __DIR__ . '/AddToDb/PublishReportsRepository.php';
 # MdwikiSql
 include_once __DIR__ . '/Database.php';
 
+# Http
+include_once __DIR__ . '/Http/PublishEndpoint.php';
+include_once __DIR__ . '/Http/CxTokenEndpoint.php';
+
 include_once __DIR__ . '/cors.php';
 include_once __DIR__ . '/text_edit.php';
 include_once __DIR__ . '/utils/start_utils.php';
 
 include_once __DIR__ . '/process/EditProcessLog.php';
 include_once __DIR__ . '/process/ProcessEdit.php';
-include_once __DIR__ . '/process/start.php';
+include_once __DIR__ . '/process/StartController.php';
 
 include_once __DIR__ . '/sql/access_helps.php';
 include_once __DIR__ . '/sql/mdwiki_sql.php';
 
 include_once __DIR__ . '/api/WikiApi.php';
 
-include_once __DIR__ . '/bots/index.php';
-
-include_once __DIR__ . '/cxtoken/get_token.php';
-include_once __DIR__ . '/cxtoken/token_handler.php';
+include_once __DIR__ . '/bots/include.php';
 
 
 $home = getenv('HOME') ?: ($_SERVER['HOME'] ?? "");

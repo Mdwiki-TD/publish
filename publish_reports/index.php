@@ -2,8 +2,10 @@
 <html lang="en" dir="ltr" data-bs-theme="light" xmlns="http://www.w3.org/1999/xhtml">
 
 <?php
+// publish_reports/index.php
+// namespace PublishReports\Http;
 
-include_once __DIR__ . "/config.php";
+include_once __DIR__ . "/reports_config.php";
 
 if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
     define("PUBLISH_REPORTS_DIR_BY_DAY", "/tmp");

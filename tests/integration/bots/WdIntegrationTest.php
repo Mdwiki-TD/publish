@@ -18,7 +18,6 @@ class WdIntegrationTest extends TestCase
         // variables that the library expects.
         // For this example, we assume your app usually initializes these from a string.
 
-        $GLOBALS['decrypt_key'] = $this->getTestKey();
     }
 
     private function getTestKey()

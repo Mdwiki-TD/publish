@@ -1,42 +1,8 @@
-<?PHP
-header('Content-Type: application/json; charset=utf-8');
+<?php
+// src/index.php
 
-// Check if the request is a POST request
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Method Not Allowed
-    echo json_encode(['error' => 'Only POST requests are allowed']);
-    exit;
-}
-
-use function Publish\Process\run;
+use Publish\Http\PublishEndpoint;
 
 include_once __DIR__ . '/app/include.php';
 
-function check_publish_secret_code()
-{
-    // load publish_secret_code from headers['X-Secret-Key']
-    $publishSecretCode = getenv('PUBLISH_SECRET_CODE');
-    if ($publishSecretCode === false) {
-        $publishSecretCode = $_ENV['PUBLISH_SECRET_CODE'] ?? '';
-    }
-
-    if ($publishSecretCode === '') {
-        return true;
-    }
-    $receivedKey = $_SERVER['HTTP_X_SECRET_KEY'] ?? '';
-
-    // if ($receivedKey === $publishSecretCode) {
-    if (hash_equals($publishSecretCode, $receivedKey)) {
-        return true;
-    }
-
-    return false;
-}
-
-if (!check_publish_secret_code()) {
-    http_response_code(403); // Forbidden
-    echo json_encode(['error' => 'Access denied. Invalid or missing secret key.']);
-    exit;
-}
-
-run($_POST);
+(new PublishEndpoint())->run();

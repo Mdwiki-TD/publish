@@ -34,7 +34,8 @@ putenv('TEXT_WORK_FILE=I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/fix_refs_repo/
 // In real tests you'd generate these with Key::createNewRandomKey()->saveToAsciiSafeString()
 // For unit tests that don't call crypto operations directly, empty strings are fine.
 
-putenv('DECRYPT_KEY=def000001358577eb292b944a354cfe446413d532d4c18c963597a88ec1daeba34080234b36ad1c54269ff04c443b5155c0c122a2c4e95137b12507b924f799bf13d8571');
+putenv('DECRYPT_KEY=' . \Defuse\Crypto\Key::createNewRandomKey()->saveToAsciiSafeString());
+putenv('ENCRYPT_KEY=' . \Defuse\Crypto\Key::createNewRandomKey()->saveToAsciiSafeString());
 
 $_SERVER['SERVER_NAME'] = 'localhost';
 
