@@ -1,11 +1,6 @@
 <?php
 
 namespace Publish\Revids;
-/*
-Usage:
-use function Publish\Revids\get_revid_db;
-use function Publish\Revids\get_revid;
-*/
 
 use function Publish\Helps\pub_test_print;
 use function Publish\CurlRequests\get_url_curl;

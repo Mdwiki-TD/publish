@@ -41,7 +41,7 @@ src/
     ├── api/           # Wikipedia API interaction layer
     ├── bots/          # Utility/helper modules
     ├── cxtoken/       # ContentTranslation token management
-    ├── mw_client/     # MediaWiki OAuth client wrapper
+    ├── MediaWikiClient/     # MediaWiki OAuth client wrapper
     ├── process/       # Edit orchestration and processing
     ├── sql/           # Database access layer
     └── utils/         # Shared utility functions
@@ -65,7 +65,7 @@ POST /index.php
     → Get source revision ID
     → Preprocess wikitext (fix_refs)
     → app/process/process_edit.php::processEdit()
-      → app/api/do_edit.php::publish_do_edit() (OAuth edit to Wikipedia)
+      → app/api/DoEdit.php::publish_do_edit() (OAuth edit to Wikipedia)
       → On success: app/bots/wd.php::LinkToWikidata()
       → Log to database and JSON files
     → Return JSON response

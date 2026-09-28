@@ -1,11 +1,6 @@
 <?php
 
 namespace Publish\CryptHelps;
-/*
-Usage:
-use function Publish\CryptHelps\encode_value;
-use function Publish\CryptHelps\decode_value;
-*/
 
 use Defuse\Crypto\Key;
 use Defuse\Crypto\Crypto;

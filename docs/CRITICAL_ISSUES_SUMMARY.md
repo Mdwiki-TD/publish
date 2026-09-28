@@ -22,7 +22,7 @@ $this->password = getenv('DB_PASSWORD') ?: '';
 
 ### 2. Security: SQL Injection via Table Name (SEC-002)
 
-**Location:** `src/bots/add_to_db.php:131,139,225-228`
+**Location:** `src/bots/PublishReportsRepository.php:131,139,225-228`
 **Risk:** SQL injection if table names are user-controlled
 **Fix:**
 
@@ -183,13 +183,13 @@ Many files were updated with:
 | `src/bots/mdwiki_sql.php`       | Added PHPDoc, type annotations, security comments      |
 | `src/bots/helps.php`            | Added PHPDoc, type annotations                         |
 | `src/bots/process_edit.php`     | Added PHPDoc, type annotations, constants              |
-| `src/bots/do_edit.php`          | Added PHPDoc, type annotations                         |
+| `src/bots/DoEdit.php`          | Added PHPDoc, type annotations                         |
 | `src/bots/wd.php`               | Added PHPDoc, type annotations                         |
 | `src/bots/access_helps.php`     | Added PHPDoc, type annotations                         |
 | `src/bots/access_helps_new.php` | Added PHPDoc, type annotations, performance warnings   |
 | `src/bots/files_helps.php`      | Added PHPDoc, type annotations, race condition warning |
 | `src/bots/revids_bot.php`       | Added PHPDoc, type annotations                         |
-| `src/bots/add_to_db.php`        | Added PHPDoc, type annotations, security warning       |
+| `src/bots/PublishReportsRepository.php`        | Added PHPDoc, type annotations, security warning       |
 | `src/bots/get_token.php`        | Added PHPDoc, type annotations                         |
 | `src/bots/cors.php`             | Added PHPDoc, security warnings                        |
 | `src/bots/config.php`           | Added PHPDoc, type annotations                         |

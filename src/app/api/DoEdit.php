@@ -1,15 +1,10 @@
 <?php
 
 namespace Publish\DoEdit;
-/*
-Usage:
-use function Publish\DoEdit\publish_do_edit;
-*/
-
 
 use function Publish\MediaWikiClient\get_client;
 use function Publish\MediaWikiClient\getAccessToken;
-use function Publish\MediaWikiClient\get_edits_token;
+use function Publish\MediaWikiClient\getEditsToken;
 
 function publish_do_edit($apiParams, $wiki, $access)
 {
@@ -19,7 +14,7 @@ function publish_do_edit($apiParams, $wiki, $access)
 
     $accessToken = getAccessToken($access["access_key"], $access["access_secret"]);
 
-    $editToken = get_edits_token($client, $accessToken, $apiUrl);
+    $editToken = getEditsToken($client, $accessToken, $apiUrl);
 
     $apiParams['token'] = $editToken;
     # Error details: The following tags are not allowed to be manually applied: contenttranslation and contenttranslation-v2

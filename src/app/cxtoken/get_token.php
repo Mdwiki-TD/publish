@@ -1,14 +1,9 @@
 <?php
 
 namespace Publish\GetToken;
-/*
-
-use function Publish\GetToken\get_cxtoken;
-
-*/
 
 use function Publish\Helps\pub_test_print;
-use function Publish\MediaWikiClient\post_params;
+use function Publish\MediaWikiClient\postParams;
 
 function get_cxtoken($wiki, $accessKey, $accessSecret)
 {
@@ -17,7 +12,7 @@ function get_cxtoken($wiki, $accessKey, $accessSecret)
         'action' => 'cxtoken',
         'format' => 'json',
     ];
-    $response = post_params($apiParams, $httpsDomain, $accessKey, $accessSecret);
+    $response = postParams($apiParams, $httpsDomain, $accessKey, $accessSecret);
 
     $apiResult = json_decode($response, true);
 

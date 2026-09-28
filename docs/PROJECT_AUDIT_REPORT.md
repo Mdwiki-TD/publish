@@ -12,12 +12,13 @@
 The MDWiki Publish Repository is a PHP backend service that publishes Wikipedia articles translated via the ContentTranslation tool on `mdwiki.toolforge.org`. It receives translated wikitext through POST requests, preprocesses it using the external `fix_refs` library, and submits edits to Wikipedia via OAuth-authenticated MediaWiki API calls. On success, it links the published article to Wikidata and logs results to both a MySQL database and date-organized JSON report files.
 
 **Key Technologies:**
-- PHP 8.0+ (procedural/functional architecture with PSR-4 namespaces)
-- MySQL/MariaDB via PDO
-- MediaWiki OAuth 1.0a (`mediawiki/oauthclient`)
-- Defuse PHP Encryption for token storage
-- cURL for HTTP requests
-- PHPUnit 10 + PHPStan level 5 for quality assurance
+
+-   PHP 8.0+ (procedural/functional architecture with PSR-4 namespaces)
+-   MySQL/MariaDB via PDO
+-   MediaWiki OAuth 1.0a (`mediawiki/oauthclient`)
+-   Defuse PHP Encryption for token storage
+-   cURL for HTTP requests
+-   PHPUnit 10 + PHPStan level 5 for quality assurance
 
 **Architecture:** The application follows a procedural pipeline pattern. A POST request enters through `index.php`, passes through CORS/secret-key validation, and flows through a sequential pipeline: access validation → revision lookup → wikitext preprocessing → OAuth edit → Wikidata linking → logging. All modules are loaded via manual `include_once` chains from `app/include.php`.
 
@@ -25,13 +26,13 @@ The MDWiki Publish Repository is a PHP backend service that publishes Wikipedia 
 
 ## Project Health Assessment
 
-| Dimension | Rating | Assessment |
-|-----------|--------|------------|
-| **Overall Code Quality** | 5/10 | Functional but inconsistent naming, mixed conventions, no type declarations |
-| **Maintainability** | 5/10 | Readable at function level, but tight coupling and global state make changes risky |
-| **Scalability** | 4/10 | New DB connection per query, no caching, synchronous HTTP, file-based logging |
-| **Security Posture** | 4/10 | Hardcoded credentials in VCS, CORS bypass, no input validation, no rate limiting |
-| **Production Readiness** | 5/10 | Currently running in production but with significant unresolved risks |
+| Dimension                | Rating | Assessment                                                                         |
+| ------------------------ | ------ | ---------------------------------------------------------------------------------- |
+| **Overall Code Quality** | 5/10   | Functional but inconsistent naming, mixed conventions, no type declarations        |
+| **Maintainability**      | 5/10   | Readable at function level, but tight coupling and global state make changes risky |
+| **Scalability**          | 4/10   | New DB connection per query, no caching, synchronous HTTP, file-based logging      |
+| **Security Posture**     | 4/10   | Hardcoded credentials in VCS, CORS bypass, no input validation, no rate limiting   |
+| **Production Readiness** | 5/10   | Currently running in production but with significant unresolved risks              |
 
 ---
 
@@ -51,15 +52,15 @@ All 9 modules share these patterns:
 
 ### Repeated Weaknesses Across Modules
 
-| Weakness | Affected Modules | Frequency |
-|----------|-----------------|-----------|
-| No return type declarations | All 9 modules | 100% |
-| Hardcoded admin username `"Mr. Ibrahem"` | `start_utils.php`, `process_edit.php`, `token_handler.php` | 3 modules |
-| Duplicated username normalization | `start_utils.php::formatUser()`, `token_handler.php::handle_user_name()` | 2 modules |
-| Silent error swallowing (return empty) | `mdwiki_sql.php`, `crypt_helps.php`, `revids_bot.php` | 3 modules |
-| Hardcoded Windows paths (`I:/MD_TOOLS/...`) | `load_env.php`, `files_helps.php`, `start.php` | 3 modules |
-| `global` variable usage | `crypt_helps.php` | 1 module (critical) |
-| No input validation on user data | `start.php`, `index.php`, `token.php` | 3 entry points |
+| Weakness                                    | Affected Modules                                                         | Frequency           |
+| ------------------------------------------- | ------------------------------------------------------------------------ | ------------------- |
+| No return type declarations                 | All 9 modules                                                            | 100%                |
+| Hardcoded admin username `"Mr. Ibrahem"`    | `start_utils.php`, `process_edit.php`, `token_handler.php`               | 3 modules           |
+| Duplicated username normalization           | `start_utils.php::formatUser()`, `token_handler.php::handle_user_name()` | 2 modules           |
+| Silent error swallowing (return empty)      | `mdwiki_sql.php`, `crypt_helps.php`, `revids_bot.php`                    | 3 modules           |
+| Hardcoded Windows paths (`I:/MD_TOOLS/...`) | `load_env.php`, `files_helps.php`, `start.php`                           | 3 modules           |
+| `global` variable usage                     | `crypt_helps.php`                                                        | 1 module (critical) |
+| No input validation on user data            | `start.php`, `index.php`, `token.php`                                    | 3 entry points      |
 
 ### Common Technical Debt
 
@@ -73,14 +74,14 @@ All 9 modules share these patterns:
 
 ### Dependency Issues
 
-| Dependency | Version | Concern |
-|------------|---------|---------|
-| `mediawiki/oauthclient` | ^1.2 | Stable, well-maintained |
-| `defuse/php-encryption` | ^2.4 | Stable, but key management is the weak link |
-| `firebase/php-jwt` | 7.0.0 | Pinned to exact version, no apparent usage in source |
-| `phpunit/phpunit` | ^10.0 | Current, good |
-| `phpstan/phpstan` | ^2.1 | Current, good |
-| External `fix_refs` | N/A | Loaded from filesystem path, not a Composer dependency |
+| Dependency              | Version | Concern                                                |
+| ----------------------- | ------- | ------------------------------------------------------ |
+| `mediawiki/oauthclient` | ^1.2    | Stable, well-maintained                                |
+| `defuse/php-encryption` | ^2.4    | Stable, but key management is the weak link            |
+| `firebase/php-jwt`      | 7.0.0   | Pinned to exact version, no apparent usage in source   |
+| `phpunit/phpunit`       | ^10.0   | Current, good                                          |
+| `phpstan/phpstan`       | ^2.1    | Current, good                                          |
+| External `fix_refs`     | N/A     | Loaded from filesystem path, not a Composer dependency |
 
 **Key concern:** The `fix_refs` library is loaded via `include_once` from a filesystem path (`TEXT_WORK_FILE` env var). If the file is missing, the application silently continues without preprocessing. There is no version pinning or integrity check.
 
@@ -113,6 +114,7 @@ putenv('DECRYPT_KEY=def000001358577eb292b944a354cfe446413d532d4c18c963597a88ec1d
 **Impact:** Database credentials and encryption keys are committed to Git history. Anyone with repository access can decrypt all stored OAuth tokens and access the database. Even if removed from HEAD, they persist in Git history.
 
 **Remediation:**
+
 1. Add `load_env.php` to `.gitignore` immediately
 2. Rotate ALL exposed credentials (DB password, DECRYPT_KEY, COOKIE_KEY)
 3. Re-encrypt all OAuth tokens with the new key
@@ -143,6 +145,7 @@ if ($publish_secret_code === '') {
 **Severity:** Critical
 
 The CORS validation block is entirely commented out:
+
 ```php
 /*
 $alowed = is_allowed();
@@ -223,18 +226,18 @@ The encryption key is loaded at file include time into a module-level variable, 
 
 ### MEDIUM - Address Within 1 Month
 
-| ID | Issue | Location |
-|----|-------|----------|
-| MED-001 | File path injection in `to_do()` - `$file_name` not sanitized | `bots/files_helps.php:19` |
-| MED-002 | SSRF risk - `$sourcetitle` passed directly into URL construction | `bots/revids_bot.php:23` |
-| MED-003 | Hardcoded admin fallback `"Mr. Ibrahem"` for Wikidata linking | `process/process_edit.php:41` |
-| MED-004 | Directory permissions 0755 (world-readable) for report files | `bots/files_helps.php:38-58` |
-| MED-005 | No transaction wrapping for multi-step DB operations | `sql/add_to_db.php` |
-| MED-006 | `rand()` used in error responses (weak, unnecessary) | `mw_client/index.php:83` |
-| MED-007 | Inconsistent null/empty/error return types across all modules | Multiple files |
-| MED-008 | `$wiki` parameter not validated before URL construction | `api/do_edit.php`, `cxtoken/get_token.php` |
-| MED-009 | `all_pages_revids.json` (89KB) parsed on every request | `bots/revids_bot.php:45` |
-| MED-010 | No rate limiting on publish endpoint | `index.php` |
+| ID      | Issue                                                            | Location                                   |
+| ------- | ---------------------------------------------------------------- | ------------------------------------------ |
+| MED-001 | File path injection in `to_do()` - `$file_name` not sanitized    | `bots/files_helps.php:19`                  |
+| MED-002 | SSRF risk - `$sourcetitle` passed directly into URL construction | `bots/revids_bot.php:23`                   |
+| MED-003 | Hardcoded admin fallback `"Mr. Ibrahem"` for Wikidata linking    | `process/process_edit.php:41`              |
+| MED-004 | Directory permissions 0755 (world-readable) for report files     | `bots/files_helps.php:38-58`               |
+| MED-005 | No transaction wrapping for multi-step DB operations             | `sql/PublishReportsRepository.php`                        |
+| MED-006 | `rand()` used in error responses (weak, unnecessary)             | `MediaWikiClient/index.php:83`             |
+| MED-007 | Inconsistent null/empty/error return types across all modules    | Multiple files                             |
+| MED-008 | `$wiki` parameter not validated before URL construction          | `api/DoEdit.php`, `cxtoken/get_token.php` |
+| MED-009 | `all_pages_revids.json` (89KB) parsed on every request           | `bots/revids_bot.php:45`                   |
+| MED-010 | No rate limiting on publish endpoint                             | `index.php`                                |
 
 ---
 
@@ -270,53 +273,53 @@ The encryption key is loaded at file include time into a module-level variable, 
 
 ### Immediate Fixes (Days 1-3)
 
-| Priority | Action | Impact |
-|----------|--------|--------|
-| 1 | Add `load_env.php` to `.gitignore` | Prevents future credential commits |
-| 2 | Rotate all exposed credentials | Mitigates CRIT-001 |
-| 3 | Fix `check_publish_secret_code()` to reject empty secret | Fixes CRIT-002 |
-| 4 | Fix CORS validation to use `parse_url()` exact matching | Fixes HIGH-001 |
-| 5 | Remove hardcoded Windows paths from `files_helps.php` and `start.php` | Environment portability |
+| Priority | Action                                                                | Impact                             |
+| -------- | --------------------------------------------------------------------- | ---------------------------------- |
+| 1        | Add `load_env.php` to `.gitignore`                                    | Prevents future credential commits |
+| 2        | Rotate all exposed credentials                                        | Mitigates CRIT-001                 |
+| 3        | Fix `check_publish_secret_code()` to reject empty secret              | Fixes CRIT-002                     |
+| 4        | Fix CORS validation to use `parse_url()` exact matching               | Fixes HIGH-001                     |
+| 5        | Remove hardcoded Windows paths from `files_helps.php` and `start.php` | Environment portability            |
 
 ### Short-Term Improvements (Weeks 1-2)
 
-| Priority | Action | Impact |
-|----------|--------|--------|
-| 6 | Uncomment CORS validation on `index.php` | Fixes CRIT-003 |
-| 7 | Add input validation layer for POST parameters | Fixes HIGH-003 |
-| 8 | Remove SQL query exposure from debug output | Fixes HIGH-002 |
-| 9 | Sanitize `$file_name` in `to_do()` | Fixes MED-001 |
-| 10 | Validate `$wiki` parameter against whitelist | Fixes MED-008 |
-| 11 | Set directory permissions to 0700 for report files | Fixes MED-004 |
-| 12 | Add return type declarations to all functions | Type safety |
+| Priority | Action                                             | Impact         |
+| -------- | -------------------------------------------------- | -------------- |
+| 6        | Uncomment CORS validation on `index.php`           | Fixes CRIT-003 |
+| 7        | Add input validation layer for POST parameters     | Fixes HIGH-003 |
+| 8        | Remove SQL query exposure from debug output        | Fixes HIGH-002 |
+| 9        | Sanitize `$file_name` in `to_do()`                 | Fixes MED-001  |
+| 10       | Validate `$wiki` parameter against whitelist       | Fixes MED-008  |
+| 11       | Set directory permissions to 0700 for report files | Fixes MED-004  |
+| 12       | Add return type declarations to all functions      | Type safety    |
 
 ### Medium-Term Improvements (Weeks 3-8)
 
-| Priority | Action | Impact |
-|----------|--------|--------|
-| 13 | Implement database connection singleton | Fixes HIGH-004 |
-| 14 | Replace `include_once` chains with Composer autoloading | Maintainability |
-| 15 | Refactor `crypt_helps.php` to class-based approach | Fixes HIGH-005 |
-| 16 | Extract hardcoded admin username to configuration | Fixes MED-003 |
-| 17 | Cache `all_pages_revids.json` in memory with TTL | Fixes MED-009 |
-| 18 | Add rate limiting middleware | Fixes MED-010 |
-| 19 | Standardize error handling (Result type or exceptions) | Fixes MED-007 |
-| 20 | Add transaction wrapping for multi-step DB operations | Fixes MED-005 |
-| 21 | Deduplicate username normalization logic | Code quality |
-| 22 | Validate `$sourcetitle` before URL construction | Fixes MED-002 |
+| Priority | Action                                                  | Impact          |
+| -------- | ------------------------------------------------------- | --------------- |
+| 13       | Implement database connection singleton                 | Fixes HIGH-004  |
+| 14       | Replace `include_once` chains with Composer autoloading | Maintainability |
+| 15       | Refactor `crypt_helps.php` to class-based approach      | Fixes HIGH-005  |
+| 16       | Extract hardcoded admin username to configuration       | Fixes MED-003   |
+| 17       | Cache `all_pages_revids.json` in memory with TTL        | Fixes MED-009   |
+| 18       | Add rate limiting middleware                            | Fixes MED-010   |
+| 19       | Standardize error handling (Result type or exceptions)  | Fixes MED-007   |
+| 20       | Add transaction wrapping for multi-step DB operations   | Fixes MED-005   |
+| 21       | Deduplicate username normalization logic                | Code quality    |
+| 22       | Validate `$sourcetitle` before URL construction         | Fixes MED-002   |
 
 ### Long-Term Strategic Refactoring (Months 2-6)
 
-| Priority | Action | Impact |
-|----------|--------|--------|
-| 23 | Refactor to class-based architecture with DI container | Architecture |
-| 24 | Create `MediaWikiApiClient`, `WikidataClient`, `ReportLogger` service classes | Separation of concerns |
-| 25 | Implement async HTTP or queue-based processing for external API calls | Scalability |
-| 26 | Add comprehensive unit tests (target 80%+ coverage) | Reliability |
-| 27 | Implement structured logging (Monolog) replacing `pub_test_print()` | Observability |
-| 28 | Add CI/CD pipeline with PHPStan, PHPUnit, and security scanning | DevOps |
-| 29 | Create OpenAPI/Swagger documentation for the API | Documentation |
-| 30 | Separate `fix_refs` dependency into a proper Composer package | Dependency management |
+| Priority | Action                                                                        | Impact                 |
+| -------- | ----------------------------------------------------------------------------- | ---------------------- |
+| 23       | Refactor to class-based architecture with DI container                        | Architecture           |
+| 24       | Create `MediaWikiApiClient`, `WikidataClient`, `ReportLogger` service classes | Separation of concerns |
+| 25       | Implement async HTTP or queue-based processing for external API calls         | Scalability            |
+| 26       | Add comprehensive unit tests (target 80%+ coverage)                           | Reliability            |
+| 27       | Implement structured logging (Monolog) replacing `pub_test_print()`           | Observability          |
+| 28       | Add CI/CD pipeline with PHPStan, PHPUnit, and security scanning               | DevOps                 |
+| 29       | Create OpenAPI/Swagger documentation for the API                              | Documentation          |
+| 30       | Separate `fix_refs` dependency into a proper Composer package                 | Dependency management  |
 
 ### Security Hardening Priority Order
 
@@ -336,39 +339,42 @@ The encryption key is loaded at file include time into a module-level variable, 
 ### DevOps and Testing Recommendations
 
 1. **CI Pipeline:**
-   - PHPStan level 5 (already configured, enforce in CI)
-   - PHPUnit with coverage reporting
-   - Composer audit for dependency vulnerabilities
-   - Secret scanning (e.g., `trufflehog` or `gitleaks`)
+
+    - PHPStan level 5 (already configured, enforce in CI)
+    - PHPUnit with coverage reporting
+    - Composer audit for dependency vulnerabilities
+    - Secret scanning (e.g., `trufflehog` or `gitleaks`)
 
 2. **Environment Management:**
-   - Use `.env` files with `.env.example` template
-   - Never commit `load_env.php` with real credentials
-   - Use different databases for development/production
+
+    - Use `.env` files with `.env.example` template
+    - Never commit `load_env.php` with real credentials
+    - Use different databases for development/production
 
 3. **Monitoring:**
-   - Add request logging middleware (method, path, user, status, duration)
-   - Monitor publish success/failure rates
-   - Alert on unusual error patterns (spike in `noaccess`, `abusefilter`)
+
+    - Add request logging middleware (method, path, user, status, duration)
+    - Monitor publish success/failure rates
+    - Alert on unusual error patterns (spike in `noaccess`, `abusefilter`)
 
 4. **Testing:**
-   - Add unit tests for `process/start.php` (currently untested)
-   - Add integration tests for the full publish flow
-   - Add security tests for CORS and auth bypass scenarios
+    - Add unit tests for `process/start.php` (currently untested)
+    - Add integration tests for the full publish flow
+    - Add security tests for CORS and auth bypass scenarios
 
 ---
 
 ## Final Evaluation
 
-| Metric | Score | Notes |
-|--------|-------|-------|
-| **Overall Project Score** | **5/10** | Functional production system with significant security and architectural debt |
-| **Risk Level** | **High** | Credential exposure in VCS, auth bypass, no input validation |
-| **Technical Debt Level** | **Medium-High** | Procedural architecture, global state, inconsistent naming, duplicated code |
-| **Production Readiness** | **5/10** | Currently serving production traffic but with unresolved critical security issues |
-| **Security Score** | **4/10** | 3 critical, 4 high, 6 medium security findings |
-| **Maintainability Score** | **5/10** | Readable at function level, but tight coupling and no abstraction layer |
-| **Test Coverage** | **5/10** | Test infrastructure exists with 17 test files, but core modules lack coverage |
+| Metric                    | Score           | Notes                                                                             |
+| ------------------------- | --------------- | --------------------------------------------------------------------------------- |
+| **Overall Project Score** | **5/10**        | Functional production system with significant security and architectural debt     |
+| **Risk Level**            | **High**        | Credential exposure in VCS, auth bypass, no input validation                      |
+| **Technical Debt Level**  | **Medium-High** | Procedural architecture, global state, inconsistent naming, duplicated code       |
+| **Production Readiness**  | **5/10**        | Currently serving production traffic but with unresolved critical security issues |
+| **Security Score**        | **4/10**        | 3 critical, 4 high, 6 medium security findings                                    |
+| **Maintainability Score** | **5/10**        | Readable at function level, but tight coupling and no abstraction layer           |
+| **Test Coverage**         | **5/10**        | Test infrastructure exists with 17 test files, but core modules lack coverage     |
 
 ### Recommended Next Steps
 
@@ -383,4 +389,4 @@ The MDWiki Publish Repository is a working production system that successfully p
 
 ---
 
-*This report was generated based on analysis of 30 PHP source files across 9 modules, existing documentation in `docs/`, and the project's `composer.json`, `phpunit.xml`, and `phpstan.neon` configuration.*
+_This report was generated based on analysis of 30 PHP source files across 9 modules, existing documentation in `docs/`, and the project's `composer.json`, `phpunit.xml`, and `phpstan.neon` configuration._

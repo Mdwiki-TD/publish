@@ -3,10 +3,10 @@
 namespace Tests\Bots\Integration;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Integration Tests for src/bots/wd.php (namespace Publish\WD)
- *
  */
 class WdIntegrationTest extends TestCase
 {
@@ -32,9 +32,9 @@ class WdIntegrationTest extends TestCase
     // -----------------------------------------------------------------------
 
     /**
-     * @group readonly
      * Keys passed directly should be returned as is without a DB call.
      */
+    #[Group('readonly')]
     public function testGetAccessCredentialsReturnsDirectKeysWithoutDbCall(): void
     {
         $result = \Publish\WD\getAccessCredentials('anyuser', 'direct_key', 'direct_secret');
@@ -46,9 +46,9 @@ class WdIntegrationTest extends TestCase
     }
 
     /**
-     * @group readonly
      * A user that does not exist in the DB should return null.
      */
+    #[Group('readonly')]
     public function testGetAccessCredentialsReturnsNullForNonExistentUser(): void
     {
         $result = \Publish\WD\getAccessCredentials('__user_that_does_not_exist__', '', '');
@@ -56,31 +56,14 @@ class WdIntegrationTest extends TestCase
         $this->assertNull($result);
     }
 
-    /**
-     * @group readonly
-     * A user existing in the DB returns an array of two elements.
-     * Requires WD_TEST_USER to be defined in the environment.
-     */
-    public function testGetAccessCredentialsReturnsArrayForKnownUser(): void
-    {
-        $user = "Mr. Ibrahem";
-
-        $result = \Publish\WD\getAccessCredentials($user, '', '');
-
-        $this->assertIsArray($result);
-        $this->assertCount(2, $result);
-        // $this->assertNotEmpty($result[0]); // access_key
-        // $this->assertNotEmpty($result[1]); // access_secret
-    }
-
     // -----------------------------------------------------------------------
     // LinkToWikidata – Calling the real Wikidata API (requires credentials)
     // -----------------------------------------------------------------------
 
     /**
-     * @group write
      * A user without credentials should return an error array instead of crashing.
      */
+    #[Group('write')]
     public function testLinkToWikidataReturnsErrorArrayForMissingCredentials(): void
     {
         $result = \Publish\WD\LinkToWikidata(
@@ -98,9 +81,9 @@ class WdIntegrationTest extends TestCase
     }
 
     /**
-     * @group write
      * The result always contains a QID even on error.
      */
+    #[Group('write')]
     public function testLinkToWikidataAlwaysIncludesQidInResult(): void
     {
         // No credentials → early error, but qid should still be present

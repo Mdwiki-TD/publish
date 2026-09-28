@@ -1,11 +1,6 @@
 <?php
 
 namespace Publish\FilesHelps;
-/*
-Usage:
-use function Publish\FilesHelps\to_do;
-use function Publish\FilesHelps\check_dirs;
-*/
 
 use function Publish\Helps\pub_test_print;
 

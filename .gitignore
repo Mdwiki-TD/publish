@@ -29,3 +29,6 @@ load_env.php
 /.phpunit.cache
 /build/coverage-html
 /.commandcode
+.phpunit.cache/**
+report.xml
+z.php

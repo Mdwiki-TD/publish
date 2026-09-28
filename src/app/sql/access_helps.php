@@ -1,13 +1,6 @@
 <?php
 
 namespace Publish\AccessHelps;
-/*
-
-Usage:
-use function Publish\AccessHelps\get_access_from_db;
-use function Publish\AccessHelps\del_access_from_db;
-
-*/
 
 use function Publish\MdwikiSql\execute_query;
 use function Publish\MdwikiSql\fetch_query;
@@ -42,5 +35,5 @@ function del_access_from_db($user)
         DELETE FROM access_keys WHERE user_name = ? or user_name_hash = ?;
     SQL;
 
-    execute_query($query, [$user, hash('sha256', $user)], "access_keys");
+    execute_query($query, [$user, hash('sha256', $user)]);
 }

@@ -4,7 +4,6 @@ tests/
 │   ├── api/
 │   │   └── WikiApiIntegrationTest.php
 │   ├── bots/
-│   │   ├── CurlRequestsTest.php
 │   │   └── WdIntegrationTest.php
 │   ├── cxtoken/
 │   ├── mw_client/

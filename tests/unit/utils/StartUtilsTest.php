@@ -186,7 +186,7 @@ class StartUtilsTest extends TestCase
 
     public function testGetErrorsFileDetectsWdCsrftoken(): void
     {
-        $result = \Publish\StartUtils\get_errors_file(['error' => 'get_csrftoken failed'], 'wd_errors');
+        $result = \Publish\StartUtils\get_errors_file(['error' => 'getCsrfTokenData failed'], 'wd_errors');
         $this->assertSame('wd_csrftoken', $result);
     }
 

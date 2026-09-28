@@ -1,13 +1,10 @@
 <?php
 
 namespace Publish\EditProcess;
-/*
-Usage:
-use function Publish\EditProcess\processEdit;
-*/
+
+use Publish\AddToDb\PublishReportsRepository;
 
 use function Publish\Helps\pub_test_print;
-use function Publish\AddToDb\InsertPublishReports;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
 use function Publish\AccessHelps\get_access_from_db;
@@ -35,7 +32,7 @@ function shouldAddedToWikidata($lang, $title)
 function retryWithFallbackUser($sourcetitle, $lang, $title, $user)
 {
     $LinkTowd = [];
-    pub_test_print("get_csrftoken failed for user: $user, retrying with Mr. Ibrahem");
+    pub_test_print("getCsrfTokenData failed for user: $user, retrying with Mr. Ibrahem");
 
     // Retry with "Mr. Ibrahem" credentials - get fresh credentials from database
     $fallbackAccess = get_access_from_db('Mr. Ibrahem');
@@ -68,7 +65,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
 
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $accessKey, $accessSecret) ?? [];
-        // Check if the error is get_csrftoken failure and user is not already "Mr. Ibrahem"
+        // Check if the error is getCsrfTokenData failure and user is not already "Mr. Ibrahem"
         if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'get_csrftoken failed' && $user !== 'Mr. Ibrahem') {
             $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user);
         }
@@ -90,7 +87,16 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
         $fileName = get_errors_file($LinkTowd['error'], "wd_errors");
         to_do($tab3, $fileName, $randId);
         // --
-        InsertPublishReports($title, $user, $lang, $sourcetitle, $fileName, $tab3);
+        $repository = new PublishReportsRepository();
+
+        $repository->insertPublishReports(
+            $title,
+            $user,
+            $lang,
+            $sourcetitle,
+            $fileName,
+            $tab3
+        );
     }
     return $LinkTowd;
 }
@@ -138,6 +144,16 @@ function processEdit($request, $access, $text, $user, $tab, $randId, $trType)
     $tab['result_to_cx'] = $editit;
     to_do($tab, $toDoFile, $randId);
     // --
-    InsertPublishReports($title, $user, $lang, $sourcetitle, $toDoFile, $tab);
+    $repository = new PublishReportsRepository();
+
+    $repository->insertPublishReports(
+        $title,
+        $user,
+        $lang,
+        $sourcetitle,
+        $toDoFile,
+        $tab
+    );
+
     return $editit;
 }

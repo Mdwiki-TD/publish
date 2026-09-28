@@ -3,9 +3,10 @@
 namespace Tests\Bots\Integration;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Integration Tests for wiki_api.php (namespace Publish\WD)
+ * Integration Tests for WikiApi.php (namespace Publish\WD)
  *
  */
 class WikiApiIntegrationTest extends TestCase
@@ -15,9 +16,9 @@ class WikiApiIntegrationTest extends TestCase
     // -----------------------------------------------------------------------
 
     /**
-     * @group readonly
      * The Main Page on English Wikipedia has a well-known pageid.
      */
+    #[Group('readonly')]
     public function testGetTitleInfoReturnsCorrectPageIdForMainPageEn(): void
     {
         $result = \Publish\WikiApi\GetTitleInfo('Main Page', 'en');
@@ -30,9 +31,9 @@ class WikiApiIntegrationTest extends TestCase
     }
 
     /**
-     * @group readonly
      * User page in Malagasy Wikipedia.
      */
+    #[Group('readonly')]
     public function testGetTitleInfoReturnsCorrectDataForMgUserPage(): void
     {
         $title  = "Mpikambana:Doc James/Fahaverezan'ny volo";
@@ -45,9 +46,9 @@ class WikiApiIntegrationTest extends TestCase
     }
 
     /**
-     * @group readonly
      * User page in Bosnian Wikipedia.
      */
+    #[Group('readonly')]
     public function testGetTitleInfoReturnsCorrectDataForBsUserPage(): void
     {
         $title  = "Korisnik:Doc James/Analna fistula";
@@ -60,9 +61,9 @@ class WikiApiIntegrationTest extends TestCase
     }
 
     /**
-     * @group readonly
      * A non-existent page should return missing = true, not null.
      */
+    #[Group('readonly')]
     public function testGetTitleInfoReturnsMissingFlagForNonExistentPage(): void
     {
         // Wikipedia returns { "missing": true } for missing pages
@@ -74,9 +75,9 @@ class WikiApiIntegrationTest extends TestCase
     }
 
     /**
-     * @group readonly
      * Title containing spaces – RFC 3986 encoding should work.
      */
+    #[Group('readonly')]
     public function testGetTitleInfoHandlesTitleWithSpaces(): void
     {
         $result = \Publish\WikiApi\GetTitleInfo('United States', 'en');
@@ -87,9 +88,9 @@ class WikiApiIntegrationTest extends TestCase
     }
 
     /**
-     * @group readonly
      * Title containing Unicode characters (Japanese).
      */
+    #[Group('readonly')]
     public function testGetTitleInfoHandlesUnicodeTitles(): void
     {
         $result = \Publish\WikiApi\GetTitleInfo('メインページ', 'ja');
@@ -97,13 +98,18 @@ class WikiApiIntegrationTest extends TestCase
         $this->assertIsArray($result);
         $this->assertArrayHasKey('pageid', $result);
     }
-
     /**
-     * @group readonly
      * Non-existent language → cURL exception → should return null, not crash.
      */
+    #[Group('readonly')]
+    #[Group('network')]
     public function testGetTitleInfoReturnsNullForInvalidLang(): void
     {
+        $this->markTestSkipped(
+            'Requires real network access and cURL timeout (~11s) for a non-existent domain. '
+                . 'Run manually or via --group network when needed.'
+        );
+
         // zz.wikipedia.org does not exist → exception → null
         $result = \Publish\WikiApi\GetTitleInfo('SomePage', 'zz_invalid_lang_xyz');
 
