@@ -2,8 +2,9 @@
 
 namespace Publish\GetToken;
 
+use Publish\MediaWikiClient\MediaWikiEditClient;
+
 use function Publish\Helps\pub_test_print;
-use function Publish\MediaWikiClient\postParams;
 
 function get_cxtoken($wiki, $accessKey, $accessSecret)
 {
@@ -12,7 +13,14 @@ function get_cxtoken($wiki, $accessKey, $accessSecret)
         'action' => 'cxtoken',
         'format' => 'json',
     ];
-    $response = postParams($apiParams, $httpsDomain, $accessKey, $accessSecret);
+
+    $editClient = new MediaWikiEditClient();
+    $response = $editClient->postParams(
+        (array) $apiParams,
+        (string) $httpsDomain,
+        (string) $accessKey,
+        (string) $accessSecret,
+    );
 
     $apiResult = json_decode($response, true);
 

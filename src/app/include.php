@@ -11,7 +11,13 @@ if ($env === 'development' && file_exists(__DIR__ . '/load_env.php')) {
 include_once __DIR__ . '/config.php';
 
 # MediaWikiClient
-include_once __DIR__ . '/MediaWikiClient/index.php';
+include_once __DIR__ . '/MediaWikiClient/MediaWikiOAuthClientAdapter.php';
+include_once __DIR__ . '/MediaWikiClient/OAuthHttpClientInterface.php';
+
+include_once __DIR__ . '/MediaWikiClient/MediaWikiOAuthClientFactory.php';
+include_once __DIR__ . '/MediaWikiClient/OAuthClientFactoryInterface.php';
+
+include_once __DIR__ . '/MediaWikiClient/MediaWikiEditClient.php';
 
 # CurlRequests
 include_once __DIR__ . '/CurlRequests/HttpClientInterface.php';

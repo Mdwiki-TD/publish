@@ -40,7 +40,7 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user)
 
     if (!empty($fallbackAccess)) {
 
-        $LinkTowd = LinkToWikidata($sourcetitle, $lang, 'Mr. Ibrahem', $title, $fallbackAccess) ?? [];
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, 'Mr. Ibrahem', $title, $fallbackAccess);
 
         // Add a note that fallback was used
         if (!isset($LinkTowd['error'])) {
@@ -61,7 +61,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
     $LinkTowd = [];
 
     try {
-        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access) ?? [];
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access);
         // Check if the error is getCsrfTokenData failure and user is not already "Mr. Ibrahem"
         if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'get_csrftoken failed' && $user !== 'Mr. Ibrahem') {
             $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user);
