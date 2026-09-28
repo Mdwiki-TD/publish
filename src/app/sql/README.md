@@ -53,7 +53,7 @@ fetch_query($sql, $params, $table_name)    // Creates Database, fetches, destroy
 
 ### Strengths
 1. **Parameterized queries** - All queries use PDO prepared statements with `?` placeholders
-2. **Table name allowlisting** - `find_exists_or_update()` and `InsertPageTarget()` validate table names against a whitelist
+2. **Table name allowlisting** - `findExistsOrUpdate()` and `InsertPageTarget()` validate table names against a whitelist
 3. **Encrypted token storage** - OAuth tokens stored encrypted, decrypted on read
 4. **Hash-based user lookup** - Supports lookup by both `user_name` and `user_name_hash` (SHA-256)
 5. **SQL mode management** - `disableFullGroupByMode()` handles MySQL strict mode

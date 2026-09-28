@@ -249,7 +249,7 @@ The encryption key is loaded at file include time into a module-level variable, 
 
 2. **Encrypted token storage** - OAuth tokens are encrypted at rest using `defuse/php-encryption`, a well-vetted library. The `access_keys` table stores encrypted values, and the `user_name_hash` column enables indexed lookups without decrypting.
 
-3. **Table name allowlisting** - Both `find_exists_or_update()` and `InsertPageTarget()` validate table names against a hardcoded allowlist before interpolation, mitigating the SQL injection risk from dynamic table names.
+3. **Table name allowlisting** - Both `findExistsOrUpdate()` and `InsertPageTarget()` validate table names against a hardcoded allowlist before interpolation, mitigating the SQL injection risk from dynamic table names.
 
 4. **Timing-safe comparison** - The secret key check uses `hash_equals()` instead of `===`, preventing timing attacks.
 
