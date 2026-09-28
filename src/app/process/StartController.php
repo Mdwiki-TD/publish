@@ -4,6 +4,7 @@ namespace Publish\Process;
 
 use Publish\AddToDb\PublishReportsRepository;
 use Publish\Process\ProcessEdit;
+use Publish\Settings;
 
 use function Publish\EditProcess\text_changes;
 use function Publish\Helps\pub_test_print;
@@ -145,7 +146,8 @@ class StartController
 
     private function resolveTablesPath(): string
     {
-        $path = getenv("TABLES_PATH") !== false ? getenv("TABLES_PATH") : ($_ENV["TABLES_PATH"] ?? "");
+        $settings = Settings::getInstance();
+        $path = $settings->TablesPath;
         if (!empty($path)) {
             return $path;
         }

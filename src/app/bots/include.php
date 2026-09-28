@@ -1,6 +1,5 @@
 <?PHP
 
-include_once __DIR__ . '/crypt_helps.php';
 include_once __DIR__ . '/files_helps.php';
 include_once __DIR__ . '/helps.php';
 include_once __DIR__ . '/revids_bot.php';

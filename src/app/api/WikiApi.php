@@ -24,8 +24,8 @@ function GetTitleInfo(string $targettitle, string $lang)
 
     debugEcho("GetTitleInfo url: $url");
 
-    $client = new CurlHttpClient();
     try {
+        $client = new CurlHttpClient();
         $output = $client->get($url) ?? '';
         debugEcho("GetTitleInfo result: $output");
         $result = json_decode($output, true);

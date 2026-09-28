@@ -1,5 +1,5 @@
 <?php
-// publish_reports/index.php
+// publish_reports/reports_config.php
 // namespace PublishReports;
 // class Config
 
