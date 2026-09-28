@@ -14,10 +14,10 @@ include_once __DIR__ . '/config.php';
 include_once __DIR__ . '/MediaWikiClient/index.php';
 
 # CurlRequests
-include_once __DIR__ . '/bots/CurlHttpClient.php';
+include_once __DIR__ . '/CurlRequests/CurlHttpClient.php';
 
 # AddToDb
-include_once __DIR__ . '/sql/PublishReportsRepository.php';
+include_once __DIR__ . '/AddToDb/PublishReportsRepository.php';
 
 # MdwikiSql
 include_once __DIR__ . '/Database.php';
