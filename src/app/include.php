@@ -46,7 +46,7 @@ include_once __DIR__ . '/sql/mdwiki_sql.php';
 
 include_once __DIR__ . '/api/WikiApi.php';
 
-include_once __DIR__ . '/bots/index.php';
+include_once __DIR__ . '/bots/include.php';
 
 
 $home = getenv('HOME') ?: ($_SERVER['HOME'] ?? "");
