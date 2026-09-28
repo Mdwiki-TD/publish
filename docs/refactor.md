@@ -450,7 +450,7 @@ if (substr(__DIR__, 0, 2) == 'I:') {
 -   [ ] Implement caching properly
 -   [ ] Fix inefficient query
 
-### `src/bots/process_edit.php`
+### `src/bots/ProcessEdit.php`
 
 -   [ ] Extract to EditService
 -   [ ] Remove database calls from controller

@@ -201,7 +201,7 @@ foreach ($result as $row) {
 
 #### LOG-002: Audit Trail Integrity Issue
 
-**File:** `src/bots/process_edit.php:52-77`
+**File:** `src/bots/ProcessEdit.php:52-77`
 **Severity:** High
 **Description:** Fallback to "Mr. Ibrahem" user for Wikidata linking creates incorrect audit trail.
 
@@ -408,7 +408,7 @@ file_put_contents($file_j, json_encode($tab, JSON_PRETTY_PRINT | JSON_UNESCAPED_
 **Severity:** Medium
 **Description:** Files mix multiple responsibilities:
 
--   `process_edit.php`: API calls, database, Wikidata, error handling
+-   `ProcessEdit.php`: API calls, database, Wikidata, error handling
 -   `wd.php`: Database queries, HTTP, OAuth
 
 **Recommendation:** Separate into focused service classes.
@@ -467,7 +467,7 @@ The codebase lacks comprehensive PHP type annotations. The following should be a
 | File                   | Functions Needing Types |
 | ---------------------- | ----------------------- |
 | `start.php`            | All functions           |
-| `process_edit.php`     | All functions           |
+| `ProcessEdit.php`     | All functions           |
 | `mdwiki_sql.php`       | Database class methods  |
 | `helps.php`            | All functions           |
 | `access_helps.php`     | All functions           |

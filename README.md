@@ -39,9 +39,9 @@ The main functions in `index.php` include:
 -   `determineHashtag($title, $user)`: Determines the hashtag to be used.
 -   `prepareApiParams($title, $summary, $text, $request)`: Prepares the API parameters for the edit request.
 -   `handleNoAccess($user, $tab)`: Handles cases where the user does not have access.
--   `processEdit($access, $sourcetitle, $text, $lang, $revid, $campaign, $user, $title, $summary, $request, $tab)`: Processes the edit request.
+-   `ProcessEdit.handle($access, $sourcetitle, $text, $lang, $revid, $campaign, $user, $title, $summary, $request, $tab)`: Processes the edit request.
 -   `handleSuccessfulEdit($sourcetitle, $campaign, $lang, $user, $title, $editit, $access_key, $access_secret)`: Handles successful edits and links the article to Wikidata.
--   `start($request)`: The main function that starts the process based on the request parameters.
+-   `run($request)`: The main function that starts the process based on the request parameters.
 
 # Notes
 

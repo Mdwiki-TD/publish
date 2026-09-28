@@ -47,8 +47,8 @@ app/
 │   └── index.php      # OAuth client, tokens, CSRF, POST operations
 ├── process/           # Edit processing & orchestration
 │   ├── start.php          # Main workflow orchestrator
-│   ├── process_edit.php   # Edit execution and post-edit handling
-│   └── process_db_log.php # Database insertion logic
+│   ├── ProcessEdit.php   # Edit execution and post-edit handling
+│   └── EditProcessLog.php # Database insertion logic
 ├── sql/               # Database access layer
 │   ├── mdwiki_sql.php     # PDO Database class and query wrappers
 │   ├── access_helps.php   # OAuth token CRUD
@@ -72,8 +72,8 @@ include.php (bootstrap)
   ├── utils/start_utils.php → Formatting, error classification
   ├── process/
   │   ├── start.php → Main orchestrator
-  │   ├── process_edit.php → Edit handler
-  │   └── process_db_log.php → DB logging
+  │   ├── ProcessEdit.php → Edit handler
+  │   └── EditProcessLog.php → DB logging
   ├── sql/
   │   ├── mdwiki_sql.php → Database class
   │   ├── access_helps.php → Token storage
@@ -106,7 +106,7 @@ include.php (bootstrap)
 6. Revision ID lookup (bots/revids_bot.php)
 7. Wikitext preprocessing (text_edit.php → fix_refs)
 8. Edit execution (api/DoEdit.php)
-9. Post-edit operations (process/process_edit.php)
+9. Post-edit operations (process/ProcessEdit.php)
    - Wikidata linking (bots/wd.php)
    - Database logging (sql/PublishReportsRepository.php)
    - File logging (bots/files_helps.php)

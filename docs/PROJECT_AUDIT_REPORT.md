@@ -55,7 +55,7 @@ All 9 modules share these patterns:
 | Weakness                                    | Affected Modules                                                         | Frequency           |
 | ------------------------------------------- | ------------------------------------------------------------------------ | ------------------- |
 | No return type declarations                 | All 9 modules                                                            | 100%                |
-| Hardcoded admin username `"Mr. Ibrahem"`    | `start_utils.php`, `process_edit.php`, `token_handler.php`               | 3 modules           |
+| Hardcoded admin username `"Mr. Ibrahem"`    | `start_utils.php`, `ProcessEdit.php`, `token_handler.php`               | 3 modules           |
 | Duplicated username normalization           | `start_utils.php::formatUser()`, `token_handler.php::handle_user_name()` | 2 modules           |
 | Silent error swallowing (return empty)      | `mdwiki_sql.php`, `crypt_helps.php`, `revids_bot.php`                    | 3 modules           |
 | Hardcoded Windows paths (`I:/MD_TOOLS/...`) | `load_env.php`, `files_helps.php`, `start.php`                           | 3 modules           |
@@ -230,7 +230,7 @@ The encryption key is loaded at file include time into a module-level variable, 
 | ------- | ---------------------------------------------------------------- | ------------------------------------------ |
 | MED-001 | File path injection in `to_do()` - `$file_name` not sanitized    | `bots/files_helps.php:19`                  |
 | MED-002 | SSRF risk - `$sourcetitle` passed directly into URL construction | `bots/revids_bot.php:23`                   |
-| MED-003 | Hardcoded admin fallback `"Mr. Ibrahem"` for Wikidata linking    | `process/process_edit.php:41`              |
+| MED-003 | Hardcoded admin fallback `"Mr. Ibrahem"` for Wikidata linking    | `process/ProcessEdit.php:41`              |
 | MED-004 | Directory permissions 0755 (world-readable) for report files     | `bots/files_helps.php:38-58`               |
 | MED-005 | No transaction wrapping for multi-step DB operations             | `sql/PublishReportsRepository.php`                        |
 | MED-006 | `rand()` used in error responses (weak, unnecessary)             | `MediaWikiClient/index.php:83`             |

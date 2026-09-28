@@ -62,7 +62,7 @@ This project is a PHP-based workflow designed to manage the final steps for publ
 3. Generates an edit summary using `make_summary`.
 4. Sends the wikitext through `fix_refs` and `textfixes` for cleanup and standardization.
 5. API request parameters are prepared (`prepareApiParams`).
-6. The system processes edits (`processEdit`) and submits them to Wikipedia.
+6. The system processes edits (`ProcessEdit.handle`) and submits them to Wikipedia.
 7. On successful edit, `handleSuccessfulEdit` links the article to Wikidata.
 8. Additional bot scripts (`bots/`) and reporting modules (`publish_reports/`) run as needed.
 9. Error handling and logging mechanisms track and resolve issues (`handleNoAccess`).

@@ -87,7 +87,7 @@ $query = "SELECT id, a_k, a_s FROM keys_new WHERE username_hash = ?";
 
 ### 2. Audit Trail Integrity (LOG-002)
 
-**Location:** `src/bots/process_edit.php:118-156`
+**Location:** `src/bots/ProcessEdit.php:118-156`
 **Impact:** Edits attributed to wrong user
 **Fix:** Require explicit user consent for fallback or fail the Wikidata operation
 
@@ -182,7 +182,7 @@ Many files were updated with:
 | ------------------------------- | ------------------------------------------------------ |
 | `src/bots/mdwiki_sql.php`       | Added PHPDoc, type annotations, security comments      |
 | `src/bots/helps.php`            | Added PHPDoc, type annotations                         |
-| `src/bots/process_edit.php`     | Added PHPDoc, type annotations, constants              |
+| `src/bots/ProcessEdit.php`     | Added PHPDoc, type annotations, constants              |
 | `src/bots/DoEdit.php`          | Added PHPDoc, type annotations                         |
 | `src/bots/wd.php`               | Added PHPDoc, type annotations                         |
 | `src/bots/access_helps.php`     | Added PHPDoc, type annotations                         |

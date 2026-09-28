@@ -73,22 +73,3 @@ function get_errors_file($editit, $placeHolder)
     }
     return $toDoFile;
 }
-
-function prepareApiParams($title, $summary, $text, $request)
-{
-    $apiParams = [
-        'action' => 'edit',
-        'title' => $title,
-        // 'section' => 'new',
-        'summary' => $summary,
-        'text' => $text,
-        'format' => 'json',
-    ];
-
-    // wpCaptchaId, wpCaptchaWord
-    if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
-        $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
-        $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
-    }
-    return $apiParams;
-}

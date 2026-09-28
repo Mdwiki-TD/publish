@@ -1,13 +1,13 @@
 <?php
 
-namespace Publish\EditProcess;
+namespace Publish\Process\ProcessEdit;
 
 use MediaWiki\OAuthClient\Token;
 
 use Publish\AddToDb\PublishReportsRepository;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 
-use function Publish\EditProcessLog\add_to_db;
+use function Publish\Process\EditProcessLog\add_to_db;
 
 use function Publish\Helps\pub_test_print;
 use function Publish\WD\LinkToWikidata;
@@ -15,7 +15,6 @@ use function Publish\FilesHelps\to_do;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\WikiApi\GetTitleInfo;
 use function Publish\StartUtils\get_errors_file;
-use function Publish\StartUtils\prepareApiParams;
 
 
 function shouldAddedToWikidata($lang, $title): bool
@@ -100,7 +99,27 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
     return $LinkTowd;
 }
 
-function processEdit($request, $access, $text, $user, $tab, $randId, $trType)
+
+function prepareApiParams($title, $summary, $text, $request)
+{
+    $apiParams = [
+        'action' => 'edit',
+        'title' => $title,
+        // 'section' => 'new',
+        'summary' => $summary,
+        'text' => $text,
+        'format' => 'json',
+    ];
+
+    // wpCaptchaId, wpCaptchaWord
+    if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
+        $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
+        $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
+    }
+    return $apiParams;
+}
+
+function handle($request, $access, $text, $user, $tab, $randId, $trType)
 {
     $sourcetitle = $tab['sourcetitle'];
     $lang = $tab['lang'];

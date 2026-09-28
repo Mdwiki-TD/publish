@@ -1,6 +1,6 @@
 <?php
 
-namespace Publish\EditProcessLog;
+namespace Publish\Process\EditProcessLog;
 
 use Publish\AddToDb\PublishReportsRepository;
 
