@@ -18,7 +18,7 @@ use function Publish\StartUtils\formatTitle;
 use function Publish\StartUtils\formatUser;
 use function Publish\StartUtils\determineHashtag;
 
-class Start
+class StartController
 {
     private ProcessEdit $processEdit;
 
