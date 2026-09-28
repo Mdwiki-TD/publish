@@ -2,7 +2,7 @@
 
 namespace Publish\EditProcess;
 
-use function Publish\AddToDb\InsertPageTarget;
+use Publish\AddToDb\PublishReportsRepository;
 use function Publish\Sql\retrieveCampaignCategories;
 use function Publish\Sql\find_exists_or_update;
 
@@ -56,8 +56,19 @@ function add_to_db($target, $lang, $user, $toUsersTable, $campaign, $sourcetitle
         ];
     }
 
-    InsertPageTarget($sourcetitle, $trType, $cat, $lang, $user, $target, $tableName, $mdwikiRevid, $words);
+    $repository = new PublishReportsRepository();
 
+    $repository->insertPageTarget(
+        $sourcetitle,
+        $trType,
+        $cat,
+        $lang,
+        $user,
+        $target,
+        $tableName,
+        $mdwikiRevid,
+        $words
+    );
     return [
         'use_user_sql' => $useUserSql,
         'to_users_table' => $toUsersTable,
