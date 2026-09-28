@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Integration Tests for wiki_api.php (namespace Publish\WD)
+ * Integration Tests for WikiApi.php (namespace Publish\WD)
  *
  */
 class WikiApiIntegrationTest extends TestCase

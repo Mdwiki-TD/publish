@@ -30,8 +30,8 @@ app/
 ├── load_env.php       # Development environment variables (WARNING: contains credentials)
 ├── text_edit.php      # Wikitext preprocessing via fix_refs integration
 ├── api/               # Wikipedia API interaction layer
-│   ├── do_edit.php    # OAuth-authenticated edit execution
-│   └── wiki_api.php   # Title/page information queries
+│   ├── DoEdit.php    # OAuth-authenticated edit execution
+│   └── WikiApi.php   # Title/page information queries
 ├── bots/              # Utility/helper modules
 │   ├── index.php      # Module loader
 │   ├── curl_requests.php  # HTTP client
@@ -81,8 +81,8 @@ include.php (bootstrap)
   │   └── sql.php → General queries
   ├── MediaWikiClient/index.php → OAuth client
   ├── api/
-  │   ├── do_edit.php → Edit execution
-  │   └── wiki_api.php → Title queries
+  │   ├── DoEdit.php → Edit execution
+  │   └── WikiApi.php → Title queries
   ├── bots/
   │   ├── curl_requests.php → HTTP client
   │   ├── crypt_helps.php → Encryption
@@ -105,7 +105,7 @@ include.php (bootstrap)
 5. User access validation (sql/access_helps.php)
 6. Revision ID lookup (bots/revids_bot.php)
 7. Wikitext preprocessing (text_edit.php → fix_refs)
-8. Edit execution (api/do_edit.php)
+8. Edit execution (api/DoEdit.php)
 9. Post-edit operations (process/process_edit.php)
    - Wikidata linking (bots/wd.php)
    - Database logging (sql/add_to_db.php)

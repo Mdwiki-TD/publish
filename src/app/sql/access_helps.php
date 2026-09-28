@@ -1,13 +1,6 @@
 <?php
 
 namespace Publish\AccessHelps;
-/*
-
-Usage:
-use function Publish\AccessHelps\get_access_from_db;
-use function Publish\AccessHelps\del_access_from_db;
-
-*/
 
 use function Publish\MdwikiSql\execute_query;
 use function Publish\MdwikiSql\fetch_query;

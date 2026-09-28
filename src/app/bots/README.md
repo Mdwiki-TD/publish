@@ -27,7 +27,7 @@ This module contains utility functions and helper classes used throughout the ap
 
 ### Module Relationships
 ```
-curl_requests.php ──→ (used by revids_bot.php, wiki_api.php)
+curl_requests.php ──→ (used by revids_bot.php, WikiApi.php)
 crypt_helps.php   ──→ (used by sql/access_helps.php)
 files_helps.php   ──→ (used by process/process_edit.php)
 wd.php            ──→ (used by process/process_edit.php)

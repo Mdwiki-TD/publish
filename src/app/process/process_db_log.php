@@ -1,10 +1,6 @@
 <?php
 
 namespace Publish\EditProcess;
-/*
-Usage:
-use function Publish\EditProcess\add_to_db;
-*/
 
 use function Publish\AddToDb\InsertPageTarget;
 use function Publish\Sql\retrieveCampaignCategories;

@@ -2,9 +2,9 @@
 src/
 ├── app/
 │   ├── api/
-│   │   ├── do_edit.php
+│   │   ├── DoEdit.php
 │   │   ├── README.md
-│   │   └── wiki_api.php
+│   │   └── WikiApi.php
 │   ├── bots/
 │   │   ├── crypt_helps.php
 │   │   ├── curl_requests.php

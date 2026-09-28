@@ -2,16 +2,6 @@
 
 namespace Publish\StartUtils;
 
-/*
-Usage:
-use function Publish\StartUtils\make_summary;
-use function Publish\StartUtils\formatTitle;
-use function Publish\StartUtils\formatUser;
-use function Publish\StartUtils\determineHashtag;
-use function Publish\StartUtils\get_errors_file;
-use function Publish\StartUtils\prepareApiParams;
-*/
-
 function make_summary($revid, $sourcetitle, $to, $hashtag)
 {
     return "Created by translating the page [[:mdwiki:Special:Redirect/revision/$revid|$sourcetitle]] to:$to $hashtag";
@@ -61,7 +51,7 @@ function get_errors_file($editit, $placeHolder)
     ];
     $errsWd = [
         "Links to user pages" => "wd_user_pages",
-        "get_csrftoken" => "wd_csrftoken",
+        "getCsrfTokenData" => "wd_csrftoken",
         "protectedpage" => "wd_protectedpage",
     ];
     $cText = json_encode($editit);

@@ -29,7 +29,7 @@ This project is a PHP-based workflow designed to manage the final steps for publ
 
 3. **API Preparation & Processing Module** (API interaction with Wikipedia)
 
-    - `do_edit.php`: Handles article editing requests.
+    - `DoEdit.php`: Handles article editing requests.
     - `get_token.php`: Manages authentication and token retrieval.
     - `token.php`: Assists with authentication handling.
 

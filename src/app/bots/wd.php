@@ -3,7 +3,7 @@
 namespace Publish\WD;
 
 use function Publish\Sql\GetQidForMdtitle;
-use function Publish\MediaWikiClient\post_params;
+use function Publish\MediaWikiClient\postParams;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\Helps\pub_test_print;
 
@@ -33,17 +33,17 @@ function LinkIt($apiParams, $accessKey, $accessSecret)
     $wikidataDomain = getenv('WIKIDATA_DOMAIN') ?: ($_ENV['WIKIDATA_DOMAIN'] ?? 'www.wikidata.org');
     $httpsDomain = "https://$wikidataDomain";
 
-    $response = post_params($apiParams, $httpsDomain, $accessKey, $accessSecret);
+    $response = postParams($apiParams, $httpsDomain, $accessKey, $accessSecret);
     $Result = json_decode($response, true);
     if (!is_array($Result)) {
         $Result = [];
     }
     if (isset($Result['error'])) {
-        pub_test_print("post_params: Result->error: " . json_encode($Result['error']));
+        pub_test_print("postParams: Result->error: " . json_encode($Result['error']));
     }
 
     if (empty($Result)) {
-        pub_test_print("post_params: Error: " . json_last_error() . " " . json_last_error_msg());
+        pub_test_print("postParams: Error: " . json_last_error() . " " . json_last_error_msg());
         pub_test_print("response:");
         pub_test_print($response);
     }

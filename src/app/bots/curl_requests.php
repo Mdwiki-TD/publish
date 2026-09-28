@@ -1,10 +1,6 @@
 <?php
 
 namespace Publish\CurlRequests;
-/*
-Usage:
-use function Publish\CurlRequests\get_url_curl;
-*/
 
 use function Publish\Helps\pub_test_print;
 

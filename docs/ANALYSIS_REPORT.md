@@ -236,7 +236,7 @@ $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
 -   `get_access_from_db()` returns `null`
 -   `LinkToWikidata()` returns `['error' => '...']`
--   `get_csrftoken()` returns array with null csrftoken
+-   `getCsrfTokenData()` returns array with null csrftoken
     **Recommendation:** Standardize error handling with exceptions or Result type.
 
 #### LOG-005: Missing Transaction Handling
@@ -472,7 +472,7 @@ The codebase lacks comprehensive PHP type annotations. The following should be a
 | `helps.php`            | All functions           |
 | `access_helps.php`     | All functions           |
 | `access_helps_new.php` | All functions           |
-| `do_edit.php`          | All functions           |
+| `DoEdit.php`          | All functions           |
 | `wd.php`               | All functions           |
 | `revids_bot.php`       | All functions           |
 | `add_to_db.php`        | All functions           |

@@ -183,7 +183,7 @@ Many files were updated with:
 | `src/bots/mdwiki_sql.php`       | Added PHPDoc, type annotations, security comments      |
 | `src/bots/helps.php`            | Added PHPDoc, type annotations                         |
 | `src/bots/process_edit.php`     | Added PHPDoc, type annotations, constants              |
-| `src/bots/do_edit.php`          | Added PHPDoc, type annotations                         |
+| `src/bots/DoEdit.php`          | Added PHPDoc, type annotations                         |
 | `src/bots/wd.php`               | Added PHPDoc, type annotations                         |
 | `src/bots/access_helps.php`     | Added PHPDoc, type annotations                         |
 | `src/bots/access_helps_new.php` | Added PHPDoc, type annotations, performance warnings   |

@@ -13,12 +13,12 @@ This module handles all direct interactions with the MediaWiki API for publishin
 
 | File           | Namespace         | Purpose                                          |
 | -------------- | ----------------- | ------------------------------------------------ |
-| `do_edit.php`  | `Publish\DoEdit`  | Executes OAuth-authenticated edits to Wikipedia  |
-| `wiki_api.php` | `Publish\WikiApi` | Queries Wikipedia API for title/page information |
+| `DoEdit.php`  | `Publish\DoEdit`  | Executes OAuth-authenticated edits to Wikipedia  |
+| `WikiApi.php` | `Publish\WikiApi` | Queries Wikipedia API for title/page information |
 
 ## Architecture
 
-### `do_edit.php`
+### `DoEdit.php`
 
 Provides `publish_do_edit($apiParams, $wiki, $access)` which:
 
@@ -27,7 +27,7 @@ Provides `publish_do_edit($apiParams, $wiki, $access)` which:
 3. Fetches a CSRF edit token
 4. Executes the edit via `makeOAuthCall()`
 
-### `wiki_api.php`
+### `WikiApi.php`
 
 Provides `GetTitleInfo($targettitle, $lang)` which:
 

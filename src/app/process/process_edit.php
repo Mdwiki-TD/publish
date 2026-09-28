@@ -1,10 +1,6 @@
 <?php
 
 namespace Publish\EditProcess;
-/*
-Usage:
-use function Publish\EditProcess\processEdit;
-*/
 
 use function Publish\Helps\pub_test_print;
 use function Publish\AddToDb\InsertPublishReports;
@@ -35,7 +31,7 @@ function shouldAddedToWikidata($lang, $title)
 function retryWithFallbackUser($sourcetitle, $lang, $title, $user)
 {
     $LinkTowd = [];
-    pub_test_print("get_csrftoken failed for user: $user, retrying with Mr. Ibrahem");
+    pub_test_print("getCsrfTokenData failed for user: $user, retrying with Mr. Ibrahem");
 
     // Retry with "Mr. Ibrahem" credentials - get fresh credentials from database
     $fallbackAccess = get_access_from_db('Mr. Ibrahem');
@@ -68,8 +64,8 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
 
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $accessKey, $accessSecret) ?? [];
-        // Check if the error is get_csrftoken failure and user is not already "Mr. Ibrahem"
-        if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'get_csrftoken failed' && $user !== 'Mr. Ibrahem') {
+        // Check if the error is getCsrfTokenData failure and user is not already "Mr. Ibrahem"
+        if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'getCsrfTokenData failed' && $user !== 'Mr. Ibrahem') {
             $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user);
         }
         // Log errors if they still exist after retry

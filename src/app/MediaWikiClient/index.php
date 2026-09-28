@@ -10,21 +10,21 @@ use function Publish\Helps\pub_test_print;
 
 function get_client($domain)
 {
-    $domain = parse_url($domain, PHP_URL_HOST);
-    $CONSUMER_KEY        = getenv("CONSUMER_KEY") ?: '';
-    $CONSUMER_SECRET     = getenv("CONSUMER_SECRET") ?: '';
-    $oauthUrl = "https://$domain/w/index.php?title=Special:OAuth";
+        $domain = parse_url($domain, PHP_URL_HOST);
+        $CONSUMER_KEY        = getenv("CONSUMER_KEY") ?: '';
+        $CONSUMER_SECRET     = getenv("CONSUMER_SECRET") ?: '';
+        $oauthUrl = "https://$domain/w/index.php?title=Special:OAuth";
 
-    // Configure the OAuth client with the URL and consumer details.
-    $conf = new ClientConfig($oauthUrl);
+        // Configure the OAuth client with the URL and consumer details.
+        $conf = new ClientConfig($oauthUrl);
 
-    $conf->setConsumer(new Consumer($CONSUMER_KEY, $CONSUMER_SECRET));
+        $conf->setConsumer(new Consumer($CONSUMER_KEY, $CONSUMER_SECRET));
 
-    $conf->setUserAgent('mdwiki MediaWiki OAuth Client/1.0');
+        $conf->setUserAgent('mdwiki MediaWiki OAuth Client/1.0');
 
-    $client = new Client($conf);
+        $client = new Client($conf);
 
-    return $client;
+        return $client;
 }
 
 function getAccessToken($accessKey, $accessSecret)
@@ -34,58 +34,61 @@ function getAccessToken($accessKey, $accessSecret)
     return $accessToken;
 }
 
-function get_edits_token($client, $accessToken, $apiUrl)
+function getEditsToken($client, Token $accessToken, string $apiUrl): ?string
 {
-    $response = $client->makeOAuthCall($accessToken, "$apiUrl?action=query&meta=tokens&format=json");
-    $data = json_decode($response);
-    if ($data == null || !isset($data->query->tokens->csrftoken)) {
-        // Handle error
-        pub_test_print("<br>get_edits_token Error: " . json_last_error() . " " . json_last_error_msg());
-        return null;
-    }
-    return $data->query->tokens->csrftoken;
+        $response = $client->makeOAuthCall($accessToken, "$apiUrl?action=query&meta=tokens&format=json");
+        $data = json_decode($response);
+
+        if ($data === null || !isset($data->query->tokens->csrftoken)) {
+            // Handle error
+            pub_test_print('<br>getEditsToken Error: ' . json_last_error() . ' ' . json_last_error_msg());
+
+            return null;
+        }
+
+        return $data->query->tokens->csrftoken;
 }
 
-function get_csrftoken($client, $accessKey, $accessSecret, $apiUrl)
+function getCsrfTokenData($client, Token $accessToken, string $apiUrl): ?array
 {
-    $accessToken = getAccessToken($accessKey, $accessSecret);
-    $response = $client->makeOAuthCall($accessToken, "$apiUrl?action=query&meta=tokens&format=json");
-    $data = json_decode($response, true);
-    if ($data == null || !isset($data['query']['tokens']['csrftoken'])) {
-        // Handle error
-        pub_test_print("<br>get_csrftoken Error: " . json_last_error() . " " . json_last_error_msg());
-        pub_test_print($data);
-    }
-    return $data;
+        $response = $client->makeOAuthCall($accessToken, "$apiUrl?action=query&meta=tokens&format=json");
+        $data = json_decode($response, true);
+
+        if ($data === null || !isset($data['query']['tokens']['csrftoken'])) {
+            // Handle error
+            pub_test_print('<br>getCsrfTokenData Error: ' . json_last_error() . ' ' . json_last_error_msg());
+            pub_test_print($data);
+        }
+
+        return $data;
 }
 
-function post_params($apiParams, $httpsDomain, $accessKey, $accessSecret)
+function postParams(array $apiParams, string $httpsDomain, string $accessKey, string $accessSecret): string
 {
-    $client = get_client($httpsDomain);
-    $apiUrl = "$httpsDomain/w/api.php";
+        $client = get_client($httpsDomain);
+        $apiUrl = "$httpsDomain/w/api.php";
 
-    $accessToken = new Token($accessKey, $accessSecret);
+        $accessToken = new Token($accessKey, $accessSecret);
 
-    $csrftokenData = get_csrftoken($client, $accessKey, $accessSecret, $apiUrl);
+        $csrfTokenData = getCsrfTokenData($client, $accessToken, $apiUrl);
 
-    $csrftoken = $csrftokenData['query']['tokens']['csrftoken'] ?? null;
+        $csrftoken = $csrfTokenData['query']['tokens']['csrftoken'] ?? null;
 
-    if ($csrftoken == null) {
-        $data = [
-            'error' => 'get_csrftoken failed',
-            "rand" => rand(),
-            "csrftoken_data" => $csrftokenData
-        ];
-        return json_encode($data, JSON_PRETTY_PRINT);
-    }
+        if ($csrftoken === null) {
+            $data = [
+                'error' => 'get_csrftoken failed',
+                'rand' => rand(),
+                'csrftoken_data' => $csrfTokenData,
+            ];
 
-    $apiParams["format"] = "json";
+            return json_encode($data, JSON_PRETTY_PRINT);
+        }
 
-    pub_test_print("post_params: apiParams:" . json_encode($apiParams, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        $apiParams['format'] = 'json';
 
-    $apiParams["token"] = $csrftoken;
+        pub_test_print('postParams: apiParams:' . json_encode($apiParams, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
-    $response = $client->makeOAuthCall($accessToken, $apiUrl, true, $apiParams);
+        $apiParams['token'] = $csrftoken;
 
-    return $response;
+        return $client->makeOAuthCall($accessToken, $apiUrl, true, $apiParams);
 }
