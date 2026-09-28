@@ -16,7 +16,7 @@ This module contains utility functions and helper classes used throughout the ap
 | File | Namespace | Purpose |
 |------|-----------|---------|
 | `index.php` | *(loader)* | Includes all bot modules |
-| `curl_requests.php` | `Publish\CurlRequests` | HTTP GET via cURL with custom user agent |
+| `CurlHttpClient.php` | `Publish\CurlRequests` | HTTP GET via cURL with custom user agent |
 | `files_helps.php` | `Publish\FilesHelps` | Report file logging with date-based directory structure |
 | `helps.php` | `Publish\Helps` | Debug output helper (`pub_test_print`) |
 | `revids_bot.php` | `Publish\Revids` | Revision ID lookup from JSON file or remote API |
@@ -27,7 +27,7 @@ This module contains utility functions and helper classes used throughout the ap
 
 ### Module Relationships
 ```
-curl_requests.php ──→ (used by revids_bot.php, WikiApi.php)
+CurlHttpClient.php ──→ (used by revids_bot.php, WikiApi.php)
 crypt_helps.php   ──→ (used by sql/access_helps.php)
 files_helps.php   ──→ (used by process/process_edit.php)
 wd.php            ──→ (used by process/process_edit.php)
@@ -55,7 +55,7 @@ Uses `defuse/php-encryption` for symmetric encryption of OAuth tokens:
 - **`files_helps.php`** - Clean directory structure creation with proper `mkdir()` permissions
 - **`wd.php`** - Good fallback pattern for CSRF failures
 - **`crypt_helps.php`** - Uses a well-vetted encryption library
-- **`curl_requests.php`** - Sets proper timeouts (5s connect, 5s total)
+- **`CurlHttpClient.php`** - Sets proper timeouts (5s connect, 5s total)
 - **`revids_bot.php`** - Dual lookup strategy (local JSON file, then remote API)
 
 ### Weaknesses

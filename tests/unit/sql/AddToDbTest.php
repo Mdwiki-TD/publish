@@ -1,23 +1,58 @@
 <?php
 
-namespace Tests\Bots;
+namespace Tests\AddToDb;
 
+use Publish\AddToDb\PublishReportsRepository;
+use Publish\MdwikiSql\Database;
 use PHPUnit\Framework\TestCase;
-use PDO;
 
-/**
- * Tests for src/bots/add_to_db.php
- *
- * Covers:
- *   - InsertPageTarget() – routing logic, parameter normalisation, deduplication
- *   - InsertPublishReports() – verifies SQL execution path
- *   - retrieveCampaignCategories() – structural test
- *   - find_exists_or_update() – internal helper (via InsertPageTarget behaviour)
- */
-class AddToDbTest extends TestCase
+class PublishReportsRepositoryTest extends TestCase
 {
-    public static function setUpBeforeClass(): void
+    public function testInsertPublishReportsBuildsCorrectQueryAndParams(): void
     {
-        // That is fine for our tests.
+        $dbMock = $this->createMock(Database::class);
+
+        $dbMock->expects($this->once())
+            ->method('executequery')
+            ->with(
+                $this->stringContains('INSERT INTO publish_reports'),
+                [
+                    'Some Title',
+                    'SomeUser',
+                    'ar',
+                    'Source Title',
+                    'success', // .json لازم تنشال
+                    json_encode(['key' => 'value']),
+                ]
+            )
+            ->willReturn(true);
+
+        $repo = new PublishReportsRepository($dbMock);
+
+        $result = $repo->insertPublishReports(
+            'Some Title',
+            'SomeUser',
+            'ar',
+            'Source Title',
+            'success.json',
+            ['key' => 'value']
+        );
+
+        $this->assertTrue($result);
+    }
+
+    public function testInsertPageTargetRejectsInvalidTableName(): void
+    {
+        $dbMock = $this->createMock(Database::class);
+        $dbMock->expects($this->never())->method('executequery');
+
+        $repo = new PublishReportsRepository($dbMock);
+
+        $result = $repo->insertPageTarget(
+            'Source', 'type', 'cat', 'ar', 'user',
+            'target', 'malicious_table', 'rev1', 'words'
+        );
+
+        $this->assertFalse($result);
     }
 }

@@ -40,7 +40,7 @@ $this->password = 'root11';
 
 #### SEC-002: SQL Injection via Table Name Interpolation
 
-**File:** `src/bots/add_to_db.php:59,66,124`
+**File:** `src/bots/PublishReportsRepository.php:59,66,124`
 **Severity:** Critical
 **Description:** Table names are directly interpolated into SQL queries without validation.
 
@@ -241,7 +241,7 @@ $main_dir_by_day = check_dirs($rand_id, "reports_by_day");
 
 #### LOG-005: Missing Transaction Handling
 
-**File:** `src/bots/add_to_db.php`
+**File:** `src/bots/PublishReportsRepository.php`
 **Severity:** Medium
 **Description:** Database operations lack transaction wrapping.
 **Impact:** Partial data writes on failure.
@@ -278,7 +278,7 @@ if (empty($revid)) {
 
 #### LOG-008: Unused Variable in Scope
 
-**File:** `src/bots/add_to_db.php:16-26`
+**File:** `src/bots/PublishReportsRepository.php:16-26`
 **Severity:** Low
 **Description:** `$Words_table` loaded at file level but may fail silently.
 
@@ -475,7 +475,7 @@ The codebase lacks comprehensive PHP type annotations. The following should be a
 | `DoEdit.php`          | All functions           |
 | `wd.php`               | All functions           |
 | `revids_bot.php`       | All functions           |
-| `add_to_db.php`        | All functions           |
+| `PublishReportsRepository.php`        | All functions           |
 | `files_helps.php`      | All functions           |
 | `get_token.php`        | All functions           |
 | `cors.php`             | `is_allowed()`          |

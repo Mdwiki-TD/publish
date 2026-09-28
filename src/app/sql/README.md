@@ -17,7 +17,7 @@ This module provides the database access layer for the application. It wraps PDO
 |------|-----------|---------|
 | `mdwiki_sql.php` | `Publish\MdwikiSql` | PDO `Database` class and `execute_query()`/`fetch_query()` wrappers |
 | `access_helps.php` | `Publish\AccessHelps` | OAuth token CRUD operations (get/delete from `access_keys` table) |
-| `add_to_db.php` | `Publish\AddToDb` | Insert publish reports and page target records |
+| `PublishReportsRepository.php` | `Publish\AddToDb` | Insert publish reports and page target records |
 | `sql.php` | `Publish\Sql` | General SQL queries (QID lookup, campaign categories, upsert logic) |
 | `table_name.php` | `Publish\MdwikiSql` | Empty namespace declaration (placeholder) |
 

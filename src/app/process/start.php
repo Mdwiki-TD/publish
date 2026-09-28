@@ -2,6 +2,8 @@
 
 namespace Publish\Start;
 
+use Publish\AddToDb\PublishReportsRepository;
+
 use function Publish\EditProcess\text_changes;
 use function Publish\Helps\pub_test_print;
 use function Publish\AccessHelps\get_access_from_db;
@@ -9,7 +11,6 @@ use function Publish\EditProcess\processEdit;
 use function Publish\FilesHelps\to_do;
 use function Publish\Revids\get_revid_db;
 use function Publish\Revids\get_revid;
-use function Publish\AddToDb\InsertPublishReports;
 use function Publish\StartUtils\make_summary;
 use function Publish\StartUtils\formatTitle;
 use function Publish\StartUtils\formatUser;
@@ -47,7 +48,16 @@ function handleNoAccess($user, $tab, $randId)
     $tab['result_to_cx'] = $editit;
 
     to_do($tab, "noaccess", $randId);
-    InsertPublishReports($tab['title'], $user, $tab['lang'], $tab['sourcetitle'], "noaccess", $tab);
+
+    $repository = new PublishReportsRepository();
+    $repository->insertPublishReports(
+        $tab['title'],
+        $user,
+        $tab['lang'],
+        $tab['sourcetitle'],
+        "noaccess",
+        $tab
+    );
 
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");

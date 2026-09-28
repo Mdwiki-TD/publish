@@ -34,7 +34,7 @@ app/
 │   └── WikiApi.php   # Title/page information queries
 ├── bots/              # Utility/helper modules
 │   ├── index.php      # Module loader
-│   ├── curl_requests.php  # HTTP client
+│   ├── CurlHttpClient.php  # HTTP client
 │   ├── crypt_helps.php    # Encryption/decryption
 │   ├── files_helps.php    # Report file logging
 │   ├── helps.php          # Debug output helper
@@ -52,7 +52,7 @@ app/
 ├── sql/               # Database access layer
 │   ├── mdwiki_sql.php     # PDO Database class and query wrappers
 │   ├── access_helps.php   # OAuth token CRUD
-│   ├── add_to_db.php      # Publish report and page tracking inserts
+│   ├── PublishReportsRepository.php      # Publish report and page tracking inserts
 │   ├── sql.php            # General queries (QID, categories, upsert)
 │   └── table_name.php     # Placeholder/empty namespace
 └── utils/             # Shared utility functions
@@ -77,14 +77,14 @@ include.php (bootstrap)
   ├── sql/
   │   ├── mdwiki_sql.php → Database class
   │   ├── access_helps.php → Token storage
-  │   ├── add_to_db.php → Record insertion
+  │   ├── PublishReportsRepository.php → Record insertion
   │   └── sql.php → General queries
   ├── MediaWikiClient/index.php → OAuth client
   ├── api/
   │   ├── DoEdit.php → Edit execution
   │   └── WikiApi.php → Title queries
   ├── bots/
-  │   ├── curl_requests.php → HTTP client
+  │   ├── CurlHttpClient.php → HTTP client
   │   ├── crypt_helps.php → Encryption
   │   ├── files_helps.php → File logging
   │   ├── helps.php → Debug helper
@@ -108,7 +108,7 @@ include.php (bootstrap)
 8. Edit execution (api/DoEdit.php)
 9. Post-edit operations (process/process_edit.php)
    - Wikidata linking (bots/wd.php)
-   - Database logging (sql/add_to_db.php)
+   - Database logging (sql/PublishReportsRepository.php)
    - File logging (bots/files_helps.php)
 10. JSON response
 ```

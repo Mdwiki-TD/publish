@@ -2,8 +2,9 @@
 
 namespace Publish\EditProcess;
 
+use Publish\AddToDb\PublishReportsRepository;
+
 use function Publish\Helps\pub_test_print;
-use function Publish\AddToDb\InsertPublishReports;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
 use function Publish\AccessHelps\get_access_from_db;
@@ -65,7 +66,7 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
     try {
         $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $accessKey, $accessSecret) ?? [];
         // Check if the error is getCsrfTokenData failure and user is not already "Mr. Ibrahem"
-        if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'getCsrfTokenData failed' && $user !== 'Mr. Ibrahem') {
+        if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'get_csrftoken failed' && $user !== 'Mr. Ibrahem') {
             $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user);
         }
         // Log errors if they still exist after retry
@@ -86,7 +87,16 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
         $fileName = get_errors_file($LinkTowd['error'], "wd_errors");
         to_do($tab3, $fileName, $randId);
         // --
-        InsertPublishReports($title, $user, $lang, $sourcetitle, $fileName, $tab3);
+        $repository = new PublishReportsRepository();
+
+        $repository->insertPublishReports(
+            $title,
+            $user,
+            $lang,
+            $sourcetitle,
+            $fileName,
+            $tab3
+        );
     }
     return $LinkTowd;
 }
@@ -134,6 +144,16 @@ function processEdit($request, $access, $text, $user, $tab, $randId, $trType)
     $tab['result_to_cx'] = $editit;
     to_do($tab, $toDoFile, $randId);
     // --
-    InsertPublishReports($title, $user, $lang, $sourcetitle, $toDoFile, $tab);
+    $repository = new PublishReportsRepository();
+
+    $repository->insertPublishReports(
+        $title,
+        $user,
+        $lang,
+        $sourcetitle,
+        $toDoFile,
+        $tab
+    );
+
     return $editit;
 }

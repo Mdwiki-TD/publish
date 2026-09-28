@@ -25,7 +25,7 @@ This is a PHP application that manages the final steps in publishing Wikipedia a
 
 #### 1.2 SQL Injection Risk
 
-**Location:** `src/bots/add_to_db.php:124-127`
+**Location:** `src/bots/PublishReportsRepository.php:124-127`
 **Severity:** HIGH
 **Issue:** Table name is interpolated directly into SQL:
 
@@ -78,7 +78,7 @@ echo "Unable to connect to the database. Please try again later.";
 
 -   `src/app/include.php:25-29` - Conditional paths based on drive letter
 -   `src/bots/files_helps.php:49` - `I:/MD_TOOLS/mdwiki.toolforge.org/PHP_REPOS/publish-repo/php-publish-repo/src`
--   `src/bots/add_to_db.php:16-19` - Fallback paths for words.json
+-   `src/bots/PublishReportsRepository.php:16-19` - Fallback paths for words.json
 
 **Severity:** HIGH
 **Issue:** Code contains Windows-specific paths (`I:/mdwiki/...`) that won't work in production.
@@ -90,7 +90,7 @@ echo "Unable to connect to the database. Please try again later.";
 
 -   `src/bots/config.php:7-52` - Global configuration variables
 -   `src/bots/helps.php:15` - Global `$usr_agent`
--   `src/bots/add_to_db.php:15-26` - Global `$Words_table`
+-   `src/bots/PublishReportsRepository.php:15-26` - Global `$Words_table`
 -   `src/bots/files_helps.php:12-15` - Global `$rand_id`, `$main_dir_by_day`
 -   `src/bots/access_helps_new.php:17` - Global `$user_ids_cache`
 

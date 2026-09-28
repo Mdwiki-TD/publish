@@ -7,7 +7,7 @@ src/
 │   │   └── WikiApi.php
 │   ├── bots/
 │   │   ├── crypt_helps.php
-│   │   ├── curl_requests.php
+│   │   ├── CurlHttpClient.php
 │   │   ├── files_helps.php
 │   │   ├── helps.php
 │   │   ├── index.php
@@ -28,7 +28,7 @@ src/
 │   │   └── start.php
 │   ├── sql/
 │   │   ├── access_helps.php
-│   │   ├── add_to_db.php
+│   │   ├── PublishReportsRepository.php
 │   │   ├── mdwiki_sql.php
 │   │   ├── README.md
 │   │   ├── sql.php

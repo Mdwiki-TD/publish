@@ -39,7 +39,7 @@ Add `?test` query parameter to any request to enable verbose error reporting and
 | `wd.php` | Wikidata integration - links translated articles via `wbsetsitelink` |
 | `access_helps.php` / `access_helps_new.php` | Retrieves encrypted OAuth tokens from database |
 | `revids_bot.php` | Fetches revision IDs from JSON file or API |
-| `add_to_db.php` | Inserts publish records to `pages`/`pages_users`/`publish_reports` tables |
+| `PublishReportsRepository.php` | Inserts publish records to `pages`/`pages_users`/`publish_reports` tables |
 | `files_helps.php` | Logs results to JSON files in `publish_reports/reports_by_day/` |
 
 ### Dependencies
