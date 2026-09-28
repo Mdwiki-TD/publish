@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-use function Publish\Process\run;
+use Publish\Process\Start;
 
 include_once __DIR__ . '/app/include.php';
 
@@ -39,4 +39,4 @@ if (!check_publish_secret_code()) {
     exit;
 }
 
-run($_POST);
+(new Start())->run($_POST);
