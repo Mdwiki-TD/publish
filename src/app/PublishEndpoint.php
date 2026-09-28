@@ -1,0 +1,42 @@
+<?PHP
+// src/app/PublishEndpoint.php
+
+header('Content-Type: application/json; charset=utf-8');
+
+// Check if the request is a POST request
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(['error' => 'Only POST requests are allowed']);
+    exit;
+}
+
+use Publish\Process\StartController;
+
+function check_publish_secret_code()
+{
+    // load publish_secret_code from headers['X-Secret-Key']
+    $publishSecretCode = getenv('PUBLISH_SECRET_CODE');
+    if ($publishSecretCode === false) {
+        $publishSecretCode = $_ENV['PUBLISH_SECRET_CODE'] ?? '';
+    }
+
+    if ($publishSecretCode === '') {
+        return true;
+    }
+    $receivedKey = $_SERVER['HTTP_X_SECRET_KEY'] ?? '';
+
+    // if ($receivedKey === $publishSecretCode) {
+    if (hash_equals($publishSecretCode, $receivedKey)) {
+        return true;
+    }
+
+    return false;
+}
+
+if (!check_publish_secret_code()) {
+    http_response_code(403); // Forbidden
+    echo json_encode(['error' => 'Access denied. Invalid or missing secret key.']);
+    exit;
+}
+
+(new StartController())->run($_POST);
