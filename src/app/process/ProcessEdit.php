@@ -18,6 +18,7 @@ use function Publish\StartUtils\get_errors_file;
 class ProcessEdit
 {
     private const FALLBACK_USER = 'Mr. Ibrahem';
+    private const USER_TABLE_FILTER = 'abusefilter-warning-39';
 
     private EditProcessLog $editProcessLog;
 
@@ -127,69 +128,87 @@ class ProcessEdit
         return $apiParams;
     }
 
-    public function handle($request, $access, $text, $user, $tab, $randId, $trType)
+    // ------------------------------------------------------------
+    // Main flow
+    // ------------------------------------------------------------
+
+    public function handle($request, $access, $text, $user, $tab, $randId, $trType): array
     {
-        $sourcetitle = $tab['sourcetitle'];
-        $lang = $tab['lang'];
-        $campaign = $tab['campaign'];
-        $title = $tab['title'];
-        $summary = $tab['summary'];
-        $mdwikiRevid = $tab['revid'] ?? "";
+        $apiParams = $this->prepareApiParams($tab['title'], $tab['summary'], $text, $request);
 
-        $apiParams = $this->prepareApiParams($title, $summary, $text, $request);
+        $editit = $this->publishEdit($apiParams, $tab['lang'], $access);
 
-        $accessToken = new Token($access["access_key"], $access["access_secret"]);
+        $tab['result'] = $editit['edit']['result'] ?? '';
 
-        $editClient = new MediaWikiEditClient();
-        $editit = $editClient->publishEdit($apiParams, $lang, $accessToken);
-
-        $success = $editit['edit']['result'] ?? '';
-        $isCaptcha = $editit['edit']['captcha'] ?? null;
-
-        $tab['result'] = $success;
-
-        $toDoFile = "";
-
-        $words = $tab["words"];
-
-        if ($success === 'Success') {
-            $linktowikidata = $this->handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $randId);
-            $editit['LinkToWikidata'] = $linktowikidata;
-
-            // if $wdResult has "abusefilter-warning-39" then $toUsersTable = true
-            $toUsersTable = strpos(json_encode($linktowikidata), "abusefilter-warning-39") !== false;
-
-            $editit['sql_result'] = $this->editProcessLog->addToDb(
-                $title,
-                $lang,
-                $user,
-                $toUsersTable,
-                $campaign,
-                $sourcetitle,
-                $mdwikiRevid,
-                $words,
-                $trType
-            );
+        if ($tab['result'] === 'Success') {
+            $editit = $this->onSuccess($editit, $tab, $user, $access, $randId, $trType);
             $toDoFile = "success";
-        } else if ($isCaptcha) {
+        } elseif ($editit['edit']['captcha'] ?? null) {
             $toDoFile = "captcha";
         } else {
             $toDoFile = get_errors_file($editit, "errors");
         }
-        $tab['result_to_cx'] = $editit;
-        to_do($tab, $toDoFile, $randId);
-        // --
-        $repository = new PublishReportsRepository();
 
+        $tab['result_to_cx'] = $editit;
+
+        $this->logResult($tab, $user, $toDoFile, $randId);
+
+        return $editit;
+    }
+
+    private function logResult(array $tab, $user, string $toDoFile, $randId): void
+    {
+        to_do($tab, $toDoFile, $randId);
+
+        $repository = new PublishReportsRepository();
         $repository->insertPublishReports(
-            $title,
+            $tab['title'],
             $user,
-            $lang,
-            $sourcetitle,
+            $tab['lang'],
+            $tab['sourcetitle'],
             $toDoFile,
             $tab
         );
+    }
 
+    private function publishEdit(array $apiParams, string $lang, array $access): array
+    {
+        $accessToken = new Token($access["access_key"], $access["access_secret"]);
+
+        $editClient = new MediaWikiEditClient();
+        return $editClient->publishEdit($apiParams, $lang, $accessToken);
+    }
+
+    /** Link to Wikidata, then record the page in the database. */
+    private function onSuccess(array $editit, array $tab, $user, $access, $randId, $trType): array
+    {
+        $linkToWikidata = $this->handleSuccessfulEdit(
+            $tab['sourcetitle'],
+            $tab['lang'],
+            $user,
+            $tab['title'],
+            $access,
+            $randId
+        );
+        $editit['LinkToWikidata'] = $linkToWikidata;
+        $toUsersTable = $this->shouldUseUsersTable($linkToWikidata);
+        $editit['sql_result'] = $this->editProcessLog->addToDb(
+            $tab['title'],
+            $tab['lang'],
+            $user,
+            $toUsersTable,
+            $tab['campaign'],
+            $tab['sourcetitle'],
+            (string)($tab['revid'] ?? ""),
+            (string)$tab['words'],
+            $trType
+        );
         return $editit;
+    }
+
+    private function shouldUseUsersTable(array $linkToWikidata): bool
+    {
+        // if $wdResult has "abusefilter-warning-39" then $toUsersTable = true
+        return strpos(json_encode($linkToWikidata), self::USER_TABLE_FILTER) !== false;
     }
 }
