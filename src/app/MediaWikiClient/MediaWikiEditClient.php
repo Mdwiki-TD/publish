@@ -62,8 +62,12 @@ class MediaWikiEditClient
 
     public function postParams(array $apiParams, string $httpsDomain, string $accessKey, string $accessSecret): string
     {
-        $client = $this->clientFactory->createForDomain($httpsDomain);
-        $apiUrl = "$httpsDomain/w/api.php";
+        // Ensure $httpsDomain starts with protocol for URL construction if needed,
+        // or strip scheme for factory if required by MediaWikiOAuthClientFactory.
+        $domain = preg_replace('#^https?://#', '', $httpsDomain);
+
+        $client = $this->clientFactory->createForDomain($domain);
+        $apiUrl = "https://$domain/w/api.php";
         $accessToken = new Token($accessKey, $accessSecret);
 
         $csrfTokenData = $this->getCsrfTokenData($client, $accessToken, $apiUrl);

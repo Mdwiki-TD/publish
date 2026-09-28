@@ -27,7 +27,7 @@
     },
     "config": {
         "platform": {
-            "php": "8.2"
+            "php": "8.4"
         }
     },
     "require-dev": {
@@ -35,9 +35,8 @@
         "phpstan/phpstan": "^2.1"
     },
     "require": {
-        "mediawiki/oauthclient": "^1.2",
-        "defuse/php-encryption": "^2.4",
-        "firebase/php-jwt": "7.0.0"
+        "mediawiki/oauthclient": "3.0.0",
+        "defuse/php-encryption": "^2.4"
     },
     "autoload-dev": {
         "psr-4": {
