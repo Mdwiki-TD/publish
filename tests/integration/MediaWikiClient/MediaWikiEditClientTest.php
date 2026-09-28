@@ -5,14 +5,14 @@ namespace Tests\Bots\Integration;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 
-use function Publish\DoEdit\publish_do_edit;
+use function Publish\MediaWikiClient\publish_do_edit;
 use MediaWiki\OAuthClient\Token;
 
 /**
- * Integration Tests for src/app/api/DoEdit.php
+ * Integration Tests for src/app/MediaWikiClient/MediaWikiEditClient.php
  * publish_do_edit
  */
-class DoEditTest extends TestCase
+class MediaWikiEditClientTest extends TestCase
 {
     // -----------------------------------------------------------------------
     // publish_do_edit

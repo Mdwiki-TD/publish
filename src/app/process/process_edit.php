@@ -11,7 +11,7 @@ use function Publish\FilesHelps\to_do;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\WikiApi\GetTitleInfo;
 use function Publish\EditProcess\add_to_db;
-use function Publish\DoEdit\publish_do_edit;
+use function Publish\MediaWikiClient\publish_do_edit;
 use function Publish\StartUtils\get_errors_file;
 use function Publish\StartUtils\prepareApiParams;
 
