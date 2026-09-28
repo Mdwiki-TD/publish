@@ -107,8 +107,8 @@ All 9 modules share these patterns:
 ```php
 putenv('TOOL_TOOLSDB_USER=root');
 putenv('TOOL_TOOLSDB_PASSWORD=root11');
-putenv('COOKIE_KEY=def000008f0992fd44f7b71bc86a13c50ffa0295fabd0b8b008fc19d75774746ae6ef19e0328d36d9b457496158ae01fa22dc7638759aadf6c45fd4cda76edb865b0222f');
-putenv('DECRYPT_KEY=def000001358577eb292b944a354cfe446413d532d4c18c963597a88ec1daeba34080234b36ad1c54269ff04c443b5155c0c122a2c4e95137b12507b924f799bf13d8571');
+putenv('COOKIE_KEY=...');
+putenv('DECRYPT_KEY=...');
 ```
 
 **Impact:** Database credentials and encryption keys are committed to Git history. Anyone with repository access can decrypt all stored OAuth tokens and access the database. Even if removed from HEAD, they persist in Git history.
