@@ -55,11 +55,13 @@ class PublishEndpoint
     {
         $expected = $this->getSecretCode();
 
-        // No secret configured => authentication disabled
+        // No secret configured => refuse, rather than silently disabling authentication.
+        // Note: this makes a missing PUBLISH_SECRET_CODE a hard failure, so it must be set
+        // in every deployed environment.
         if ($expected === '') {
-            return true;
+            error_log('PublishEndpoint: ' . self::SECRET_ENV_NAME . ' is not configured; rejecting request');
+            return false;
         }
-        // load publish_secret_code from headers['X-Secret-Key']
 
         $received = (string)($_SERVER[self::SECRET_HEADER] ?? '');
 

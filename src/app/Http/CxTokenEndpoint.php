@@ -34,6 +34,9 @@ class CxTokenEndpoint
         "mwoauth-invalid-authorization",
     ];
 
+    /** Wiki must be a plain language code (e.g. "en", "ar", "zh-classical", "simple"); it is interpolated into the API URL. */
+    private const WIKI_PATTERN = '/^[a-z]{2,12}(-[a-z0-9]+)?$/';
+
     private MediaWikiEditClient $client;
 
     public function __construct(?MediaWikiEditClient $client = null)
@@ -61,9 +64,13 @@ class CxTokenEndpoint
         $user = $_GET['user'] ?? '';
 
         if (empty($wiki) || empty($user)) {
-            $this->fail(200, ['code' => 'no data', 'info' => 'wiki or user is empty']);
-            // orignal code used: without statusCode: 400
-            // print(json_encode(['error' => ['code' => 'no data', 'info' => 'wiki or user is empty']], JSON_PRETTY_PRINT));
+            $this->fail(400, ['code' => 'no data', 'info' => 'wiki or user is empty']);
+        }
+
+        // $wiki is interpolated into the request URL, so it must be a plain language code;
+        // anything else (e.g. "evil.com/x?a=") would send the OAuth-signed request off-wiki.
+        if (!preg_match(self::WIKI_PATTERN, $wiki)) {
+            $this->fail(400, ['code' => 'badwiki', 'info' => 'invalid wiki']);
         }
 
         $this->respond($this->handleToken($wiki, $user));
@@ -79,12 +86,12 @@ class CxTokenEndpoint
         $access = get_access_from_db($user);
 
         if (empty($access)) {
+            // set the status before any output, so the header cannot be "already sent"
             http_response_code(403);
             $this->respond([
                 'error'    => ['code' => 'noaccess', 'info' => 'noaccess'],
                 'username' => $user,
             ]);
-            header('HTTP/1.0 403 Forbidden');
             exit(1);
         }
 

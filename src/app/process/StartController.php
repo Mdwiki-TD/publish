@@ -145,7 +145,10 @@ class StartController
 
     private function resolveTablesPath(): string
     {
-        $path = getenv("TABLES_PATH") !== false ? getenv("TABLES_PATH") : ($_ENV["TABLES_PATH"] ?? "");
+        $path = getenv("TABLES_PATH");
+        if ($path === false || $path === '') {
+            $path = $_ENV["TABLES_PATH"] ?? "";
+        }
         if (!empty($path)) {
             return $path;
         }
