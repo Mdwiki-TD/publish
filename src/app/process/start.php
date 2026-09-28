@@ -1,6 +1,6 @@
 <?php
 
-namespace Publish\Process\Start;
+namespace Publish\Process;
 
 use Publish\AddToDb\PublishReportsRepository;
 

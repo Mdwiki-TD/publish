@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-use function Publish\Process\Start\run;
+use function Publish\Process\run;
 
 include_once __DIR__ . '/app/include.php';
 
