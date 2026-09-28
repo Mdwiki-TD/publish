@@ -29,8 +29,8 @@ include_once __DIR__ . '/AddToDb/PublishReportsRepository.php';
 # MdwikiSql
 include_once __DIR__ . '/Database.php';
 
-# PublishEndpoint
-include_once __DIR__ . '/PublishEndpoint.php';
+# Http
+include_once __DIR__ . '/Http/PublishEndpoint.php';
 
 include_once __DIR__ . '/cors.php';
 include_once __DIR__ . '/text_edit.php';

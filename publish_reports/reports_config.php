@@ -1,4 +1,7 @@
 <?php
+// publish_reports/index.php
+// namespace PublishReports;
+// class Config
 
 // Enable error reporting for debugging
 if (isset($_REQUEST['test'])) {

@@ -1,6 +1,8 @@
-<?PHP
+<?php
 // src/index.php
 
+use Publish\Http\PublishEndpoint;
 
 include_once __DIR__ . '/app/include.php';
-include_once __DIR__ . '/app/PublishEndpoint.php';
+
+(new PublishEndpoint())->run();
