@@ -21,7 +21,6 @@ This directory contains the core source code for the **MDWiki Publish API** - a 
 -   **External Libraries:**
     -   `mediawiki/oauthclient` ^1.2 - MediaWiki OAuth 1.0a client
     -   `defuse/php-encryption` ^2.4 - Symmetric encryption for token storage
-    -   `firebase/php-jwt` 7.0.0 - JWT handling
 -   **Testing:** PHPUnit 10, PHPStan level 5
 
 ## Project Structure

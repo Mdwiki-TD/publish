@@ -78,7 +78,6 @@ All 9 modules share these patterns:
 | ----------------------- | ------- | ------------------------------------------------------ |
 | `mediawiki/oauthclient` | ^1.2    | Stable, well-maintained                                |
 | `defuse/php-encryption` | ^2.4    | Stable, but key management is the weak link            |
-| `firebase/php-jwt`      | 7.0.0   | Pinned to exact version, no apparent usage in source   |
 | `phpunit/phpunit`       | ^10.0   | Current, good                                          |
 | `phpstan/phpstan`       | ^2.1    | Current, good                                          |
 | External `fix_refs`     | N/A     | Loaded from filesystem path, not a Composer dependency |
