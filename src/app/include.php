@@ -31,6 +31,7 @@ include_once __DIR__ . '/Database.php';
 
 # Http
 include_once __DIR__ . '/Http/PublishEndpoint.php';
+include_once __DIR__ . '/Http/CxTokenEndpoint.php';
 
 include_once __DIR__ . '/cors.php';
 include_once __DIR__ . '/text_edit.php';
@@ -46,9 +47,6 @@ include_once __DIR__ . '/sql/mdwiki_sql.php';
 include_once __DIR__ . '/api/WikiApi.php';
 
 include_once __DIR__ . '/bots/index.php';
-
-include_once __DIR__ . '/cxtoken/get_token.php';
-include_once __DIR__ . '/cxtoken/token_handler.php';
 
 
 $home = getenv('HOME') ?: ($_SERVER['HOME'] ?? "");
