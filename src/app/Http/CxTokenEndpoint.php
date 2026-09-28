@@ -61,79 +61,71 @@ class CxTokenEndpoint
         $user = $_GET['user'] ?? '';
 
         if (empty($wiki) || empty($user)) {
-            print(json_encode(['error' => ['code' => 'no data', 'info' => 'wiki or user is empty']], JSON_PRETTY_PRINT));
+            $this->fail(200, ['code' => 'no data', 'info' => 'wiki or user is empty']);
+            // orignal code used: without statusCode: 400
+            // print(json_encode(['error' => ['code' => 'no data', 'info' => 'wiki or user is empty']], JSON_PRETTY_PRINT));
+        }
+
+        $this->respond($this->handleToken($wiki, $user));
+    }
+
+    // ------------------------------------------------------------
+    // Core logic
+    // ------------------------------------------------------------
+
+    public function handleToken(string $wiki, string $user): array
+    {
+        $user   = $this->resolveUserName($user);
+        $access = get_access_from_db($user);
+
+        if (empty($access)) {
+            http_response_code(403);
+            $this->respond([
+                'error'    => ['code' => 'noaccess', 'info' => 'noaccess'],
+                'username' => $user,
+            ]);
+            header('HTTP/1.0 403 Forbidden');
             exit(1);
         }
 
-        $cxtoken = handle_token($wiki, $user);
+        $cxtoken = $this->getCxToken($wiki, $access) ?? ['error' => 'no cxtoken'];
 
-        print(json_encode($cxtoken, JSON_PRETTY_PRINT));
+        if ($this->isInvalidAuthorization($cxtoken)) {
+            del_access_from_db($user);
+            $cxtoken["del_access"] = true;
+        }
+
+        return $cxtoken;
     }
-    function get_cxtoken($wiki, $access)
+
+    public function resolveUserName(string $user): string
     {
+        return self::SPECIAL_USERS[$user] ?? $user;
+    }
 
-        $accessKey = $access['access_key'];
-        $accessSecret = $access['access_secret'];
-
-        $httpsDomain = "https://$wiki.wikipedia.org";
-        $apiParams = [
-            'action' => 'cxtoken',
-            'format' => 'json',
-        ];
-
-        $editClient = new MediaWikiEditClient();
-        $response = $editClient->postParams(
-            (array) $apiParams,
-            (string) $httpsDomain,
-            (string) $accessKey,
-            (string) $accessSecret,
+    public function getCxToken(string $wiki, array $access): ?array
+    {
+        $response = $this->client->postParams(
+            ['action' => 'cxtoken', 'format' => 'json'],
+            "https://$wiki.wikipedia.org",
+            (string)$access['access_key'],
+            (string)$access['access_secret']
         );
 
         $apiResult = json_decode($response, true);
 
-        if ($apiResult == null || isset($apiResult['error'])) {
-            pub_test_print("<br>get_cxtoken: Error: " . json_last_error() . " " . json_last_error_msg());
+        if ($apiResult === null || isset($apiResult['error'])) {
+            pub_test_print("<br>getCxToken: Error: " . json_last_error() . " " . json_last_error_msg());
         }
 
         return $apiResult;
     }
 
-    function handle_user_name($user)
+    private function isInvalidAuthorization(array $cxtoken): bool
     {
-        $specialUsers = [
-            "Mr. Ibrahem 1" => "Mr. Ibrahem",
-            "Admin" => "Mr. Ibrahem"
-        ];
-        $user = $specialUsers[$user] ?? $user;
-        return $user;
-    }
+        $code = $cxtoken['csrftoken_data']['error']['code'] ?? null;
 
-    function handle_token($wiki, $user)
-    {
-        $user = handle_user_name($user);
-
-        $access = get_access_from_db($user);
-
-        if (empty($access)) {
-            $cxtoken = ['error' => ['code' => 'noaccess', 'info' => 'noaccess'], 'username' => $user];
-            http_response_code(403);
-            print(json_encode($cxtoken, JSON_PRETTY_PRINT));
-            header('HTTP/1.0 403 Forbidden');
-            exit(1);
-        }
-        $cxtoken = get_cxtoken($wiki, $access) ?? ['error' => 'no cxtoken'];
-
-        $err = $cxtoken['csrftoken_data']["error"]["code"] ?? null;
-
-        $invalidAuthorizationErrors = [
-            "mwoauth-invalid-authorization-invalid-user",
-            "mwoauth-invalid-authorization"
-        ];
-        if (in_array($err, $invalidAuthorizationErrors)) {
-            del_access_from_db($user);
-            $cxtoken["del_access"] = true;
-        }
-        return $cxtoken;
+        return in_array($code, self::INVALID_AUTHORIZATION_ERRORS, true);
     }
 
     // ------------------------------------------------------------
