@@ -3,8 +3,7 @@
 namespace Publish\Process;
 
 use Publish\AddToDb\PublishReportsRepository;
-
-use function Publish\Process\ProcessEdit\handle;
+use function Publish\Process\handle;
 
 use function Publish\EditProcess\text_changes;
 use function Publish\Helps\pub_test_print;

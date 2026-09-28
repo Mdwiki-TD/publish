@@ -1,13 +1,12 @@
 <?php
 
-namespace Publish\Process\ProcessEdit;
+namespace Publish\Process;
 
 use MediaWiki\OAuthClient\Token;
 
 use Publish\AddToDb\PublishReportsRepository;
 use Publish\MediaWikiClient\MediaWikiEditClient;
-
-use function Publish\Process\EditProcessLog\add_to_db;
+use function Publish\Process\add_to_db;
 
 use function Publish\Helps\pub_test_print;
 use function Publish\WD\LinkToWikidata;
