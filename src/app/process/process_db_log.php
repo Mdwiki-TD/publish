@@ -1,10 +1,45 @@
 <?php
 
-namespace Publish\EditProcess;
+namespace Publish\EditProcessLog;
 
 use Publish\AddToDb\PublishReportsRepository;
-use function Publish\Sql\retrieveCampaignCategories;
-use function Publish\Sql\find_exists_or_update;
+
+use function Publish\MdwikiSql\fetch_query;
+use function Publish\MdwikiSql\execute_query;
+
+function find_exists_or_update($title, $lang, $user, $target, $tableName)
+{
+    $allowedTables = ['pages', 'pages_users']; // Add all valid table names
+    if (!in_array($tableName, $allowedTables, true)) {
+        error_log("find_exists_or_update: Invalid table name: $tableName");
+        return 0;
+    }
+
+    $query = <<<SQL
+        SELECT * FROM $tableName WHERE title = ? AND lang = ? AND user = ?
+    SQL;
+
+    $result = fetch_query($query, [$title, $lang, $user]);
+
+    if (count($result) > 0) {
+        $updateQuery = <<<SQL
+            UPDATE $tableName SET target = ?, pupdate = DATE(NOW())
+            WHERE title = ? AND lang = ? AND user = ? AND (target = "" OR target IS NULL)
+        SQL;
+        $params = [$target, $title, $lang, $user];
+        execute_query($updateQuery, $params);
+    }
+    return count($result) > 0;
+}
+
+function retrieveCampaignCategories()
+{
+    $campToCats = [];
+    foreach (fetch_query('SELECT category, campaign FROM categories;') as $k => $tab) {
+        $campToCats[$tab['campaign']] = $tab['category'];
+    };
+    return $campToCats;
+}
 
 function getUseUserSql($user, $target, $toUsersTable)
 {
@@ -25,7 +60,21 @@ function getUseUserSql($user, $target, $toUsersTable)
     return $useUserSql;
 }
 
-function add_to_db($target, $lang, $user, $toUsersTable, $campaign, $sourcetitle, $mdwikiRevid, $words, $trType)
+// ---------
+// Main API
+// ---------
+
+function add_to_db(
+    string $target,
+    string $lang,
+    string $user,
+    bool $toUsersTable,
+    string $campaign,
+    string $sourcetitle,
+    string $mdwikiRevid,
+    string $words,
+    string $trType,
+): array
 {
 
     $sourcetitle = str_replace("_", " ", $sourcetitle);

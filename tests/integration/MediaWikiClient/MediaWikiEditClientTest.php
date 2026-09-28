@@ -5,7 +5,7 @@ namespace Tests\Bots\Integration;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 
-use function Publish\MediaWikiClient\publish_do_edit;
+use Publish\MediaWikiClient\MediaWikiEditClient;
 use MediaWiki\OAuthClient\Token;
 
 /**
@@ -21,7 +21,7 @@ class MediaWikiEditClientTest extends TestCase
      * Edit the Main Page in English Wikipedia.
      */
     #[Group('readonly')]
-    public function testPublishDoEditEditsMainPage(): void
+    public function testpublishEditEditsMainPage(): void
     {
         $access = [
             'access_key' => "access_key",
@@ -37,7 +37,9 @@ class MediaWikiEditClientTest extends TestCase
             'format' => 'json',
         ];
         $accessToken = new Token($access["access_key"], $access["access_secret"]);
-        $result = publish_do_edit($apiParams, 'en', $accessToken);
+
+        $editClient = new MediaWikiEditClient();
+        $result = $editClient->publishEdit($apiParams, 'en', $accessToken);
 
         $expected_error = [
             'code' => 'mwoauth-invalid-authorization',

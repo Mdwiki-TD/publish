@@ -39,7 +39,6 @@ include_once __DIR__ . '/process/start.php';
 
 include_once __DIR__ . '/sql/access_helps.php';
 include_once __DIR__ . '/sql/mdwiki_sql.php';
-include_once __DIR__ . '/sql/sql.php';
 
 include_once __DIR__ . '/api/WikiApi.php';
 

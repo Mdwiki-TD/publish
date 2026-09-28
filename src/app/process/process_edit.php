@@ -2,21 +2,23 @@
 
 namespace Publish\EditProcess;
 
-use Publish\AddToDb\PublishReportsRepository;
 use MediaWiki\OAuthClient\Token;
+
+use Publish\AddToDb\PublishReportsRepository;
+use Publish\MediaWikiClient\MediaWikiEditClient;
+
+use function Publish\EditProcessLog\add_to_db;
 
 use function Publish\Helps\pub_test_print;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\WikiApi\GetTitleInfo;
-use function Publish\EditProcess\add_to_db;
-use function Publish\MediaWikiClient\publish_do_edit;
 use function Publish\StartUtils\get_errors_file;
 use function Publish\StartUtils\prepareApiParams;
 
 
-function shouldAddedToWikidata($lang, $title)
+function shouldAddedToWikidata($lang, $title): bool
 {
     $pageInformations = GetTitleInfo($title, $lang);
     if (!$pageInformations) {
@@ -112,7 +114,9 @@ function processEdit($request, $access, $text, $user, $tab, $randId, $trType)
     $apiParams["text"] = $text;
 
     $accessToken = new Token($access["access_key"], $access["access_secret"]);
-    $editit = publish_do_edit($apiParams, $lang, $accessToken);
+
+    $editClient = new MediaWikiEditClient();
+    $editit = $editClient->publishEdit($apiParams, $lang, $accessToken);
 
     $Success = $editit['edit']['result'] ?? '';
     $isCaptcha = $editit['edit']['captcha'] ?? null;

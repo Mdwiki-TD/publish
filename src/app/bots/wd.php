@@ -4,10 +4,14 @@ namespace Publish\WD;
 
 use Publish\MediaWikiClient\MediaWikiEditClient;
 
-use function Publish\Sql\GetQidForMdtitle;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\Helps\pub_test_print;
+use function Publish\MdwikiSql\fetch_query;
 
+function GetQidForMdtitle($title)
+{
+    return fetch_query("SELECT qid FROM qids WHERE title = ?", [$title]);
+}
 
 function getAccessCredentials(string $user, string $accessKey, string $accessSecret): array|null
 {
