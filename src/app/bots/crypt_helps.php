@@ -6,16 +6,18 @@ use Defuse\Crypto\Key;
 use Defuse\Crypto\Crypto;
 
 $_decrypt_key_str    = getenv("DECRYPT_KEY") ?: '';
+$_encrypt_key_str    = getenv("ENCRYPT_KEY") ?: '';
 
-$decryptKey = $_decrypt_key_str ? Key::loadFromAsciiSafeString($_decrypt_key_str) : null;
+$cryptKey = $_decrypt_key_str ? Key::loadFromAsciiSafeString($_decrypt_key_str) : null;
+$encryptkey = $_encrypt_key_str ? Key::loadFromAsciiSafeString($_encrypt_key_str) : null;
 
 function decode_value($value)
 {
-    global $decryptKey;
+    global $cryptKey;
 
     if (empty(trim($value))) return "";
 
-    $key = $decryptKey ?: $GLOBALS['decrypt_key'];
+    $key = $cryptKey ?: $GLOBALS['decrypt_key'];
     try {
         return Crypto::decrypt($value, $key);
     } catch (\Exception $e) {
@@ -25,10 +27,10 @@ function decode_value($value)
 
 function encode_value($value)
 {
-    global $decryptKey;
+    global $cryptKey;
     if (empty(trim($value))) return "";
 
-    $key = $decryptKey ?: $GLOBALS['decrypt_key'];
+    $key = $cryptKey ?: $GLOBALS['decrypt_key'];
     try {
         return Crypto::encrypt($value, $key);
     } catch (\Exception $e) {

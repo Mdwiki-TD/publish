@@ -25,13 +25,13 @@ use PDO;
 class AccessHelpsTest extends TestCase
 {
     private static PDO $pdo;
-    private static Key $decryptKey;
+    private static Key $cryptKey;
 
     public static function setUpBeforeClass(): void
     {
-        self::$decryptKey = Key::createNewRandomKey();
+        self::$cryptKey = Key::createNewRandomKey();
 
-        $GLOBALS['decrypt_key'] = self::$decryptKey;
+        $GLOBALS['decrypt_key'] = self::$cryptKey;
 
         // Set environment variables to prevent MySQL connection attempts
         putenv('DB_HOST_TOOLS=invalid');

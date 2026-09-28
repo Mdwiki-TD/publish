@@ -32,3 +32,4 @@ load_env.php
 .phpunit.cache/**
 report.xml
 z.php
+fix.php

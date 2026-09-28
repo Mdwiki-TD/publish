@@ -15,7 +15,7 @@ use Defuse\Crypto\Key;
 class CryptHelpsTest extends TestCase
 {
     /** A real Defuse key used throughout the test suite */
-    private static Key $decryptKey;
+    private static Key $cryptKey;
     private static $previousDecryptKey = null;
 
     public static function setUpBeforeClass(): void
@@ -23,10 +23,10 @@ class CryptHelpsTest extends TestCase
         self::$previousDecryptKey = $GLOBALS['decrypt_key'] ?? null;
         // Generate fresh random keys; we inject them via $GLOBALS so that the
         // global variables set by config.php are available to crypt_helps.php.
-        self::$decryptKey = Key::createNewRandomKey();
+        self::$cryptKey = Key::createNewRandomKey();
 
-        // crypt_helps.php reads $decryptKey from the global scope.
-        $GLOBALS['decrypt_key'] = self::$decryptKey;
+        // crypt_helps.php reads $cryptKey from the global scope.
+        $GLOBALS['decrypt_key'] = self::$cryptKey;
     }
 
     public static function tearDownAfterClass(): void
