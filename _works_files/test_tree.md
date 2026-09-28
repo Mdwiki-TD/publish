@@ -4,10 +4,9 @@ tests/
 │   ├── api/
 │   │   └── WikiApiIntegrationTest.php
 │   ├── bots/
-│   │   ├── CurlRequestsTest.php
 │   │   └── WdIntegrationTest.php
 │   ├── cxtoken/
-│   ├── MediaWikiClient/
+│   ├── mw_client/
 │   ├── process/
 │   │   ├── ProcessEditTest.php
 │   │   └── StartTest.php
@@ -22,7 +21,7 @@ tests/
 │   │   ├── HelpsTest.php
 │   │   └── WdUnitTest.php
 │   ├── cxtoken/
-│   ├── MediaWikiClient/
+│   ├── mw_client/
 │   ├── process/
 │   ├── sql/
 │   │   ├── AccessHelpsTest.php
