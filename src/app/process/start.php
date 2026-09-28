@@ -1,16 +1,19 @@
 <?php
 
-namespace Publish\Start;
+namespace Publish\Process;
 
 use Publish\AddToDb\PublishReportsRepository;
+
+use function Publish\Process\ProcessEdit\handle;
 
 use function Publish\EditProcess\text_changes;
 use function Publish\Helps\pub_test_print;
 use function Publish\AccessHelps\get_access_from_db;
-use function Publish\EditProcess\processEdit;
 use function Publish\FilesHelps\to_do;
+
 use function Publish\Revids\get_revid_db;
 use function Publish\Revids\get_revid;
+
 use function Publish\StartUtils\make_summary;
 use function Publish\StartUtils\formatTitle;
 use function Publish\StartUtils\formatUser;
@@ -65,7 +68,7 @@ function handleNoAccess($user, $tab, $randId)
     print(json_encode($editit, JSON_PRETTY_PRINT));
 }
 
-function start($request)
+function run($request)
 {
     $randId = time() .  "-" . bin2hex(random_bytes(6));
     $user = formatUser($request['user'] ?? '');
@@ -115,7 +118,7 @@ function start($request)
         $text = $newtext;
     }
 
-    $editResult = processEdit($request, $access, $text, $user, $tab, $randId, $trType);
+    $editResult = handle($request, $access, $text, $user, $tab, $randId, $trType);
 
     pub_test_print("\n<br>");
     pub_test_print("\n<br>");

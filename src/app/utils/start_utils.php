@@ -52,6 +52,7 @@ function get_errors_file($editit, $placeHolder)
     $errsWd = [
         "Links to user pages" => "wd_user_pages",
         "getCsrfTokenData" => "wd_csrftoken",
+        "get_csrftoken" => "wd_csrftoken",
         "protectedpage" => "wd_protectedpage",
     ];
     $cText = json_encode($editit);
@@ -71,23 +72,4 @@ function get_errors_file($editit, $placeHolder)
         }
     }
     return $toDoFile;
-}
-
-function prepareApiParams($title, $summary, $text, $request)
-{
-    $apiParams = [
-        'action' => 'edit',
-        'title' => $title,
-        // 'section' => 'new',
-        'summary' => $summary,
-        'text' => $text,
-        'format' => 'json',
-    ];
-
-    // wpCaptchaId, wpCaptchaWord
-    if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
-        $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
-        $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
-    }
-    return $apiParams;
 }

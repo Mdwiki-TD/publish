@@ -11,9 +11,16 @@ if ($env === 'development' && file_exists(__DIR__ . '/load_env.php')) {
 include_once __DIR__ . '/config.php';
 
 # MediaWikiClient
-include_once __DIR__ . '/MediaWikiClient/index.php';
+include_once __DIR__ . '/MediaWikiClient/MediaWikiOAuthClientAdapter.php';
+include_once __DIR__ . '/MediaWikiClient/OAuthHttpClientInterface.php';
+
+include_once __DIR__ . '/MediaWikiClient/MediaWikiOAuthClientFactory.php';
+include_once __DIR__ . '/MediaWikiClient/OAuthClientFactoryInterface.php';
+
+include_once __DIR__ . '/MediaWikiClient/MediaWikiEditClient.php';
 
 # CurlRequests
+include_once __DIR__ . '/CurlRequests/HttpClientInterface.php';
 include_once __DIR__ . '/CurlRequests/CurlHttpClient.php';
 
 # AddToDb
@@ -26,15 +33,13 @@ include_once __DIR__ . '/cors.php';
 include_once __DIR__ . '/text_edit.php';
 include_once __DIR__ . '/utils/start_utils.php';
 
-include_once __DIR__ . '/process/process_db_log.php';
-include_once __DIR__ . '/process/process_edit.php';
+include_once __DIR__ . '/process/EditProcessLog.php';
+include_once __DIR__ . '/process/ProcessEdit.php';
 include_once __DIR__ . '/process/start.php';
 
 include_once __DIR__ . '/sql/access_helps.php';
 include_once __DIR__ . '/sql/mdwiki_sql.php';
-include_once __DIR__ . '/sql/sql.php';
 
-include_once __DIR__ . '/api/DoEdit.php';
 include_once __DIR__ . '/api/WikiApi.php';
 
 include_once __DIR__ . '/bots/index.php';

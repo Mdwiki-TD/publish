@@ -26,8 +26,8 @@ src/
 │   │   ├── index.php
 │   │   └── README.md
 │   ├── process/
-│   │   ├── process_db_log.php
-│   │   ├── process_edit.php
+│   │   ├── EditProcessLog.php
+│   │   ├── ProcessEdit.php
 │   │   ├── README.md
 │   │   └── start.php
 │   ├── sql/

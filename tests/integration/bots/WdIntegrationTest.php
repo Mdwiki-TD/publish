@@ -66,13 +66,16 @@ class WdIntegrationTest extends TestCase
     #[Group('write')]
     public function testLinkToWikidataReturnsErrorArrayForMissingCredentials(): void
     {
+        $access = [
+            'access_key' => "", // empty access_key
+            'access_secret' => "",  // empty access_secret
+        ];
         $result = \Publish\WD\LinkToWikidata(
             'SomeTitle',
             'fr',
             '__nonexistent_user__',
             'Titre',
-            '',  // empty access_key
-            ''   // empty access_secret
+            $access,
         );
 
         $this->assertIsArray($result);
@@ -86,14 +89,17 @@ class WdIntegrationTest extends TestCase
     #[Group('write')]
     public function testLinkToWikidataAlwaysIncludesQidInResult(): void
     {
+        $access = [
+            'access_key' => "", // empty access_key
+            'access_secret' => "",  // empty access_secret
+        ];
         // No credentials → early error, but qid should still be present
         $result = \Publish\WD\LinkToWikidata(
             'AnyTitle',
             'de',
             '__nonexistent_user__',
             'IrgendeineTitle',
-            '',
-            ''
+            $access
         );
 
         $this->assertArrayHasKey('qid', $result);

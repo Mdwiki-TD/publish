@@ -2,7 +2,7 @@
 
 namespace Publish\WikiApi;
 
-use function Publish\CurlRequests\get_url_curl;
+use Publish\CurlRequests\CurlHttpClient;
 
 
 function debugEcho(string $s): void
@@ -25,7 +25,8 @@ function GetTitleInfo(string $targettitle, string $lang)
     debugEcho("GetTitleInfo url: $url");
 
     try {
-        $output = get_url_curl($url);
+        $client = new CurlHttpClient();
+        $output = $client->get($url) ?? '';
         debugEcho("GetTitleInfo result: $output");
         $result = json_decode($output, true);
 

@@ -2,28 +2,47 @@
 
 namespace Publish\CurlRequests;
 
-use function Publish\Helps\pub_test_print;
+use Publish\CurlRequests\HttpClientInterface;
 
-function get_url_curl(string $url): string
+class CurlHttpClient implements HttpClientInterface
 {
-    $usrAgent = 'WikiProjectMed Translation Dashboard/1.0 (https://mdwiki.toolforge.org/; tools.mdwiki@toolforge.org)';
+    private const DEFAULT_USER_AGENT = 'WikiProjectMed Translation Dashboard/1.0 (https://mdwiki.toolforge.org/; tools.mdwiki@toolforge.org)';
 
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
-    // curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
+    private string $userAgent;
+    private int $connectTimeout;
+    private int $timeout;
 
-    curl_setopt($ch, CURLOPT_USERAGENT, $usrAgent);
-
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-
-    $output = curl_exec($ch);
-    if ($output === FALSE) {
-        pub_test_print("<br>cURL Error: " . curl_error($ch) . "<br>$url");
+    public function __construct(
+        string $userAgent = self::DEFAULT_USER_AGENT,
+        int $connectTimeout = 5,
+        int $timeout = 5
+    ) {
+        $this->userAgent = $userAgent;
+        $this->connectTimeout = $connectTimeout;
+        $this->timeout = $timeout;
     }
 
-    curl_close($ch);
+    public function get(string $url): ?string
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
+        // curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
+        curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->connectTimeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 
-    return $output;
+        $output = curl_exec($ch);
+
+        if ($output === false) {
+            error_log('<br>cURL Error: ' . curl_error($ch) . "<br>$url");
+            curl_close($ch);
+
+            return null;
+        }
+
+        curl_close($ch);
+
+        return $output;
+    }
 }

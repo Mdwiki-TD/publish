@@ -1,21 +1,23 @@
 <?php
 
-namespace Publish\EditProcess;
+namespace Publish\Process\ProcessEdit;
+
+use MediaWiki\OAuthClient\Token;
 
 use Publish\AddToDb\PublishReportsRepository;
+use Publish\MediaWikiClient\MediaWikiEditClient;
+
+use function Publish\Process\EditProcessLog\add_to_db;
 
 use function Publish\Helps\pub_test_print;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\WikiApi\GetTitleInfo;
-use function Publish\EditProcess\add_to_db;
-use function Publish\DoEdit\publish_do_edit;
 use function Publish\StartUtils\get_errors_file;
-use function Publish\StartUtils\prepareApiParams;
 
 
-function shouldAddedToWikidata($lang, $title)
+function shouldAddedToWikidata($lang, $title): bool
 {
     $pageInformations = GetTitleInfo($title, $lang);
     if (!$pageInformations) {
@@ -38,10 +40,8 @@ function retryWithFallbackUser($sourcetitle, $lang, $title, $user)
     $fallbackAccess = get_access_from_db('Mr. Ibrahem');
 
     if (!empty($fallbackAccess)) {
-        $fallbackAccessKey = $fallbackAccess['access_key'];
-        $fallbackAccessSecret = $fallbackAccess['access_secret'];
 
-        $LinkTowd = LinkToWikidata($sourcetitle, $lang, 'Mr. Ibrahem', $title, $fallbackAccessKey, $fallbackAccessSecret) ?? [];
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, 'Mr. Ibrahem', $title, $fallbackAccess);
 
         // Add a note that fallback was used
         if (!isset($LinkTowd['error'])) {
@@ -60,11 +60,9 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
         return ["error" => "skip link to wd for user pages"];
     }
     $LinkTowd = [];
-    $accessKey = $access['access_key'];
-    $accessSecret = $access['access_secret'];
 
     try {
-        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $accessKey, $accessSecret) ?? [];
+        $LinkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access);
         // Check if the error is getCsrfTokenData failure and user is not already "Mr. Ibrahem"
         if (isset($LinkTowd['error']) && $LinkTowd['error'] == 'get_csrftoken failed' && $user !== 'Mr. Ibrahem') {
             $LinkTowd['fallback'] = retryWithFallbackUser($sourcetitle, $lang, $title, $user);
@@ -101,7 +99,27 @@ function handleSuccessfulEdit($sourcetitle, $lang, $user, $title, $access, $rand
     return $LinkTowd;
 }
 
-function processEdit($request, $access, $text, $user, $tab, $randId, $trType)
+
+function prepareApiParams($title, $summary, $text, $request)
+{
+    $apiParams = [
+        'action' => 'edit',
+        'title' => $title,
+        // 'section' => 'new',
+        'summary' => $summary,
+        'text' => $text,
+        'format' => 'json',
+    ];
+
+    // wpCaptchaId, wpCaptchaWord
+    if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
+        $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
+        $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
+    }
+    return $apiParams;
+}
+
+function handle($request, $access, $text, $user, $tab, $randId, $trType)
 {
     $sourcetitle = $tab['sourcetitle'];
     $lang = $tab['lang'];
@@ -114,7 +132,10 @@ function processEdit($request, $access, $text, $user, $tab, $randId, $trType)
 
     $apiParams["text"] = $text;
 
-    $editit = publish_do_edit($apiParams, $lang, $access);
+    $accessToken = new Token($access["access_key"], $access["access_secret"]);
+
+    $editClient = new MediaWikiEditClient();
+    $editit = $editClient->publishEdit($apiParams, $lang, $accessToken);
 
     $Success = $editit['edit']['result'] ?? '';
     $isCaptcha = $editit['edit']['captcha'] ?? null;
