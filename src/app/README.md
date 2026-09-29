@@ -225,7 +225,7 @@ include.php (bootstrap)
 | `TOOL_TOOLSDB_PASSWORD` | Database password                        | Yes                                 |
 | `CONSUMER_KEY`          | MediaWiki OAuth consumer key             | Yes                                 |
 | `CONSUMER_SECRET`       | MediaWiki OAuth consumer secret          | Yes                                 |
-| `DECRYPT_KEY`           | Defuse encryption key for token storage  | Yes                                 |
+| `CRYPTO_KEY`           | Defuse encryption key for token storage  | Yes                                 |
 | `PUBLISH_SECRET_CODE`   | API secret key for endpoint auth         | No (bypasses auth if empty)         |
 | `PUBLISH_REPORTS_PATH`  | Path for JSON report files               | No (has defaults)                   |
 | `ALL_PAGES_REVIDS_PATH` | Path to `all_pages_revids.json`          | No (has defaults)                   |

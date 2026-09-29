@@ -21,7 +21,6 @@ This directory contains the core source code for the **MDWiki Publish API** - a 
 -   **External Libraries:**
     -   `mediawiki/oauthclient` ^1.2 - MediaWiki OAuth 1.0a client
     -   `defuse/php-encryption` ^2.4 - Symmetric encryption for token storage
-    -   `firebase/php-jwt` 7.0.0 - JWT handling
 -   **Testing:** PHPUnit 10, PHPStan level 5
 
 ## Project Structure
@@ -136,7 +135,7 @@ The codebase uses a **functional/procedural architecture** with PSR-4 namespaced
 putenv('TOOL_TOOLSDB_USER=root');
 putenv('TOOL_TOOLSDB_PASSWORD=root11');
 putenv('COOKIE_KEY=def000008f0992f...');
-putenv('DECRYPT_KEY=def000001358577e...');
+putenv('CRYPTO_KEY=def000001358577e...');
 ```
 
 **Risk:** High - Database credentials and encryption keys are committed to version control.
@@ -255,7 +254,7 @@ TOOL_TOOLSDB_PASSWORD=your_db_password
 CONSUMER_KEY=your_mediawiki_oauth_consumer_key
 CONSUMER_SECRET=your_mediawiki_oauth_consumer_secret
 PUBLISH_SECRET_CODE=your_api_secret_key
-DECRYPT_KEY=your_defuse_encryption_key
+CRYPTO_KEY=your_defuse_encryption_key
 PUBLISH_REPORTS_PATH=/path/to/reports
 ALL_PAGES_REVIDS_PATH=/path/to/all_pages_revids.json
 TEXT_WORK_FILE=/path/to/fix_refs/work.php
