@@ -1,5 +1,4 @@
 <?php
-
 namespace Publish\AddToDb;
 
 use Publish\MdwikiSql\Database;
@@ -74,7 +73,7 @@ class PublishReportsRepository
         string $mdwikiRevid,
         string $words
     ): bool {
-        if (!in_array($tableName, self::ALLOWED_TABLES, true)) {
+        if (! in_array($tableName, self::ALLOWED_TABLES, true)) {
             error_log("InsertPageTarget: Invalid table name: $tableName");
             return false;
         }

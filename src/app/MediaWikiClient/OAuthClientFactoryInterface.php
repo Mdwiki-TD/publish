@@ -1,5 +1,4 @@
 <?php
-
 namespace Publish\MediaWikiClient;
 
 use Publish\MediaWikiClient\OAuthHttpClientInterface;

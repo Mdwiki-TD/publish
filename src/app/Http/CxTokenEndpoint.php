@@ -5,8 +5,8 @@ namespace Publish\Http;
 
 use function Publish\AccessHelps\del_access_from_db;
 use function Publish\AccessHelps\get_access_from_db;
-use Publish\Cors;
 use function Publish\Helps\pub_test_print;
+use Publish\Cors;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 
 /**

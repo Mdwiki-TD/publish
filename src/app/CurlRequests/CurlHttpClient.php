@@ -1,5 +1,4 @@
 <?php
-
 namespace Publish\CurlRequests;
 
 use Publish\CurlRequests\HttpClientInterface;
@@ -17,9 +16,9 @@ class CurlHttpClient implements HttpClientInterface
         int $connectTimeout = 5,
         int $timeout = 5
     ) {
-        $this->userAgent = $userAgent;
+        $this->userAgent      = $userAgent;
         $this->connectTimeout = $connectTimeout;
-        $this->timeout = $timeout;
+        $this->timeout        = $timeout;
     }
 
     public function get(string $url): ?string

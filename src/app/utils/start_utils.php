@@ -1,5 +1,4 @@
 <?php
-
 namespace Publish\StartUtils;
 
 function make_summary($revid, $sourcetitle, $to, $hashtag)
@@ -19,7 +18,7 @@ function formatUser($user)
 {
     $specialUsers = [
         "Mr. Ibrahem 1" => "Mr. Ibrahem",
-        "Admin" => "Mr. Ibrahem"
+        "Admin"         => "Mr. Ibrahem",
     ];
     $user = $specialUsers[$user] ?? $user;
     return str_replace("_", " ", $user);
@@ -34,7 +33,6 @@ function determineHashtag($title, $user)
     }
     return $hashtag;
 }
-
 
 function get_errors_file($editit, $placeHolder)
 {
@@ -51,9 +49,9 @@ function get_errors_file($editit, $placeHolder)
     ];
     $errsWd = [
         "Links to user pages" => "wd_user_pages",
-        "getCsrfTokenData" => "wd_csrftoken",
-        "get_csrftoken" => "wd_csrftoken",
-        "protectedpage" => "wd_protectedpage",
+        "getCsrfTokenData"    => "wd_csrftoken",
+        "get_csrftoken"       => "wd_csrftoken",
+        "protectedpage"       => "wd_protectedpage",
     ];
     $cText = json_encode($editit);
     if ($placeHolder == "errors") {

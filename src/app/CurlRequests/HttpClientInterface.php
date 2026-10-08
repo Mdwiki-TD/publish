@@ -1,5 +1,4 @@
 <?php
-
 namespace Publish\CurlRequests;
 
 /**

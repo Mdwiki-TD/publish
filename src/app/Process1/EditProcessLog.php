@@ -1,11 +1,9 @@
 <?php
-
 namespace Publish\Process;
 
-use Publish\AddToDb\PublishReportsRepository;
-
-use function Publish\MdwikiSql\fetch_query;
 use function Publish\MdwikiSql\execute_query;
+use function Publish\MdwikiSql\fetch_query;
+use Publish\AddToDb\PublishReportsRepository;
 
 class EditProcessLog
 {
@@ -13,7 +11,7 @@ class EditProcessLog
 
     public function findExistsOrUpdate(string $title, string $lang, string $user, string $target, string $tableName): bool
     {
-        if (!in_array($tableName, self::ALLOWED_TABLES, true)) {
+        if (! in_array($tableName, self::ALLOWED_TABLES, true)) {
             error_log("findExistsOrUpdate: Invalid table name: $tableName");
             return false;
         }
@@ -68,30 +66,30 @@ class EditProcessLog
         string $trType
     ): array {
         $sourcetitle = str_replace("_", " ", $sourcetitle);
-        $target = str_replace("_", " ", $target);
-        $user   = str_replace("_", " ", $user);
+        $target      = str_replace("_", " ", $target);
+        $user        = str_replace("_", " ", $user);
 
         if (empty($user) || empty($sourcetitle) || empty($lang)) {
             return [
-                'use_user_sql' => false,
+                'use_user_sql'   => false,
                 'to_users_table' => $toUsersTable,
-                'one_empty' => ['title' => $sourcetitle, 'lang' => $lang, 'user' => $user],
+                'one_empty'      => ['title' => $sourcetitle, 'lang' => $lang, 'user' => $user],
             ];
         }
 
         $campToCat = $this->retrieveCampaignCategories();
-        $cat = $campToCat[$campaign] ?? '';
+        $cat       = $campToCat[$campaign] ?? '';
 
         $useUserSql = $this->getUseUserSql($user, $target, $toUsersTable);
-        $tableName = $useUserSql ? 'pages_users' : 'pages';
+        $tableName  = $useUserSql ? 'pages_users' : 'pages';
 
         $exists = $this->findExistsOrUpdate($sourcetitle, $lang, $user, $target, $tableName);
 
         if ($exists) {
             return [
-                'use_user_sql' => $useUserSql,
+                'use_user_sql'   => $useUserSql,
                 'to_users_table' => $toUsersTable,
-                'exists' => "already_in",
+                'exists'         => "already_in",
             ];
         }
 
@@ -109,9 +107,9 @@ class EditProcessLog
         );
 
         return [
-            'use_user_sql' => $useUserSql,
+            'use_user_sql'   => $useUserSql,
             'to_users_table' => $toUsersTable,
-            'execute_query' => true,
+            'execute_query'  => true,
         ];
     }
 }
