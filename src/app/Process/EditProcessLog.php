@@ -8,6 +8,12 @@ class EditProcessLog
 {
     private const ALLOWED_TABLES = ['pages', 'pages_users'];
 
+    private Database $db;
+
+    public function __construct()
+    {
+        $this->db = new Database();
+    }
     public function findExistsOrUpdate(string $title, string $lang, string $user, string $target, string $tableName): bool
     {
         if (! in_array($tableName, self::ALLOWED_TABLES, true)) {
@@ -15,20 +21,18 @@ class EditProcessLog
             return false;
         }
 
-        $db     = new Database();
-        $result = $db->fetchQuery($query, [$langCode]);
-        $query  = <<<SQL
+        $query = <<<SQL
             SELECT * FROM $tableName WHERE title = ? AND lang = ? AND user = ?
         SQL;
 
-        $result = $db->fetchQuery($query, [$title, $lang, $user]);
+        $result = $this->db->fetchQuery($query, [$title, $lang, $user]);
 
         if (count($result) > 0) {
             $updateQuery = <<<SQL
                 UPDATE $tableName SET target = ?, pupdate = DATE(NOW())
                 WHERE title = ? AND lang = ? AND user = ? AND (target = "" OR target IS NULL)
             SQL;
-            $db->executeQuery($updateQuery, [$target, $title, $lang, $user]);
+            $this->db->executeQuery($updateQuery, [$target, $title, $lang, $user]);
         }
 
         return count($result) > 0;
@@ -37,7 +41,7 @@ class EditProcessLog
     public function retrieveCampaignCategories(): array
     {
         $campToCats = [];
-        foreach ($db->fetchQuery('SELECT category, campaign FROM categories;') as $k => $tab) {
+        foreach ($this->db->fetchQuery('SELECT category, campaign FROM categories;') as $k => $tab) {
             $campToCats[$tab['campaign']] = $tab['category'];
         }
         return $campToCats;
