@@ -23,12 +23,8 @@ spl_autoload_register(static function (string $class): void {
 include_once __DIR__ . '/text_edit.php';
 include_once __DIR__ . '/utils/start_utils.php';
 
-include_once __DIR__ . '/process/EditProcessLog.php';
-include_once __DIR__ . '/process/ProcessEdit.php';
-include_once __DIR__ . '/process/StartController.php';
-
-include_once __DIR__ . '/sql/access_helps.php';
-include_once __DIR__ . '/sql/mdwiki_sql.php';
+include_once __DIR__ . '/MdwikiSql/access_helps.php';
+include_once __DIR__ . '/MdwikiSql/mdwiki_sql.php';
 
 include_once __DIR__ . '/api/WikiApi.php';
 

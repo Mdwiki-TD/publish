@@ -1,9 +1,8 @@
 <?php
 namespace Publish\Process;
 
-use function Publish\MdwikiSql\execute_query;
-use function Publish\MdwikiSql\fetch_query;
 use Publish\AddToDb\PublishReportsRepository;
+use Publish\MdwikiSql\Database;
 
 class EditProcessLog
 {
@@ -16,18 +15,20 @@ class EditProcessLog
             return false;
         }
 
-        $query = <<<SQL
+        $db     = new Database();
+        $result = $db->fetchQuery($query, [$langCode]);
+        $query  = <<<SQL
             SELECT * FROM $tableName WHERE title = ? AND lang = ? AND user = ?
         SQL;
 
-        $result = fetch_query($query, [$title, $lang, $user]);
+        $result = $db->fetchQuery($query, [$title, $lang, $user]);
 
         if (count($result) > 0) {
             $updateQuery = <<<SQL
                 UPDATE $tableName SET target = ?, pupdate = DATE(NOW())
                 WHERE title = ? AND lang = ? AND user = ? AND (target = "" OR target IS NULL)
             SQL;
-            execute_query($updateQuery, [$target, $title, $lang, $user]);
+            $db->executeQuery($updateQuery, [$target, $title, $lang, $user]);
         }
 
         return count($result) > 0;
@@ -36,7 +37,7 @@ class EditProcessLog
     public function retrieveCampaignCategories(): array
     {
         $campToCats = [];
-        foreach (fetch_query('SELECT category, campaign FROM categories;') as $k => $tab) {
+        foreach ($db->fetchQuery('SELECT category, campaign FROM categories;') as $k => $tab) {
             $campToCats[$tab['campaign']] = $tab['category'];
         }
         return $campToCats;

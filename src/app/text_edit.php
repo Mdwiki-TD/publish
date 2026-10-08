@@ -1,7 +1,7 @@
 <?php
 namespace Publish\EditProcess;
 
-use function Publish\MdwikiSql\fetch_query;
+use Publish\MdwikiSql\Database;
 
 /**
  * @return array<string, mixed>
@@ -9,7 +9,9 @@ use function Publish\MdwikiSql\fetch_query;
 function getLanguagesSettings(string $langCode): array
 {
     $query  = "SELECT move_dots, expend, add_en_lang FROM language_settings where lang_code = ?";
-    $result = fetch_query($query, [$langCode]);
+
+    $db = new Database();
+    $result = $db->fetchQuery($query, [$langCode]);
 
     // Ensure we always return an array, fallback to empty array if index 0 does not exist
     return (isset($result[0]) && is_array($result[0])) ? $result[0] : [];

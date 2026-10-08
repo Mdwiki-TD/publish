@@ -13,7 +13,7 @@ class PublishReportsRepositoryTest extends TestCase
         $dbMock = $this->createMock(Database::class);
 
         $dbMock->expects($this->once())
-            ->method('executequery')
+            ->method('executeQuery')
             ->with(
                 $this->stringContains('INSERT INTO publish_reports'),
                 [
@@ -44,7 +44,7 @@ class PublishReportsRepositoryTest extends TestCase
     public function testInsertPageTargetRejectsInvalidTableName(): void
     {
         $dbMock = $this->createMock(Database::class);
-        $dbMock->expects($this->never())->method('executequery');
+        $dbMock->expects($this->never())->method('executeQuery');
 
         $repo = new PublishReportsRepository($dbMock);
 

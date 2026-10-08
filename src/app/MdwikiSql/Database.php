@@ -135,7 +135,7 @@ class Database
         }
     }
 
-    public function fetchquery(string $sqlQuery, ?array $params = null): array
+    public function fetchQuery(string $sqlQuery, ?array $params = null): array
     {
         if ($this->db === null) {
             error_log("Database connection is not established.");
@@ -156,8 +156,8 @@ class Database
             $result = $q->fetchAll(PDO::FETCH_ASSOC);
             return $result;
         } catch (PDOException $e) {
-            error_log("SQL Error in fetchquery: " . $e->getMessage() . " | Query: " . $sqlQuery);
-            $this->testPrint("SQL Error in fetchquery: " . $e->getMessage() . " | Query: " . $sqlQuery);
+            error_log("SQL Error in fetchQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
+            $this->testPrint("SQL Error in fetchQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
             // In testing mode, re-throw to allow tests to skip
             if ($this->appEnv === 'testing') {
                 throw $e;
@@ -165,7 +165,7 @@ class Database
             return [];
         }
     }
-    public function executequery(string $sqlQuery, ?array $params = null): bool
+    public function executeQuery(string $sqlQuery, ?array $params = null): bool
     {
         if ($this->db === null) {
             error_log("Database connection is not established.");
@@ -183,8 +183,8 @@ class Database
             error_log("Rows affected: " . $q->rowCount());
             return true;
         } catch (PDOException $e) {
-            error_log("SQL Error in executequery: " . $e->getMessage() . " | Query: " . $sqlQuery);
-            $this->testPrint("SQL Error in executequery: " . $e->getMessage() . " | Query: " . $sqlQuery);
+            error_log("SQL Error in executeQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
+            $this->testPrint("SQL Error in executeQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
             // In testing mode, re-throw to allow tests to skip
             if ($this->appEnv === 'testing') {
                 throw $e;

@@ -32,7 +32,7 @@ class PublishReportsRepository
      */
     private function executeQuery(string $sqlQuery, ?array $params = null): bool
     {
-        return (bool) $this->db->executequery($sqlQuery, $params);
+        return (bool) $this->db->executeQuery($sqlQuery, $params);
     }
 
     public function insertPublishReports(
