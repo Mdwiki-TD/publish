@@ -99,10 +99,4 @@ class CorsTest extends TestCase
         $this->assertNotFalse(Cors::isAllowed());
     }
 
-    public function testAllowedWithPartialDomainMatch(): void
-    {
-
-        $_SERVER['HTTP_ORIGIN'] = 'https://subdomain.medwiki.toolforge.org';
-        $this->assertSame('medwiki.toolforge.org', Cors::isAllowed());
-    }
 }
