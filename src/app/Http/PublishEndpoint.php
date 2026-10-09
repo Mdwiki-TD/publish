@@ -30,11 +30,11 @@ class PublishEndpoint
     {
         $this->sendJsonHeaders();
 
-        if (!$this->isPostRequest()) {
+        if (! $this->isPostRequest()) {
             $this->fail(405, 'Only POST requests are allowed'); // Method Not Allowed
         }
 
-        if (!$this->isAuthorized()) {
+        if (! $this->isAuthorized()) {
             $this->fail(403, 'Access denied. Invalid or missing secret key.'); // Forbidden
         }
 
@@ -63,7 +63,7 @@ class PublishEndpoint
             return false;
         }
 
-        $received = (string)($_SERVER[self::SECRET_HEADER] ?? '');
+        $received = (string) ($_SERVER[self::SECRET_HEADER] ?? '');
 
         return hash_equals($expected, $received);
     }
@@ -74,7 +74,7 @@ class PublishEndpoint
         if ($code === false) {
             $code = $_ENV[self::SECRET_ENV_NAME] ?? '';
         }
-        return (string)$code;
+        return (string) $code;
     }
 
     // ------------------------------------------------------------

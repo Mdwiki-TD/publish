@@ -8,46 +8,26 @@ if ($env === 'development' && file_exists(__DIR__ . '/load_env.php')) {
     include_once __DIR__ . '/load_env.php';
 }
 
-include_once __DIR__ . '/Settings.php';
+spl_autoload_register(static function (string $class): void {
+    $prefix = 'Publish\\';
+    if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
+        return;
+    }
+    $relative = substr($class, strlen($prefix));
+    $file     = __DIR__ . '/' . str_replace('\\', '/', $relative) . '.php';
+    if (is_file($file)) {
+        require $file;
+    }
+});
 
-# MediaWikiClient
-include_once __DIR__ . '/MediaWikiClient/MediaWikiOAuthClientAdapter.php';
-include_once __DIR__ . '/MediaWikiClient/OAuthHttpClientInterface.php';
-
-include_once __DIR__ . '/MediaWikiClient/MediaWikiOAuthClientFactory.php';
-include_once __DIR__ . '/MediaWikiClient/OAuthClientFactoryInterface.php';
-
-include_once __DIR__ . '/MediaWikiClient/MediaWikiEditClient.php';
-
-# CurlRequests
-include_once __DIR__ . '/CurlRequests/HttpClientInterface.php';
-include_once __DIR__ . '/CurlRequests/CurlHttpClient.php';
-
-# AddToDb
-include_once __DIR__ . '/AddToDb/PublishReportsRepository.php';
-
-# MdwikiSql
-include_once __DIR__ . '/Database.php';
-
-# Http
-include_once __DIR__ . '/Http/PublishEndpoint.php';
-include_once __DIR__ . '/Http/CxTokenEndpoint.php';
-
-include_once __DIR__ . '/cors.php';
 include_once __DIR__ . '/text_edit.php';
 include_once __DIR__ . '/utils/start_utils.php';
 
-include_once __DIR__ . '/process/EditProcessLog.php';
-include_once __DIR__ . '/process/ProcessEdit.php';
-include_once __DIR__ . '/process/StartController.php';
-
-include_once __DIR__ . '/sql/access_helps.php';
-include_once __DIR__ . '/sql/mdwiki_sql.php';
+include_once __DIR__ . '/MdwikiSql/access_helps.php';
 
 include_once __DIR__ . '/api/WikiApi.php';
 
 include_once __DIR__ . '/bots/include.php';
-
 
 $home = getenv('HOME') ?: ($_SERVER['HOME'] ?? "");
 

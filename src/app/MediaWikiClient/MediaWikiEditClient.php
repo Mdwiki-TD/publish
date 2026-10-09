@@ -1,12 +1,10 @@
 <?php
-
 namespace Publish\MediaWikiClient;
 
+use function Publish\Helps\pub_test_print;
+use MediaWiki\OAuthClient\Token;
 use Publish\MediaWikiClient\MediaWikiOAuthClientAdapter;
 use Publish\MediaWikiClient\MediaWikiOAuthClientFactory;
-
-use MediaWiki\OAuthClient\Token;
-use function Publish\Helps\pub_test_print;
 
 class MediaWikiEditClient
 {
@@ -30,9 +28,9 @@ class MediaWikiEditClient
     public function getEditsToken(MediaWikiOAuthClientAdapter $client, Token $accessToken, string $apiUrl): ?string
     {
         $response = $client->makeOAuthCall($accessToken, "$apiUrl?action=query&meta=tokens&format=json");
-        $data = json_decode($response);
+        $data     = json_decode($response);
 
-        if ($data === null || !isset($data->query->tokens->csrftoken)) {
+        if ($data === null || ! isset($data->query->tokens->csrftoken)) {
             // Handle error
             pub_test_print('<br>getEditsToken Error: ' . json_last_error() . ' ' . json_last_error_msg());
 
@@ -49,9 +47,9 @@ class MediaWikiEditClient
     private function getCsrfTokenData(MediaWikiOAuthClientAdapter $client, Token $accessToken, string $apiUrl): ?array
     {
         $response = $client->makeOAuthCall($accessToken, "$apiUrl?action=query&meta=tokens&format=json");
-        $data = json_decode($response, true);
+        $data     = json_decode($response, true);
 
-        if ($data === null || !isset($data['query']['tokens']['csrftoken'])) {
+        if ($data === null || ! isset($data['query']['tokens']['csrftoken'])) {
             // Handle error
             pub_test_print('<br>get_csrftoken Error: ' . json_last_error() . ' ' . json_last_error_msg());
             pub_test_print($data);
@@ -62,17 +60,17 @@ class MediaWikiEditClient
 
     public function postParams(array $apiParams, string $httpsDomain, string $accessKey, string $accessSecret): string
     {
-        $client = $this->clientFactory->createForDomain($httpsDomain);
-        $apiUrl = "$httpsDomain/w/api.php";
+        $client      = $this->clientFactory->createForDomain($httpsDomain);
+        $apiUrl      = "$httpsDomain/w/api.php";
         $accessToken = new Token($accessKey, $accessSecret);
 
         $csrfTokenData = $this->getCsrfTokenData($client, $accessToken, $apiUrl);
-        $csrftoken = $csrfTokenData['query']['tokens']['csrftoken'] ?? null;
+        $csrftoken     = $csrfTokenData['query']['tokens']['csrftoken'] ?? null;
 
         if ($csrftoken === null) {
             $data = [
-                'error' => 'get_csrftoken failed',
-                'rand' => rand(),
+                'error'          => 'get_csrftoken failed',
+                'rand'           => rand(),
                 'csrftoken_data' => $csrfTokenData,
             ];
 
@@ -100,7 +98,7 @@ class MediaWikiEditClient
         $apiUrl = "https://$wiki.wikipedia.org/w/api.php";
 
         // check if apiParams already has a token
-        if (!isset($apiParams['token'])) {
+        if (! isset($apiParams['token'])) {
             $apiParams['token'] = $this->getEditsToken($client, $accessToken, $apiUrl);
         }
 

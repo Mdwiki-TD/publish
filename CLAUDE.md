@@ -37,7 +37,7 @@ Add `?test` query parameter to any request to enable verbose error reporting and
 | File                                        | Purpose                                                                   |
 | ------------------------------------------- | ------------------------------------------------------------------------- |
 | `config.php`                                | OAuth configuration (consumer key/secret from INI file)                   |
-| `mdwiki_sql.php`                            | PDO database wrapper with `fetch_query()` and `execute_query()`           |
+| `mdwiki_sql.php`                            | PDO database wrapper with `fetchQuery()` and `executeQuery()`           |
 | `DoEdit.php`                                | Makes OAuth-authenticated edit requests to Wikipedia API                  |
 | `ProcessEdit.php`                           | Orchestrates edit workflow, handles success/error cases                   |
 | `wd.php`                                    | Wikidata integration - links translated articles via `wbsetsitelink`      |

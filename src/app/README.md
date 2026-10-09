@@ -132,7 +132,7 @@ include.php (bootstrap)
 
 -   Namespaces: `Publish\*` (PSR-4 compliant)
 -   Functions: Mixed `camelCase` and `snake_case` (inconsistent)
--   Database methods: `executequery`/`fetchquery` (no underscores, inconsistent with wrapper functions)
+-   Database methods: `executeQuery`/`fetchQuery` (no underscores, inconsistent with wrapper functions)
 
 ## Strengths
 
@@ -147,7 +147,7 @@ include.php (bootstrap)
 
 1. **Manual dependency management** - `include_once` chains instead of autoloader
 2. **No dependency injection** - Functions create their own dependencies
-3. **Inconsistent naming** - Mixed `camelCase`/`snake_case`, `executequery` vs `fetch_query`
+3. **Inconsistent naming** - Mixed `camelCase`/`snake_case`, `executeQuery` vs `fetchQuery`
 4. **Global state** - `crypt_helps.php` uses `global $decrypt_key`
 5. **Hardcoded paths** - Windows development paths in production code
 6. **Duplicated logic** - Username normalization in `start_utils.php` and `token_handler.php`
@@ -225,7 +225,7 @@ include.php (bootstrap)
 | `TOOL_TOOLSDB_PASSWORD` | Database password                        | Yes                                 |
 | `CONSUMER_KEY`          | MediaWiki OAuth consumer key             | Yes                                 |
 | `CONSUMER_SECRET`       | MediaWiki OAuth consumer secret          | Yes                                 |
-| `DECRYPT_KEY`           | Defuse encryption key for token storage  | Yes                                 |
+| `CRYPTO_KEY`           | Defuse encryption key for token storage  | Yes                                 |
 | `PUBLISH_SECRET_CODE`   | API secret key for endpoint auth         | No (bypasses auth if empty)         |
 | `PUBLISH_REPORTS_PATH`  | Path for JSON report files               | No (has defaults)                   |
 | `ALL_PAGES_REVIDS_PATH` | Path to `all_pages_revids.json`          | No (has defaults)                   |

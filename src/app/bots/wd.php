@@ -1,19 +1,19 @@
 <?php
-
 namespace Publish\WD;
-
-use Publish\MediaWikiClient\MediaWikiEditClient;
 
 use function Publish\AccessHelps\get_access_from_db;
 use function Publish\Helps\pub_test_print;
-use function Publish\MdwikiSql\fetch_query;
+use Publish\MdwikiSql\Database;
+use Publish\MediaWikiClient\MediaWikiEditClient;
 
 function GetQidForMdtitle($title)
 {
-    return fetch_query("SELECT qid FROM qids WHERE title = ?", [$title]);
+    $db = new Database();
+
+    return $db->fetchQuery("SELECT qid FROM qids WHERE title = ?", [$title]);
 }
 
-function getAccessCredentials(string $user, string $accessKey, string $accessSecret): array|null
+function getAccessCredentials(string $user, string $accessKey, string $accessSecret): array | null
 {
     if ($accessKey && $accessSecret) {
         return [$accessKey, $accessSecret];
@@ -27,7 +27,7 @@ function getAccessCredentials(string $user, string $accessKey, string $accessSec
         return null;
     }
 
-    $accessKey = $access['access_key'];
+    $accessKey    = $access['access_key'];
     $accessSecret = $access['access_secret'];
 
     return [$accessKey, $accessSecret];
@@ -36,10 +36,10 @@ function getAccessCredentials(string $user, string $accessKey, string $accessSec
 function LinkIt(array $apiParams, string $accessKey, string $accessSecret): array
 {
     $wikidataDomain = getenv('WIKIDATA_DOMAIN') ?: ($_ENV['WIKIDATA_DOMAIN'] ?? 'www.wikidata.org');
-    $httpsDomain = "https://$wikidataDomain";
+    $httpsDomain    = "https://$wikidataDomain";
 
     $editClient = new MediaWikiEditClient();
-    $response = $editClient->postParams(
+    $response   = $editClient->postParams(
         (array) $apiParams,
         (string) $httpsDomain,
         (string) $accessKey,
@@ -47,7 +47,7 @@ function LinkIt(array $apiParams, string $accessKey, string $accessSecret): arra
     );
 
     $result = json_decode($response, true);
-    if (!is_array($result)) {
+    if (! is_array($result)) {
         $result = [];
     }
     if (isset($result['error'])) {
@@ -63,11 +63,11 @@ function LinkIt(array $apiParams, string $accessKey, string $accessSecret): arra
 }
 function LinkToWikidata(string $sourcetitle, string $lang, string $user, string $targettitle, array $access): array
 {
-    $accessKey = $access['access_key'];
+    $accessKey    = $access['access_key'];
     $accessSecret = $access['access_secret'];
 
     $qids = GetQidForMdtitle($sourcetitle);
-    $qid = $qids[0]['qid'] ?? '';
+    $qid  = $qids[0]['qid'] ?? '';
 
     $credentials = getAccessCredentials($user, $accessKey, $accessSecret);
     if ($credentials === null) {
@@ -76,15 +76,15 @@ function LinkToWikidata(string $sourcetitle, string $lang, string $user, string 
     list($accessKey, $accessSecret) = $credentials;
 
     $apiParams = [
-        "action" => "wbsetsitelink",
+        "action"    => "wbsetsitelink",
         "linktitle" => $targettitle,
-        "linksite" => "{$lang}wiki",
+        "linksite"  => "{$lang}wiki",
     ];
-    if (!empty($qid)) {
+    if (! empty($qid)) {
         $apiParams["id"] = $qid;
     } else {
         $apiParams["title"] = $sourcetitle;
-        $apiParams["site"] = "enwiki";
+        $apiParams["site"]  = "enwiki";
     }
 
     $linkResult = LinkIt($apiParams, $accessKey, $accessSecret);

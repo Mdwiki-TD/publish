@@ -3,12 +3,11 @@
 
 namespace Publish\Http;
 
-use Publish\MediaWikiClient\MediaWikiEditClient;
-
-use function Publish\AccessHelps\get_access_from_db;
 use function Publish\AccessHelps\del_access_from_db;
-use function Publish\CORS\is_allowed;
+use function Publish\AccessHelps\get_access_from_db;
 use function Publish\Helps\pub_test_print;
+use Publish\Cors;
+use Publish\MediaWikiClient\MediaWikiEditClient;
 
 /**
  * HTTP endpoint that returns a cxtoken for a given wiki and user.
@@ -52,9 +51,9 @@ class CxTokenEndpoint
     {
         header('Content-Type: application/json; charset=utf-8');
 
-        $allowedDomain = is_allowed();
+        $allowedDomain = Cors::isAllowed();
 
-        if (!$allowedDomain) {
+        if (! $allowedDomain) {
             $this->fail(403, 'Access denied. Requests are only allowed from authorized domains.');
         }
 
@@ -69,7 +68,7 @@ class CxTokenEndpoint
 
         // $wiki is interpolated into the request URL, so it must be a plain language code;
         // anything else (e.g. "evil.com/x?a=") would send the OAuth-signed request off-wiki.
-        if (!preg_match(self::WIKI_PATTERN, $wiki)) {
+        if (! preg_match(self::WIKI_PATTERN, $wiki)) {
             $this->fail(400, ['code' => 'badwiki', 'info' => 'invalid wiki']);
         }
 
@@ -115,8 +114,8 @@ class CxTokenEndpoint
         $response = $this->client->postParams(
             ['action' => 'cxtoken', 'format' => 'json'],
             "https://$wiki.wikipedia.org",
-            (string)$access['access_key'],
-            (string)$access['access_secret']
+            (string) $access['access_key'],
+            (string) $access['access_secret']
         );
 
         $apiResult = json_decode($response, true);

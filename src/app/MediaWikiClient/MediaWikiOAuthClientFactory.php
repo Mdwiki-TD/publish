@@ -1,13 +1,11 @@
 <?php
-
 namespace Publish\MediaWikiClient;
-
-use Publish\MediaWikiClient\OAuthClientFactoryInterface;
-use Publish\MediaWikiClient\MediaWikiOAuthClientAdapter;
 
 use MediaWiki\OAuthClient\Client;
 use MediaWiki\OAuthClient\ClientConfig;
 use MediaWiki\OAuthClient\Consumer;
+use Publish\MediaWikiClient\MediaWikiOAuthClientAdapter;
+use Publish\MediaWikiClient\OAuthClientFactoryInterface;
 
 class MediaWikiOAuthClientFactory implements OAuthClientFactoryInterface
 {
@@ -28,14 +26,14 @@ class MediaWikiOAuthClientFactory implements OAuthClientFactoryInterface
         ?string $consumerSecret = null,
         string $userAgent = self::DEFAULT_USER_AGENT
     ) {
-        $this->consumerKey = $consumerKey ?? (getenv('CONSUMER_KEY') ?: '');
+        $this->consumerKey    = $consumerKey ?? (getenv('CONSUMER_KEY') ?: '');
         $this->consumerSecret = $consumerSecret ?? (getenv('CONSUMER_SECRET') ?: '');
-        $this->userAgent = $userAgent;
+        $this->userAgent      = $userAgent;
     }
 
     public function createForDomain(string $httpsDomain): MediaWikiOAuthClientAdapter
     {
-        $domain = parse_url($httpsDomain, PHP_URL_HOST);
+        $domain   = parse_url($httpsDomain, PHP_URL_HOST);
         $oauthUrl = "https://$domain/w/index.php?title=Special:OAuth";
 
         // Configure the OAuth client with the URL and consumer details.
