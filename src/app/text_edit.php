@@ -8,9 +8,9 @@ use Publish\MdwikiSql\Database;
  */
 function getLanguagesSettings(string $langCode): array
 {
-    $query  = "SELECT move_dots, expend, add_en_lang FROM language_settings where lang_code = ?";
+    $query = "SELECT move_dots, expend, add_en_lang FROM language_settings where lang_code = ?";
 
-    $db = new Database();
+    $db     = new Database();
     $result = $db->fetchQuery($query, [$langCode]);
 
     // Ensure we always return an array, fallback to empty array if index 0 does not exist

@@ -96,7 +96,7 @@ The codebase uses a **functional/procedural architecture** with PSR-4 namespaced
 
 -   Moderate - code is readable but tightly coupled through global function calls
 -   No dependency injection framework; dependencies are resolved via `include_once` chains
--   Naming conventions are inconsistent (`fetchquery` vs `fetch_query`, `executequery` vs `execute_query`)
+-   Naming conventions are inconsistent (`fetchQuery` vs `fetchQuery`, `executeQuery` vs `executeQuery`)
 
 ### Scalability
 
@@ -118,8 +118,8 @@ The codebase uses a **functional/procedural architecture** with PSR-4 namespaced
 
 1. **No autoloading for application code** - Uses `include_once` chains instead of Composer PSR-4 autoloading (despite having it configured)
 2. **Global state dependency** - `crypt_helps.php` uses `global $decrypt_key` instead of dependency injection
-3. **Inconsistent naming** - Mixed `camelCase` and `snake_case` (`fetchquery` vs `fetch_query`, `executequery` vs `execute_query`)
-4. **Duplicate function logic** - `fetchquery` and `executequery` in the `Database` class are nearly identical
+3. **Inconsistent naming** - Mixed `camelCase` and `snake_case` (`fetchQuery` vs `fetchQuery`, `executeQuery` vs `executeQuery`)
+4. **Duplicate function logic** - `fetchQuery` and `executeQuery` in the `Database` class are nearly identical
 5. **Hardcoded fallback paths** - Windows paths like `I:/MD_TOOLS/...` appear in production code paths
 6. **No input validation layer** - Input sanitization is scattered across individual functions
 7. **Tight coupling** - `ProcessEdit.handle()` directly calls Wikidata, database, and file logging functions
