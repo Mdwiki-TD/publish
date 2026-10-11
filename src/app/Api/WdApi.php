@@ -2,46 +2,54 @@
 namespace Publish\Api;
 
 use Publish\Logger;
+use Publish\Settings;
+use Publish\MdwikiSql\DatabaseInterface;
 use Publish\MdwikiSql\Database;
 use Publish\MdwikiSql\AccessHelps;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 
 class WdApi
 {
-    public static function GetQidForMdtitle($title)
-    {
-        $db = new Database();
+    public string               $wikidataDomain;
+    private DatabaseInterface   $db;
+    private MediaWikiEditClient $editClient;
+    private AccessHelps         $accessHelps;
+    private static ?self        $instance       = null;
 
-        return $db->fetchQuery("SELECT qid FROM qids WHERE title = ?", [$title]);
+    public function __construct(
+        ?Database $db = null,
+        ?MediaWikiEditClient $editClient = null,
+        ?AccessHelps $accessHelps = null,
+    ) {
+        $this->db = $db ?? new Database();
+        $this->editClient = $editClient ?? new MediaWikiEditClient();
+        $this->accessHelps = $accessHelps ?? new AccessHelps($this->db);
+
+        $settings = Settings::getInstance();
+        $this->wikidataDomain = $settings->wikidataDomain;
     }
 
-    public static function getAccessCredentials(string $user, string $accessKey, string $accessSecret): array|null
+    public static function getInstance(): self
     {
-        if ($accessKey && $accessSecret) {
-            return [$accessKey, $accessSecret];
+        if (self::$instance === null) {
+            self::$instance = new self();
         }
 
-        $access = AccessHelps::getAccess($user);
-
-        if (empty($access)) {
-            Logger::debug("user = $user");
-            Logger::debug("access == null");
-            return null;
-        }
-
-        $accessKey = $access['access_key'];
-        $accessSecret = $access['access_secret'];
-
-        return [$accessKey, $accessSecret];
+        return self::$instance;
+    }
+    private function GetQidForMdtitle($title)
+    {
+        return $this->db->fetchQuery("SELECT qid FROM qids WHERE title = ?", [$title]);
     }
 
-    public static function LinkIt(array $apiParams, string $accessKey, string $accessSecret): array
-    {
-        $wikidataDomain = getenv('WIKIDATA_DOMAIN') ?: ($_ENV['WIKIDATA_DOMAIN'] ?? 'www.wikidata.org');
-        $httpsDomain = "https://$wikidataDomain";
+    private function LinkIt(
+        array $apiParams,
+        string $accessKey,
+        string $accessSecret
+    ): array {
+        $httpsDomain = "https://{$this->wikidataDomain}";
 
-        $editClient = new MediaWikiEditClient();
-        $response = $editClient->postParams(
+        $response = $this->editClient->postParams(
             (array) $apiParams,
             (string) $httpsDomain,
             (string) $accessKey,
@@ -63,15 +71,42 @@ class WdApi
         }
         return $result;
     }
-    public static function LinkToWikidata(string $sourcetitle, string $lang, string $user, string $targettitle, array $access): array
-    {
+    public static function getAccessCredentials(
+        string $user,
+        string $accessKey,
+        string $accessSecret
+    ): array|null {
+        if ($accessKey && $accessSecret) {
+            return [$accessKey, $accessSecret];
+        }
+        $access = $this->accessHelps->getAccess($user);
+
+        if (empty($access)) {
+            Logger::debug("user = $user");
+            Logger::debug("access == null");
+            return null;
+        }
+
         $accessKey = $access['access_key'];
         $accessSecret = $access['access_secret'];
 
-        $qids = self::GetQidForMdtitle($sourcetitle);
+        return [$accessKey, $accessSecret];
+    }
+
+    public function LinkToWikidata(
+        string $sourcetitle,
+        string $lang,
+        string $user,
+        string $targettitle,
+        array $access
+    ): array {
+        $accessKey = $access['access_key'];
+        $accessSecret = $access['access_secret'];
+
+        $qids = $this->GetQidForMdtitle($sourcetitle);
         $qid = $qids[0]['qid'] ?? '';
 
-        $credentials = getAccessCredentials($user, $accessKey, $accessSecret);
+        $credentials = $this->getAccessCredentials($user, $accessKey, $accessSecret);
         if ($credentials === null) {
             return ['error' => 'Access credentials not found for user: ' . $user, 'qid' => $qid];
         }
@@ -89,7 +124,7 @@ class WdApi
             $apiParams["site"] = "enwiki";
         }
 
-        $linkResult = LinkIt($apiParams, $accessKey, $accessSecret);
+        $linkResult = $this->LinkIt($apiParams, $accessKey, $accessSecret);
 
         $linkResult["qid"] = $qid;
 

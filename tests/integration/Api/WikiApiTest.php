@@ -4,6 +4,7 @@ namespace Tests\Bots\Integration;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
+use Publish\CurlRequests\HttpClientInterface;
 use Publish\Api\WikiApi;
 
 /**
@@ -12,17 +13,24 @@ use Publish\Api\WikiApi;
  */
 class WikiApiTest extends TestCase
 {
+    private WikiApi              $wikiApi;
+    private ?HttpClientInterface $mockHttpClient;
+
+    protected function setUp(): void
+    {
+        $this->mockHttpClient = $this->createStub(HttpClientInterface::class);
+        $this->wikiApi = new WikiApi($this->mockHttpClient);
+    }
     // -----------------------------------------------------------------------
     // GetTitleInfo – Real HTTP request to Wikipedia API
     // -----------------------------------------------------------------------
-
     /**
      * The Main Page on English Wikipedia has a well-known pageid.
      */
-    #[Group('readonly')]
+    #[Group('network')]
     public function testGetTitleInfoReturnsCorrectPageIdForMainPageEn(): void
     {
-        $result = WikiApi::GetTitleInfo('Main Page', 'en');
+        $result = $this->wikiApi->GetTitleInfo('Main Page', 'en');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('pageid', $result);
@@ -34,11 +42,11 @@ class WikiApiTest extends TestCase
     /**
      * User page in Malagasy Wikipedia.
      */
-    #[Group('readonly')]
+    #[Group('network')]
     public function testGetTitleInfoReturnsCorrectDataForMgUserPage(): void
     {
         $title = "Mpikambana:Doc James/Fahaverezan'ny volo";
-        $result = WikiApi::GetTitleInfo($title, 'mg');
+        $result = $this->wikiApi->GetTitleInfo($title, 'mg');
 
         $this->assertIsArray($result);
         $this->assertSame(298895, $result['pageid']);
@@ -49,11 +57,11 @@ class WikiApiTest extends TestCase
     /**
      * User page in Bosnian Wikipedia.
      */
-    #[Group('readonly')]
+    #[Group('network')]
     public function testGetTitleInfoReturnsCorrectDataForBsUserPage(): void
     {
         $title = "Korisnik:Doc James/Analna fistula";
-        $result = WikiApi::GetTitleInfo($title, 'bs');
+        $result = $this->wikiApi->GetTitleInfo($title, 'bs');
 
         $this->assertIsArray($result);
         $this->assertSame(531525, $result['pageid']);
@@ -64,11 +72,11 @@ class WikiApiTest extends TestCase
     /**
      * A non-existent page should return missing = true, not null.
      */
-    #[Group('readonly')]
+    #[Group('network')]
     public function testGetTitleInfoReturnsMissingFlagForNonExistentPage(): void
     {
         // Wikipedia returns { "missing": true } for missing pages
-        $result = WikiApi::GetTitleInfo('ThisPageDefinitelyDoesNotExist_XYZ_12345', 'en');
+        $result = $this->wikiApi->GetTitleInfo('ThisPageDefinitelyDoesNotExist_XYZ_12345', 'en');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('missing', $result);
@@ -78,10 +86,10 @@ class WikiApiTest extends TestCase
     /**
      * Title containing spaces – RFC 3986 encoding should work.
      */
-    #[Group('readonly')]
+    #[Group('network')]
     public function testGetTitleInfoHandlesTitleWithSpaces(): void
     {
-        $result = WikiApi::GetTitleInfo('United States', 'en');
+        $result = $this->wikiApi->GetTitleInfo('United States', 'en');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('pageid', $result);
@@ -91,10 +99,10 @@ class WikiApiTest extends TestCase
     /**
      * Title containing Unicode characters (Japanese).
      */
-    #[Group('readonly')]
+    #[Group('network')]
     public function testGetTitleInfoHandlesUnicodeTitles(): void
     {
-        $result = WikiApi::GetTitleInfo('メインページ', 'ja');
+        $result = $this->wikiApi->GetTitleInfo('メインページ', 'ja');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('pageid', $result);
@@ -102,7 +110,7 @@ class WikiApiTest extends TestCase
     /**
      * Non-existent language → cURL exception → should return null, not crash.
      */
-    #[Group('readonly')]
+    #[Group('network')]
     #[Group('network')]
     public function testGetTitleInfoReturnsNullForInvalidLang(): void
     {
@@ -112,7 +120,7 @@ class WikiApiTest extends TestCase
         );
 
         // zz.wikipedia.org does not exist → exception → null
-        $result = WikiApi::GetTitleInfo('SomePage', 'zz_invalid_lang_xyz');
+        $result = $this->wikiApi->GetTitleInfo('SomePage', 'zz_invalid_lang_xyz');
 
         $this->assertNull($result);
     }

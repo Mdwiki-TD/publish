@@ -8,9 +8,16 @@ use Publish\Api\WdApi;
 
 class WdUnitTest extends TestCase
 {
+    private WdApi $api;
+
+    protected function setUp(): void
+    {
+        $this->api = new WdApi();
+    }
+
     public function testGetAccessCredentialsReturnsSuppliedKeysDirectly(): void
     {
-        $result = WdApi::getAccessCredentials(
+        $result = $this->api->getAccessCredentials(
             'user',
             'my_key',
             'my_secret'
@@ -21,7 +28,7 @@ class WdUnitTest extends TestCase
 
     public function testGetAccessCredentialsReturnsTwoElements(): void
     {
-        $result = WdApi::getAccessCredentials(
+        $result = $this->api->getAccessCredentials(
             'user',
             'k',
             's'
@@ -32,7 +39,7 @@ class WdUnitTest extends TestCase
 
     public function testGetAccessCredentialsReturnsNullForEmptyKeys(): void
     {
-        $result = WdApi::getAccessCredentials(
+        $result = $this->api->getAccessCredentials(
             'user',
             '',
             ''
@@ -44,10 +51,10 @@ class WdUnitTest extends TestCase
     public function testLinkToWikidataReturnsErrorWhenNoCredentials(): void
     {
         $access = [
-            'access_key' => "",
+            'access_key'    => "",
             'access_secret' => "",  // empty access_secret
         ];
-        $result = WdApi::LinkToWikidata(
+        $result = $this->api->LinkToWikidata(
             'Title',
             'es',
             'ghost_user',
@@ -62,10 +69,10 @@ class WdUnitTest extends TestCase
     public function testLinkToWikidataReturnsErrorWhenOnlyOneKeyProvided(): void
     {
         $access = [
-            'access_key' => "only_key",
+            'access_key'    => "only_key",
             'access_secret' => "",  // empty access_secret
         ];
-        $result = WdApi::LinkToWikidata(
+        $result = $this->api->LinkToWikidata(
             'Title',
             'es',
             'user',

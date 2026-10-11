@@ -6,7 +6,22 @@ use Publish\Settings;
 
 class AccessHelps
 {
-    public static function loadTitleData(string $title): array
+    private static ?self $instance = null;
+
+    public function __construct(
+        private Database $db = new Database(),
+    ) {
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+    public function loadTitleData(string $title): array
     {
         $title = trim($title);
 
@@ -22,11 +37,10 @@ class AccessHelps
                 w.w_title = ?
         SQL;
 
-        $db = new Database();
-        return $db->fetchQuery($query, [$title]);
+        return $this->db->fetchQuery($query, [$title]);
     }
 
-    public static function getAccess(string $user): array
+    public function getAccess(string $user): array
     {
         $user = trim($user);
 
@@ -36,9 +50,8 @@ class AccessHelps
             WHERE user_name_hash = ?;
         SQL;
 
-        $db = new Database();
 
-        $result = $db->fetchQuery($query, [hash('sha256', $user)]);
+        $result = $this->db->fetchQuery($query, [hash('sha256', $user)]);
         $settings = Settings::getInstance();
 
         if ($result) {
@@ -51,7 +64,7 @@ class AccessHelps
         return [];
     }
 
-    public static function delAccess(string $user): bool
+    public function delAccess(string $user): bool
     {
         $user = trim($user);
 
@@ -59,7 +72,6 @@ class AccessHelps
             DELETE FROM access_keys WHERE user_name_hash = ?;
         SQL;
 
-        $db = new Database();
-        return $db->executeQuery($query, [hash('sha256', $user)]);
+        return $this->db->executeQuery($query, [hash('sha256', $user)]);
     }
 }

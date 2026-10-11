@@ -2,12 +2,21 @@
 
 namespace Publish\Api;
 
+use Publish\CurlRequests\HttpClientInterface;
 use Publish\CurlRequests\CurlHttpClient;
 use Publish\Logger;
 
 class WikiApi
 {
-    public static function GetTitleInfo(string $targettitle, string $lang)
+    private HttpClientInterface $curlClient;
+
+    public function __construct(
+        ?HttpClientInterface $httpClient = null,
+    ) {
+        $this->curlClient = $httpClient ?? new CurlHttpClient();
+    }
+
+    public function GetTitleInfo(string $targettitle, string $lang)
     {
         $params = [
             "action"        => "query",
@@ -21,8 +30,7 @@ class WikiApi
         Logger::debug("GetTitleInfo url: $url");
 
         try {
-            $client = new CurlHttpClient();
-            $output = $client->get($url) ?? '';
+            $output = $this->curlClient->get($url) ?? '';
             Logger::debug("GetTitleInfo result: $output");
             $result = json_decode($output, true);
 

@@ -19,11 +19,24 @@ class ProcessEdit
     private const FALLBACK_USER     = 'Mr. Ibrahem';
     private const USER_TABLE_FILTER = 'abusefilter-warning-39';
 
-    private EditProcessLog $editProcessLog;
+    private EditProcessLog           $editProcessLog;
+    private AccessHelps              $accessHelps;
+    private PublishReportsRepository $repository;
+    private MediaWikiEditClient      $editClient;
+    private WdApi                    $wdApi;
 
-    public function __construct(?EditProcessLog $editProcessLog = null)
-    {
+    public function __construct(
+        ?EditProcessLog $editProcessLog = null,
+        ?WdApi $wdApi = null,
+        ?AccessHelps $accessHelps = null,
+        ?MediaWikiEditClient $editClient = null,
+        ?PublishReportsRepository $repository = null,
+    ) {
         $this->editProcessLog = $editProcessLog ?? new EditProcessLog();
+        $this->wdApi = $wdApi ?? WdApi::getInstance();
+        $this->accessHelps = $accessHelps ?? AccessHelps::getInstance();
+        $this->editClient = $editClient ?? new MediaWikiEditClient();
+        $this->repository = $repository ?? PublishReportsRepository::getInstance();
     }
 
     public function shouldAddedToWikidata(string $lang, string $title): bool
@@ -43,10 +56,10 @@ class ProcessEdit
         Logger::debug("getCsrfTokenData failed for user: $user, retrying with " . self::FALLBACK_USER);
 
         // Get fresh credentials from database
-        $fallbackAccess = AccessHelps::getAccess(self::FALLBACK_USER);
+        $fallbackAccess = $this->accessHelps->getAccess(self::FALLBACK_USER);
 
         if (!empty($fallbackAccess)) {
-            $linkTowd = WdApi::LinkToWikidata($sourcetitle, $lang, self::FALLBACK_USER, $title, $fallbackAccess);
+            $linkTowd = $this->wdApi->LinkToWikidata($sourcetitle, $lang, self::FALLBACK_USER, $title, $fallbackAccess);
 
             // Add a note that fallback was used
             if (!isset($linkTowd['error'])) {
@@ -67,7 +80,7 @@ class ProcessEdit
         $linkTowd = [];
 
         try {
-            $linkTowd = WdApi::LinkToWikidata($sourcetitle, $lang, $user, $title, $access);
+            $linkTowd = $this->wdApi->LinkToWikidata($sourcetitle, $lang, $user, $title, $access);
             // Check if the error is getCsrfTokenData failure and user is not already the fallback user
             if (
                 isset($linkTowd['error'])
@@ -95,8 +108,7 @@ class ProcessEdit
             $fileName = StartUtils::get_errors_file($linkTowd['error'], "wd_errors");
             FilesHelps::to_do($tab3, $fileName, $randId);
 
-            $repository = new PublishReportsRepository();
-            $repository->insertPublishReports(
+            $this->repository->insertPublishReports(
                 $title,
                 $user,
                 $lang,
@@ -159,8 +171,7 @@ class ProcessEdit
     {
         FilesHelps::to_do($tab, $toDoFile, $randId);
 
-        $repository = new PublishReportsRepository();
-        $repository->insertPublishReports(
+        $this->repository->insertPublishReports(
             $tab['title'],
             $user,
             $tab['lang'],
@@ -174,8 +185,7 @@ class ProcessEdit
     {
         $accessToken = new Token($access["access_key"], $access["access_secret"]);
 
-        $editClient = new MediaWikiEditClient();
-        return $editClient->publishEdit($apiParams, $lang, $accessToken);
+        return $this->editClient->publishEdit($apiParams, $lang, $accessToken);
     }
 
     /** Link to Wikidata, then record the page in the database. */

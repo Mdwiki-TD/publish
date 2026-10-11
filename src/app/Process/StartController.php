@@ -52,7 +52,7 @@ class StartController
         $user = StartUtils::formatUser($request['user'] ?? '');
         $tab = $this->buildInitialTab($request, $user);
 
-        $access = AccessHelps::getAccess($user);
+        $access = (AccessHelps::getInstance())->getAccess($user);
         if (empty($access)) {
             return $this->handleNoAccess($user, $tab, $randId);
         }
@@ -66,7 +66,7 @@ class StartController
     /** Add words count, revid and summary to the tab. */
     private function enrichTab(array $tab, array $request, string $user, string $trType): array
     {
-        $titleData = AccessHelps::loadTitleData($tab['title']);
+        $titleData = (AccessHelps::getInstance())->loadTitleData($tab['title']);
 
         $words = 0;
         if ($titleData) {
@@ -82,7 +82,7 @@ class StartController
             $revid = $titleData['revid'] ?? 0;
         }
         if (empty($revid)) {
-            $tab['empty revid'] = 'Can not get revid from all_pages_revids.json';
+            $tab['empty revid'] = 'Can not get revid';
         }
         $tab['revid'] = $revid;
 

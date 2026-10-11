@@ -11,9 +11,12 @@ use Publish\Api\WdApi;
  */
 class WdIntegrationTest extends TestCase
 {
+    private WdApi $api;
+
     protected function setUp(): void
     {
         parent::setUp();
+        $this->api = new WdApi();
 
         // Defuse keys must be instances of \Defuse\Crypto\Key or
         // variables that the library expects.
@@ -21,23 +24,13 @@ class WdIntegrationTest extends TestCase
 
     }
 
-    private function getTestKey()
-    {
-        // Return a dummy Key object or the string your app expects
-        // This depends on how your app normally populates these globals.
-        return \Defuse\Crypto\Key::createNewRandomKey();
-    }
-    // -----------------------------------------------------------------------
-    // getAccessCredentials – Reading from a real DB
-    // -----------------------------------------------------------------------
-
     /**
      * Keys passed directly should be returned as is without a DB call.
      */
-    #[Group('readonly')]
+    #[Group('network')]
     public function testGetAccessCredentialsReturnsDirectKeysWithoutDbCall(): void
     {
-        $result = WdApi::getAccessCredentials('anyuser', 'direct_key', 'direct_secret');
+        $result = $this->api->getAccessCredentials('anyuser', 'direct_key', 'direct_secret');
 
         $this->assertIsArray($result);
         $this->assertCount(2, $result);
@@ -48,10 +41,10 @@ class WdIntegrationTest extends TestCase
     /**
      * A user that does not exist in the DB should return null.
      */
-    #[Group('readonly')]
+    #[Group('network')]
     public function testGetAccessCredentialsReturnsNullForNonExistentUser(): void
     {
-        $result = WdApi::getAccessCredentials('__user_that_does_not_exist__', '', '');
+        $result = $this->api->getAccessCredentials('__user_that_does_not_exist__', '', '');
 
         $this->assertNull($result);
     }
@@ -63,14 +56,14 @@ class WdIntegrationTest extends TestCase
     /**
      * A user without credentials should return an error array instead of crashing.
      */
-    #[Group('write')]
+    #[Group('network')]
     public function testLinkToWikidataReturnsErrorArrayForMissingCredentials(): void
     {
         $access = [
             'access_key'    => "", // empty access_key
             'access_secret' => "",  // empty access_secret
         ];
-        $result = WdApi::LinkToWikidata(
+        $result = $this->api->LinkToWikidata(
             'SomeTitle',
             'fr',
             '__nonexistent_user__',
@@ -78,6 +71,7 @@ class WdIntegrationTest extends TestCase
             $access,
         );
 
+        // @phpstan-ignore method.alreadyNarrowedType
         $this->assertIsArray($result);
         $this->assertArrayHasKey('error', $result);
         $this->assertStringContainsString('__nonexistent_user__', $result['error']);
@@ -86,7 +80,7 @@ class WdIntegrationTest extends TestCase
     /**
      * The result always contains a QID even on error.
      */
-    #[Group('write')]
+    #[Group('network')]
     public function testLinkToWikidataAlwaysIncludesQidInResult(): void
     {
         $access = [
@@ -94,7 +88,7 @@ class WdIntegrationTest extends TestCase
             'access_secret' => "",  // empty access_secret
         ];
         // No credentials → early error, but qid should still be present
-        $result = WdApi::LinkToWikidata(
+        $result = $this->api->LinkToWikidata(
             'AnyTitle',
             'de',
             '__nonexistent_user__',

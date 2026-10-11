@@ -81,7 +81,7 @@ class CxTokenEndpoint
     public function handleToken(string $wiki, string $user): array
     {
         $user   = $this->resolveUserName($user);
-        $access = AccessHelps::getAccess($user);
+        $access = (AccessHelps::getInstance())->getAccess($user);
 
         if (empty($access)) {
             // set the status before any output, so the header cannot be "already sent"
@@ -96,7 +96,7 @@ class CxTokenEndpoint
         $cxtoken = $this->getCxToken($wiki, $access) ?? ['error' => 'no cxtoken'];
 
         if ($this->isInvalidAuthorization($cxtoken)) {
-            AccessHelps::delAccess($user);
+            (AccessHelps::getInstance())->delAccess($user);
             $cxtoken["del_access"] = true;
         }
 

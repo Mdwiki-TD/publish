@@ -20,21 +20,21 @@ class MediaWikiEditClientTest extends TestCase
     /**
      * Edit the Main Page in English Wikipedia.
      */
-    #[Group('readonly')]
+    #[Group('network')]
     public function testpublishEditEditsMainPage(): void
     {
         $access = [
-            'access_key' => "access_key",
+            'access_key'    => "access_key",
             'access_secret' => "access_secret",
         ];
         $apiParams = [
-            'action' => 'edit',
-            'title' => 'User:Sandbox/test Page',
+            'action'  => 'edit',
+            'title'   => 'User:Sandbox/test Page',
             // 'section' => 'new',
             'summary' => "",
-            'token' => "fake_token",
-            'text' => "",
-            'format' => 'json',
+            'token'   => "fake_token",
+            'text'    => "",
+            'format'  => 'json',
         ];
         $accessToken = new Token($access["access_key"], $access["access_secret"]);
 
@@ -44,7 +44,7 @@ class MediaWikiEditClientTest extends TestCase
         $expected_error = [
             'code' => 'mwoauth-invalid-authorization',
             'info' => 'The authorization headers in your request are not valid: Invalid consumer',
-            '*' => 'See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.',
+            '*'    => 'See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.',
         ];
 
         $this->assertIsArray($result);
