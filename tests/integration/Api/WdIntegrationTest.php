@@ -4,6 +4,7 @@ namespace Tests\Bots\Integration;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
+use Publish\Api\WdApi;
 
 /**
  * Integration Tests for src/bots/wd.php (namespace Publish\WD)
@@ -36,7 +37,7 @@ class WdIntegrationTest extends TestCase
     #[Group('readonly')]
     public function testGetAccessCredentialsReturnsDirectKeysWithoutDbCall(): void
     {
-        $result = \Publish\WD\getAccessCredentials('anyuser', 'direct_key', 'direct_secret');
+        $result = WdApi::getAccessCredentials('anyuser', 'direct_key', 'direct_secret');
 
         $this->assertIsArray($result);
         $this->assertCount(2, $result);
@@ -50,7 +51,7 @@ class WdIntegrationTest extends TestCase
     #[Group('readonly')]
     public function testGetAccessCredentialsReturnsNullForNonExistentUser(): void
     {
-        $result = \Publish\WD\getAccessCredentials('__user_that_does_not_exist__', '', '');
+        $result = WdApi::getAccessCredentials('__user_that_does_not_exist__', '', '');
 
         $this->assertNull($result);
     }
@@ -66,10 +67,10 @@ class WdIntegrationTest extends TestCase
     public function testLinkToWikidataReturnsErrorArrayForMissingCredentials(): void
     {
         $access = [
-            'access_key' => "", // empty access_key
+            'access_key'    => "", // empty access_key
             'access_secret' => "",  // empty access_secret
         ];
-        $result = \Publish\WD\LinkToWikidata(
+        $result = WdApi::LinkToWikidata(
             'SomeTitle',
             'fr',
             '__nonexistent_user__',
@@ -89,11 +90,11 @@ class WdIntegrationTest extends TestCase
     public function testLinkToWikidataAlwaysIncludesQidInResult(): void
     {
         $access = [
-            'access_key' => "", // empty access_key
+            'access_key'    => "", // empty access_key
             'access_secret' => "",  // empty access_secret
         ];
         // No credentials → early error, but qid should still be present
-        $result = \Publish\WD\LinkToWikidata(
+        $result = WdApi::LinkToWikidata(
             'AnyTitle',
             'de',
             '__nonexistent_user__',

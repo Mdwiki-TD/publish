@@ -4,7 +4,7 @@
 namespace Publish\Http;
 
 use Publish\MdwikiSql\AccessHelps;
-use function Publish\Helps\pub_test_print;
+use Publish\Logger;
 use Publish\Cors;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 
@@ -120,7 +120,7 @@ class CxTokenEndpoint
         $apiResult = json_decode($response, true);
 
         if ($apiResult === null || isset($apiResult['error'])) {
-            pub_test_print("<br>getCxToken: Error: " . json_last_error() . " " . json_last_error_msg());
+            Logger::debug("<br>getCxToken: Error: " . json_last_error() . " " . json_last_error_msg());
         }
 
         return $apiResult;

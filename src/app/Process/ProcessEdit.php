@@ -9,11 +9,10 @@ use Publish\MediaWikiClient\MediaWikiEditClient;
 use Publish\Process\EditProcessLog;
 use Publish\MdwikiSql\AccessHelps;
 use Publish\Utils\StartUtils;
-
-use function Publish\Helps\pub_test_print;
-use function Publish\WD\LinkToWikidata;
-use function Publish\FilesHelps\to_do;
+use Publish\Logger;
+use Publish\Utils\FilesHelps;
 use Publish\Api\WikiApi;
+use Publish\Api\WdApi;
 
 class ProcessEdit
 {
@@ -41,19 +40,19 @@ class ProcessEdit
     public function retryWithFallbackUser($sourcetitle, $lang, $title, $user): array
     {
         $linkTowd = [];
-        pub_test_print("getCsrfTokenData failed for user: $user, retrying with " . self::FALLBACK_USER);
+        Logger::debug("getCsrfTokenData failed for user: $user, retrying with " . self::FALLBACK_USER);
 
         // Get fresh credentials from database
         $fallbackAccess = AccessHelps::getAccess(self::FALLBACK_USER);
 
         if (!empty($fallbackAccess)) {
-            $linkTowd = LinkToWikidata($sourcetitle, $lang, self::FALLBACK_USER, $title, $fallbackAccess);
+            $linkTowd = WdApi::LinkToWikidata($sourcetitle, $lang, self::FALLBACK_USER, $title, $fallbackAccess);
 
             // Add a note that fallback was used
             if (!isset($linkTowd['error'])) {
                 $linkTowd['fallback_user'] = self::FALLBACK_USER;
                 $linkTowd['original_user'] = $user;
-                pub_test_print("Successfully linked using " . self::FALLBACK_USER . " fallback credentials");
+                Logger::debug("Successfully linked using " . self::FALLBACK_USER . " fallback credentials");
             }
         }
         return $linkTowd;
@@ -68,7 +67,7 @@ class ProcessEdit
         $linkTowd = [];
 
         try {
-            $linkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access);
+            $linkTowd = WdApi::LinkToWikidata($sourcetitle, $lang, $user, $title, $access);
             // Check if the error is getCsrfTokenData failure and user is not already the fallback user
             if (
                 isset($linkTowd['error'])
@@ -79,7 +78,7 @@ class ProcessEdit
             }
             // Log errors if they still exist after retry
         } catch (\Exception $e) {
-            pub_test_print($e->getMessage());
+            Logger::debug($e->getMessage());
         }
 
         if (isset($linkTowd['error'])) {
@@ -94,7 +93,7 @@ class ProcessEdit
             ];
             // if str($linkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
             $fileName = StartUtils::get_errors_file($linkTowd['error'], "wd_errors");
-            to_do($tab3, $fileName, $randId);
+            FilesHelps::to_do($tab3, $fileName, $randId);
 
             $repository = new PublishReportsRepository();
             $repository->insertPublishReports(
@@ -158,7 +157,7 @@ class ProcessEdit
 
     private function logResult(array $tab, $user, string $toDoFile, $randId): void
     {
-        to_do($tab, $toDoFile, $randId);
+        FilesHelps::to_do($tab, $toDoFile, $randId);
 
         $repository = new PublishReportsRepository();
         $repository->insertPublishReports(

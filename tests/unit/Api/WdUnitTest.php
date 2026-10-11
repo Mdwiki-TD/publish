@@ -4,11 +4,13 @@ namespace Tests\Bots\Unit;
 
 use PHPUnit\Framework\TestCase;
 
+use Publish\Api\WdApi;
+
 class WdUnitTest extends TestCase
 {
     public function testGetAccessCredentialsReturnsSuppliedKeysDirectly(): void
     {
-        $result = \Publish\WD\getAccessCredentials(
+        $result = WdApi::getAccessCredentials(
             'user',
             'my_key',
             'my_secret'
@@ -19,7 +21,7 @@ class WdUnitTest extends TestCase
 
     public function testGetAccessCredentialsReturnsTwoElements(): void
     {
-        $result = \Publish\WD\getAccessCredentials(
+        $result = WdApi::getAccessCredentials(
             'user',
             'k',
             's'
@@ -30,7 +32,7 @@ class WdUnitTest extends TestCase
 
     public function testGetAccessCredentialsReturnsNullForEmptyKeys(): void
     {
-        $result = \Publish\WD\getAccessCredentials(
+        $result = WdApi::getAccessCredentials(
             'user',
             '',
             ''
@@ -45,7 +47,7 @@ class WdUnitTest extends TestCase
             'access_key' => "",
             'access_secret' => "",  // empty access_secret
         ];
-        $result = \Publish\WD\LinkToWikidata(
+        $result = WdApi::LinkToWikidata(
             'Title',
             'es',
             'ghost_user',
@@ -63,7 +65,7 @@ class WdUnitTest extends TestCase
             'access_key' => "only_key",
             'access_secret' => "",  // empty access_secret
         ];
-        $result = \Publish\WD\LinkToWikidata(
+        $result = WdApi::LinkToWikidata(
             'Title',
             'es',
             'user',

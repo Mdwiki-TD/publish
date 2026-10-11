@@ -39,4 +39,4 @@ putenv('CRYPTO_KEY=' . \Defuse\Crypto\Key::createNewRandomKey()->saveToAsciiSafe
 $_SERVER['SERVER_NAME'] = 'localhost';
 
 // Load vendor autoloader
-include_once dirname(__DIR__) . '/src/app/include.php';
+include_once dirname(__DIR__) . '/src/app/bootstrap.php';

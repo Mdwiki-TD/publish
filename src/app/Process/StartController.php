@@ -6,7 +6,7 @@ use Publish\AddToDb\PublishReportsRepository;
 use Publish\Process\ProcessEdit;
 
 use function Publish\EditProcess\text_changes;
-use function Publish\Helps\pub_test_print;
+use Publish\Logger;
 use function Publish\FilesHelps\to_do;
 use Publish\MdwikiSql\AccessHelps;
 use Publish\Utils\StartUtils;
@@ -157,8 +157,8 @@ class StartController
 
     private function render(array $response): void
     {
-        pub_test_print("\n<br>");
-        pub_test_print("\n<br>");
+        Logger::debug("\n<br>");
+        Logger::debug("\n<br>");
 
         print (json_encode($response, JSON_PRETTY_PRINT));
     }

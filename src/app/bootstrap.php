@@ -14,15 +14,13 @@ spl_autoload_register(static function (string $class): void {
         return;
     }
     $relative = substr($class, strlen($prefix));
-    $file     = __DIR__ . '/' . str_replace('\\', '/', $relative) . '.php';
+    $file = __DIR__ . '/' . str_replace('\\', '/', $relative) . '.php';
     if (is_file($file)) {
         require $file;
     }
 });
 
 include_once __DIR__ . '/text_edit.php';
-
-include_once __DIR__ . '/bots/include.php';
 
 $home = getenv('HOME') ?: ($_SERVER['HOME'] ?? "");
 
