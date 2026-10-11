@@ -83,7 +83,7 @@ class StartController
         if ($titleData) {
             $words = $trType === "lead"
                 ? $titleData['w_lead_words'] ?? 0
-                : $titleData['w_tr_words'] ?? 0;
+                : $titleData['w_all_words'] ?? 0;
         }
 
         $tab['words'] = $words;

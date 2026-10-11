@@ -39,7 +39,8 @@ class AccessHelps
                 w.w_title = ?
         SQL;
 
-        return $this->db->fetchQuery($query, [$title]);
+        $rows = $this->db->fetchQuery($query, [$title]);
+        return $rows[0] ?? [];
     }
 
     public function getAccess(string $user): array
