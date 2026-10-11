@@ -10,9 +10,8 @@ include_once __DIR__ . "/reports_config.php";
 $publishReportsPath = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
 
 if (empty($publishReportsPath)) {
-    $publishReportsPath = getenv("HOME") . "/data/publish_reports_data/reports_by_day";
+    $publishReportsPath = getenv("HOME") . "/data/publish_reports_data";
 }
-;
 
 
 // open_file.php?report=bbbb&year=2025&month=04&day=15&name=success.json
@@ -43,7 +42,7 @@ if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name) || !preg_match('/^[a-zA-Z0-9_.-]+$
     exit;
 }
 
-$filePath = $publishReportsPath . "/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
+$filePath = rtrim($publishReportsPath, '/') . "/reports_by_day/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
 
 $data = [];
 if (file_exists($filePath)) {

@@ -13,13 +13,11 @@ use Publish\Api\WikiApi;
  */
 class WikiApiTest extends TestCase
 {
-    private WikiApi              $wikiApi;
-    private HttpClientInterface $mockHttpClient;
+    private WikiApi $wikiApi;
 
     protected function setUp(): void
     {
-        $this->mockHttpClient = $this->createStub(HttpClientInterface::class);
-        $this->wikiApi = new WikiApi($this->mockHttpClient);
+        $this->wikiApi = new WikiApi();
     }
     // -----------------------------------------------------------------------
     // GetTitleInfo – Real HTTP request to Wikipedia API
@@ -111,7 +109,6 @@ class WikiApiTest extends TestCase
      * Non-existent language → cURL exception → should return null, not crash.
      */
     #[Group('network')]
-    #[Group('network')]
     public function testGetTitleInfoReturnsNullForInvalidLang(): void
     {
         $this->markTestSkipped(
@@ -123,5 +120,22 @@ class WikiApiTest extends TestCase
         $result = $this->wikiApi->GetTitleInfo('SomePage', 'zz_invalid_lang_xyz');
 
         $this->assertNull($result);
+    }
+
+    /**
+     * Unit test using stubbed HttpClientInterface with configured response.
+     */
+    public function testGetTitleInfoWithStubbedHttpClient(): void
+    {
+        $mockHttpClient = $this->createStub(HttpClientInterface::class);
+        $mockHttpClient->method('get')->willReturn('{"query":{"pages":[{"pageid":123,"ns":0,"title":"Test"}]}}');
+
+        $wikiApi = new WikiApi($mockHttpClient);
+        $result = $wikiApi->GetTitleInfo('Test', 'en');
+
+        $this->assertIsArray($result);
+        $this->assertSame(123, $result['pageid']);
+        $this->assertSame(0, $result['ns']);
+        $this->assertSame('Test', $result['title']);
     }
 }

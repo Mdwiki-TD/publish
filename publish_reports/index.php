@@ -10,11 +10,13 @@ include_once __DIR__ . "/reports_config.php";
 $publishReportsPath = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
 
 if (empty($publishReportsPath)) {
-    $publishReportsPath = getenv("HOME") . "/data/publish_reports_data/reports_by_day";
+    $publishReportsPath = getenv("HOME") . "/data/publish_reports_data";
 }
 
+$publishReportsDirByDay = rtrim($publishReportsPath, '/') . "/reports_by_day/";
+
 if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
-    define("PUBLISH_REPORTS_DIR_BY_DAY", $publishReportsPath);
+    define("PUBLISH_REPORTS_DIR_BY_DAY", $publishReportsDirByDay);
 }
 
 $hoste = ($_SERVER["SERVER_NAME"] == "localhost")
@@ -253,10 +255,10 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
 function makeMonthReports($year, $month)
 {
     // $monthDir = PUBLISH_REPORTS_DIR_BY_DAY . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
-    $monthDirPath = PUBLISH_REPORTS_DIR_BY_DAY . "/$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
+    $monthDirPath = PUBLISH_REPORTS_DIR_BY_DAY . "$year/" . str_pad($month, 2, '0', STR_PAD_LEFT);
 
     if (!is_dir($monthDirPath)) {
-        $monthDirPath = PUBLISH_REPORTS_DIR_BY_DAY . "/$year/01";
+        $monthDirPath = PUBLISH_REPORTS_DIR_BY_DAY . "$year/01";
     }
 
     if (!is_dir($monthDirPath)) {
