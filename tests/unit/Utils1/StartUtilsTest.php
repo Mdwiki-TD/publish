@@ -5,7 +5,7 @@ namespace Tests\Bots;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for start_utils.php
+ * Tests for StartUtils.php
  */
 class StartUtilsTest extends TestCase
 {
