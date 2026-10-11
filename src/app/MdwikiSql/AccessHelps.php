@@ -8,9 +8,11 @@ class AccessHelps
 {
     private static ?self $instance = null;
 
-    public function __construct(
-        private Database $db = new Database(),
-    ) {
+    private Database $db;
+
+    public function __construct(?Database $db = null)
+    {
+        $this->db = $db ?? new Database();
     }
 
     public static function getInstance(): self

@@ -17,13 +17,13 @@ class WdApi
     private static ?self        $instance       = null;
 
     public function __construct(
-        ?Database $db = null,
+        ?DatabaseInterface $db = null,
         ?MediaWikiEditClient $editClient = null,
         ?AccessHelps $accessHelps = null,
     ) {
         $this->db = $db ?? new Database();
         $this->editClient = $editClient ?? new MediaWikiEditClient();
-        $this->accessHelps = $accessHelps ?? new AccessHelps($this->db);
+        $this->accessHelps = $accessHelps ?? AccessHelps::getInstance();
 
         $settings = Settings::getInstance();
         $this->wikidataDomain = $settings->wikidataDomain;
@@ -71,7 +71,7 @@ class WdApi
         }
         return $result;
     }
-    public static function getAccessCredentials(
+    public function getAccessCredentials(
         string $user,
         string $accessKey,
         string $accessSecret

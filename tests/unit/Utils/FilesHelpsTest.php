@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Publish\Tests\Bots;
 
+use Publish\Utils\FilesHelps;
 use PHPUnit\Framework\TestCase;
 
 final class FilesHelpsTest extends TestCase
@@ -22,7 +23,7 @@ final class FilesHelpsTest extends TestCase
     public function testCheckDirsCreatesDirectoryStructure(): void
     {
         $randId = 'test-' . bin2hex(random_bytes(4));
-        $result = \Publish\FilesHelps\check_dirs($randId, 'reports_by_day');
+        $result = FilesHelps::check_dirs($randId, 'reports_by_day');
         $this->assertNotEmpty($result);
         $this->assertStringContainsString('reports_by_day', $result);
     }
@@ -33,7 +34,7 @@ final class FilesHelpsTest extends TestCase
         putenv("PUBLISH_REPORTS_PATH=$customPath");
 
         $randId = 'test-custom-' . bin2hex(random_bytes(4));
-        $result = \Publish\FilesHelps\check_dirs($randId, 'reports_by_day');
+        $result = FilesHelps::check_dirs($randId, 'reports_by_day');
 
         $this->assertStringStartsWith($customPath, $result);
         $this->assertTrue(is_dir($result));
@@ -42,7 +43,7 @@ final class FilesHelpsTest extends TestCase
     public function testCheckDirsCreatesYearMonthDayStructure(): void
     {
         $randId = 'test-structure-' . bin2hex(random_bytes(4));
-        $result = \Publish\FilesHelps\check_dirs($randId, 'reports_by_day');
+        $result = FilesHelps::check_dirs($randId, 'reports_by_day');
 
         $this->assertStringContainsString(date('Y'), $result);
         $this->assertStringContainsString(date('m'), $result);

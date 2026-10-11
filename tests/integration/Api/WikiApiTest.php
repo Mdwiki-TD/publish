@@ -14,7 +14,7 @@ use Publish\Api\WikiApi;
 class WikiApiTest extends TestCase
 {
     private WikiApi              $wikiApi;
-    private ?HttpClientInterface $mockHttpClient;
+    private HttpClientInterface $mockHttpClient;
 
     protected function setUp(): void
     {

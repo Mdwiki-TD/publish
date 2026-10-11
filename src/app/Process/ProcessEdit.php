@@ -4,7 +4,7 @@ namespace Publish\Process;
 
 use MediaWiki\OAuthClient\Token;
 
-use Publish\AddToDb\PublishReportsRepository;
+use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 use Publish\Process\EditProcessLog;
 use Publish\MdwikiSql\AccessHelps;
@@ -24,6 +24,7 @@ class ProcessEdit
     private PublishReportsRepository $repository;
     private MediaWikiEditClient      $editClient;
     private WdApi                    $wdApi;
+    private WikiApi                  $wikiApi;
 
     public function __construct(
         ?EditProcessLog $editProcessLog = null,
@@ -31,9 +32,11 @@ class ProcessEdit
         ?AccessHelps $accessHelps = null,
         ?MediaWikiEditClient $editClient = null,
         ?PublishReportsRepository $repository = null,
+        ?WikiApi $wikiApi = null,
     ) {
         $this->editProcessLog = $editProcessLog ?? new EditProcessLog();
         $this->wdApi = $wdApi ?? WdApi::getInstance();
+        $this->wikiApi = $wikiApi ?? new WikiApi();
         $this->accessHelps = $accessHelps ?? AccessHelps::getInstance();
         $this->editClient = $editClient ?? new MediaWikiEditClient();
         $this->repository = $repository ?? PublishReportsRepository::getInstance();
@@ -41,7 +44,7 @@ class ProcessEdit
 
     public function shouldAddedToWikidata(string $lang, string $title): bool
     {
-        $pageInformations = WikiApi::GetTitleInfo($title, $lang);
+        $pageInformations = $this->wikiApi->GetTitleInfo($title, $lang);
         if (!$pageInformations) {
             return false;
         }

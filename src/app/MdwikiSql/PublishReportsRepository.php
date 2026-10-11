@@ -1,5 +1,5 @@
 <?php
-namespace Publish\AddToDb;
+namespace Publish\MdwikiSql;
 
 use Publish\MdwikiSql\Database;
 
@@ -11,7 +11,7 @@ class PublishReportsRepository
      */
     private const ALLOWED_TABLES = ['pages', 'pages_users'];
 
-    private Database $db;
+    private DatabaseInterface $db;
 
     private static ?self $instance = null;
 
@@ -31,7 +31,7 @@ class PublishReportsRepository
      * class still works out of the box in production code, e.g.:
      *     new PublishReportsRepository()
      */
-    public function __construct(?Database $db = null)
+    public function __construct(?DatabaseInterface $db = null)
     {
         $this->db = $db ?? new Database();
     }

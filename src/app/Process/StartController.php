@@ -2,7 +2,7 @@
 
 namespace Publish\Process;
 
-use Publish\AddToDb\PublishReportsRepository;
+use Publish\MdwikiSql\PublishReportsRepository;
 
 use Publish\Process\ProcessEdit;
 use Publish\Process\EditProcess;
@@ -26,11 +26,22 @@ class StartController
 {
     private const DEFAULT_TR_TYPE = 'lead';
 
-    private ProcessEdit $processEdit;
+    private ProcessEdit              $processEdit;
+    private EditProcess              $editProcess;
+    private AccessHelps              $accessHelps;
+    private PublishReportsRepository $repository;
 
-    public function __construct(?ProcessEdit $processEdit = null)
-    {
+    public function __construct(
+        ?ProcessEdit $processEdit = null,
+        ?EditProcess $editProcess = null,
+        ?PublishReportsRepository $repository = null,
+        ?AccessHelps $accessHelps = null,
+    ) {
         $this->processEdit = $processEdit ?? new ProcessEdit();
+        $this->editProcess = $editProcess ?? new EditProcess();
+        $this->repository = $repository ?? new PublishReportsRepository();
+        $this->accessHelps = $accessHelps ?? AccessHelps::getInstance();
+
     }
 
     // ------------------------------------------------------------
@@ -52,7 +63,7 @@ class StartController
         $user = StartUtils::formatUser($request['user'] ?? '');
         $tab = $this->buildInitialTab($request, $user);
 
-        $access = (AccessHelps::getInstance())->getAccess($user);
+        $access = $this->accessHelps->getAccess($user);
         if (empty($access)) {
             return $this->handleNoAccess($user, $tab, $randId);
         }
@@ -66,7 +77,7 @@ class StartController
     /** Add words count, revid and summary to the tab. */
     private function enrichTab(array $tab, array $request, string $user, string $trType): array
     {
-        $titleData = (AccessHelps::getInstance())->loadTitleData($tab['title']);
+        $titleData = $this->accessHelps->loadTitleData($tab['title']);
 
         $words = 0;
         if ($titleData) {
@@ -95,7 +106,7 @@ class StartController
     /** Apply text fixes (refs, ...) and record whether anything changed. */
     private function prepareText(array &$tab, string $text): string
     {
-        $newText = EditProcess::text_changes($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $tab['revid']);
+        $newText = $this->editProcess->text_changes($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $tab['revid']);
 
         if (empty($newText)) {
             return $text;
@@ -143,8 +154,7 @@ class StartController
 
         FilesHelps::to_do($tab, "noaccess", $randId);
 
-        $repository = new PublishReportsRepository();
-        $repository->insertPublishReports(
+        $this->repository->insertPublishReports(
             $tab['title'],
             $user,
             $tab['lang'],

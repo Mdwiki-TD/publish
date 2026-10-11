@@ -1,22 +1,27 @@
 <?php
 namespace Publish\Process;
 
-use Publish\AddToDb\PublishReportsRepository;
+use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MdwikiSql\Database;
 
 class EditProcessLog
 {
     private const ALLOWED_TABLES = ['pages', 'pages_users'];
 
-    private Database $db;
+    private Database                 $db;
+    private PublishReportsRepository $repository;
 
-    public function __construct()
-    {
-        $this->db = new Database();
+    public function __construct(
+        ?PublishReportsRepository $repository = null,
+        ?Database $db = null,
+    ) {
+        $this->db = $db ?? new Database();
+        $this->repository = $repository ?? new PublishReportsRepository($this->db);
     }
+
     public function findExistsOrUpdate(string $title, string $lang, string $user, string $target, string $tableName): bool
     {
-        if (! in_array($tableName, self::ALLOWED_TABLES, true)) {
+        if (!in_array($tableName, self::ALLOWED_TABLES, true)) {
             error_log("findExistsOrUpdate: Invalid table name: $tableName");
             return false;
         }
@@ -71,8 +76,8 @@ class EditProcessLog
         string $trType
     ): array {
         $sourcetitle = str_replace("_", " ", $sourcetitle);
-        $target      = str_replace("_", " ", $target);
-        $user        = str_replace("_", " ", $user);
+        $target = str_replace("_", " ", $target);
+        $user = str_replace("_", " ", $user);
 
         if (empty($user) || empty($sourcetitle) || empty($lang)) {
             return [
@@ -83,10 +88,10 @@ class EditProcessLog
         }
 
         $campToCat = $this->retrieveCampaignCategories();
-        $cat       = $campToCat[$campaign] ?? '';
+        $cat = $campToCat[$campaign] ?? '';
 
         $useUserSql = $this->getUseUserSql($user, $target, $toUsersTable);
-        $tableName  = $useUserSql ? 'pages_users' : 'pages';
+        $tableName = $useUserSql ? 'pages_users' : 'pages';
 
         $exists = $this->findExistsOrUpdate($sourcetitle, $lang, $user, $target, $tableName);
 
@@ -98,8 +103,7 @@ class EditProcessLog
             ];
         }
 
-        $repository = new PublishReportsRepository();
-        $repository->insertPageTarget(
+        $this->repository->insertPageTarget(
             $sourcetitle,
             $trType,
             $cat,

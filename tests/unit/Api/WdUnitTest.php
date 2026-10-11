@@ -4,6 +4,7 @@ namespace Tests\Bots\Unit;
 
 use PHPUnit\Framework\TestCase;
 
+use Publish\MdwikiSql\DatabaseInterface;
 use Publish\Api\WdApi;
 
 class WdUnitTest extends TestCase
@@ -12,7 +13,8 @@ class WdUnitTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->api = new WdApi();
+        $dbMock = $this->createStub(DatabaseInterface::class);
+        $this->api = new WdApi($dbMock);
     }
 
     public function testGetAccessCredentialsReturnsSuppliedKeysDirectly(): void

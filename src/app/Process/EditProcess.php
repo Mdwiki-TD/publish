@@ -3,23 +3,33 @@
 namespace Publish\Process;
 
 use Publish\MdwikiSql\Database;
+
 class EditProcess
 {
+    private Database $db;
+
+    public function __construct(?Database $db = null)
+    {
+        $this->db = $db ?? new Database();
+    }
+
     /**
      * @return array<string, mixed>
      */
-    public static function getLanguagesSettings(string $langCode): array
+    private function getLanguagesSettings(string $langCode): array
     {
-        $query = "SELECT move_dots, expend, add_en_lang FROM language_settings where lang_code = ?";
+        $query = "SELECT move_dots, expend, add_en_lang
+            FROM language_settings
+            WHERE lang_code = ?
+        ";
 
-        $db = new Database();
-        $result = $db->fetchQuery($query, [$langCode]);
+        $result = $this->db->fetchQuery($query, [$langCode]);
 
         // Ensure we always return an array, fallback to empty array if index 0 does not exist
         return (isset($result[0]) && is_array($result[0])) ? $result[0] : [];
     }
 
-    public static function text_changes(
+    public function text_changes(
         string $sourcetitle,
         string $title,
         string $text,
@@ -27,7 +37,7 @@ class EditProcess
         int|string $mdwikiRevid
     ): string {
         if (function_exists('\WpRefs\FixPage\fix_page_with_setting')) {
-            $settings = self::getLanguagesSettings($lang);
+            $settings = $this->getLanguagesSettings($lang);
 
             // Cast database values safely to ?bool to strictly match fix_page_with_setting signature
             $moveDots = isset($settings['move_dots']) ? (bool) $settings['move_dots'] : null;

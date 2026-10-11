@@ -35,11 +35,15 @@ class CxTokenEndpoint
     /** Wiki must be a plain language code (e.g. "en", "ar", "zh-classical", "simple"); it is interpolated into the API URL. */
     private const WIKI_PATTERN = '/^[a-z]{2,12}(-[a-z0-9]+)?$/';
 
+    private AccessHelps         $accessHelps;
     private MediaWikiEditClient $client;
 
-    public function __construct(?MediaWikiEditClient $client = null)
-    {
+    public function __construct(
+        ?MediaWikiEditClient $client = null,
+        ?AccessHelps $accessHelps = null,
+    ) {
         $this->client = $client ?? new MediaWikiEditClient();
+        $this->accessHelps = $accessHelps ?? AccessHelps::getInstance();
     }
 
     // ------------------------------------------------------------
@@ -52,7 +56,7 @@ class CxTokenEndpoint
 
         $allowedDomain = Cors::isAllowed();
 
-        if (! $allowedDomain) {
+        if (!$allowedDomain) {
             $this->fail(403, 'Access denied. Requests are only allowed from authorized domains.');
         }
 
@@ -67,7 +71,7 @@ class CxTokenEndpoint
 
         // $wiki is interpolated into the request URL, so it must be a plain language code;
         // anything else (e.g. "evil.com/x?a=") would send the OAuth-signed request off-wiki.
-        if (! preg_match(self::WIKI_PATTERN, $wiki)) {
+        if (!preg_match(self::WIKI_PATTERN, $wiki)) {
             $this->fail(400, ['code' => 'badwiki', 'info' => 'invalid wiki']);
         }
 
@@ -80,8 +84,8 @@ class CxTokenEndpoint
 
     public function handleToken(string $wiki, string $user): array
     {
-        $user   = $this->resolveUserName($user);
-        $access = (AccessHelps::getInstance())->getAccess($user);
+        $user = $this->resolveUserName($user);
+        $access = $this->accessHelps->getAccess($user);
 
         if (empty($access)) {
             // set the status before any output, so the header cannot be "already sent"
@@ -96,7 +100,7 @@ class CxTokenEndpoint
         $cxtoken = $this->getCxToken($wiki, $access) ?? ['error' => 'no cxtoken'];
 
         if ($this->isInvalidAuthorization($cxtoken)) {
-            (AccessHelps::getInstance())->delAccess($user);
+            $this->accessHelps->delAccess($user);
             $cxtoken["del_access"] = true;
         }
 
@@ -139,7 +143,7 @@ class CxTokenEndpoint
 
     private function respond(array $data): void
     {
-        print(json_encode($data, JSON_PRETTY_PRINT));
+        print (json_encode($data, JSON_PRETTY_PRINT));
     }
 
     /** @param string|array $error message or {code, info} array */
