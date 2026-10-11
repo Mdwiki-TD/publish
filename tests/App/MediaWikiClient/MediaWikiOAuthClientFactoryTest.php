@@ -1,25 +1,23 @@
 <?php
 
-/**
- * Seed test for: MediaWikiOAuthClientFactory
- * Source: src/app/MediaWikiClient/MediaWikiOAuthClientFactory.php
- * TODO: write the actual tests.
- */
-
 declare(strict_types=1);
 
 namespace Tests\Publish\MediaWikiClient;
 
-use Publish\MediaWikiClient\MediaWikiOAuthClientFactory;
-
 use PHPUnit\Framework\TestCase;
+use Publish\MediaWikiClient\MediaWikiOAuthClientFactory;
+use Publish\MediaWikiClient\MediaWikiOAuthClientAdapter;
+
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(MediaWikiOAuthClientFactory::class)]
-class MediaWikiOAuthClientFactoryTest extends TestCase
+final class MediaWikiOAuthClientFactoryTest extends TestCase
 {
-    public function testPlaceholder(): void
+    public function testCreateForDomainReturnsAdapter(): void
     {
-        $this->markTestIncomplete('Tests for MediaWikiOAuthClientFactory are not written yet.');
+        $factory = new MediaWikiOAuthClientFactory('consumer_key', 'consumer_secret', 'UserAgent/1.0');
+        $adapter = $factory->createForDomain('https://en.wikipedia.org');
+
+        $this->assertInstanceOf(MediaWikiOAuthClientAdapter::class, $adapter);
     }
 }

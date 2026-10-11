@@ -1,25 +1,31 @@
 <?php
 
-/**
- * Seed test for: MediaWikiOAuthClientAdapter
- * Source: src/app/MediaWikiClient/MediaWikiOAuthClientAdapter.php
- * TODO: write the actual tests.
- */
-
 declare(strict_types=1);
 
 namespace Tests\Publish\MediaWikiClient;
 
+use PHPUnit\Framework\TestCase;
+use MediaWiki\OAuthClient\Client;
+use MediaWiki\OAuthClient\Token;
 use Publish\MediaWikiClient\MediaWikiOAuthClientAdapter;
 
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(MediaWikiOAuthClientAdapter::class)]
-class MediaWikiOAuthClientAdapterTest extends TestCase
+final class MediaWikiOAuthClientAdapterTest extends TestCase
 {
-    public function testPlaceholder(): void
+    public function testMakeOAuthCallDelegatesToClient(): void
     {
-        $this->markTestIncomplete('Tests for MediaWikiOAuthClientAdapter are not written yet.');
+        $token = new Token('key', 'secret');
+        $mockClient = $this->createMock(Client::class);
+        $mockClient->expects($this->once())
+            ->method('makeOAuthCall')
+            ->with($token, 'https://en.wikipedia.org/w/api.php', true, ['action' => 'query'])
+            ->willReturn('{"response":"ok"}');
+
+        $adapter = new MediaWikiOAuthClientAdapter($mockClient);
+        $response = $adapter->makeOAuthCall($token, 'https://en.wikipedia.org/w/api.php', true, ['action' => 'query']);
+
+        $this->assertSame('{"response":"ok"}', $response);
     }
 }

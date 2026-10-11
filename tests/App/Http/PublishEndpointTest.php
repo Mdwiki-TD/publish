@@ -1,25 +1,48 @@
 <?php
 
-/**
- * Seed test for: PublishEndpoint
- * Source: src/app/Http/PublishEndpoint.php
- * TODO: write the actual tests.
- */
-
 declare(strict_types=1);
 
 namespace Tests\Publish\Http;
 
-use Publish\Http\PublishEndpoint;
-
 use PHPUnit\Framework\TestCase;
+use Publish\Http\PublishEndpoint;
+use Publish\Process\StartController;
+
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PublishEndpoint::class)]
-class PublishEndpointTest extends TestCase
+final class PublishEndpointTest extends TestCase
 {
-    public function testPlaceholder(): void
+    private array $originalServer;
+
+    protected function setUp(): void
     {
-        $this->markTestIncomplete('Tests for PublishEndpoint are not written yet.');
+        $this->originalServer = $_SERVER;
+        putenv('PUBLISH_SECRET_CODE=secret123');
+    }
+
+    protected function tearDown(): void
+    {
+        $_SERVER = $this->originalServer;
+        putenv('PUBLISH_SECRET_CODE=');
+    }
+
+    public function testRunExecutesControllerWhenAuthorizedAndPost(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SERVER['HTTP_X_SECRET_KEY'] = 'secret123';
+        $_POST = ['test' => 'data'];
+
+        $mockController = $this->createMock(StartController::class);
+        $mockController->expects($this->once())
+            ->method('run')
+            ->with(['test' => 'data']);
+
+        $endpoint = new PublishEndpoint($mockController);
+
+        // Capture header output / buffer
+        ob_start();
+        $endpoint->run();
+        ob_end_clean();
     }
 }
