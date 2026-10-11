@@ -38,7 +38,7 @@ class WikiApi
                 return null;
 
             // { "query": { "pages": [ { "pageid": 5049507, "ns": 2, "title": "利用者:Mr. Ibrahem/オランザピン/サミドルファン" } ] } }
-            $result = $result['query']['pages'][0] ?: null;
+            $result = $result['query']['pages'][0] ?? null;
         } catch (\Exception $e) {
             Logger::debug("GetTitleInfo: $e");
             $result = null;
