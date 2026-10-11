@@ -10,7 +10,7 @@ function getLanguagesSettings(string $langCode): array
 {
     $query = "SELECT move_dots, expend, add_en_lang FROM language_settings where lang_code = ?";
 
-    $db     = new Database();
+    $db = new Database();
     $result = $db->fetchQuery($query, [$langCode]);
 
     // Ensure we always return an array, fallback to empty array if index 0 does not exist
@@ -22,14 +22,14 @@ function text_changes(
     string $title,
     string $text,
     string $lang,
-    int | string $mdwikiRevid
+    int|string $mdwikiRevid
 ): string {
     if (function_exists('\WpRefs\FixPage\fix_page_with_setting')) {
         $settings = getLanguagesSettings($lang);
 
         // Cast database values safely to ?bool to strictly match fix_page_with_setting signature
-        $moveDots  = isset($settings['move_dots']) ? (bool) $settings['move_dots'] : null;
-        $expand    = isset($settings['expend']) ? (bool) $settings['expend'] : null;
+        $moveDots = isset($settings['move_dots']) ? (bool) $settings['move_dots'] : null;
+        $expand = isset($settings['expend']) ? (bool) $settings['expend'] : null;
         $addEnLang = isset($settings['add_en_lang']) ? (bool) $settings['add_en_lang'] : null;
         /*
         function fix_page_with_setting(

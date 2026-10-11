@@ -7,11 +7,11 @@ use MediaWiki\OAuthClient\Token;
 use Publish\AddToDb\PublishReportsRepository;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 use Publish\Process\EditProcessLog;
+use Publish\MdwikiSql\AccessHelps;
 
 use function Publish\Helps\pub_test_print;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
-use function Publish\AccessHelps\get_access_from_db;
 use function Publish\WikiApi\GetTitleInfo;
 use function Publish\StartUtils\get_errors_file;
 
@@ -44,7 +44,7 @@ class ProcessEdit
         pub_test_print("getCsrfTokenData failed for user: $user, retrying with " . self::FALLBACK_USER);
 
         // Get fresh credentials from database
-        $fallbackAccess = get_access_from_db(self::FALLBACK_USER);
+        $fallbackAccess = AccessHelps::getAccess(self::FALLBACK_USER);
 
         if (!empty($fallbackAccess)) {
             $linkTowd = LinkToWikidata($sourcetitle, $lang, self::FALLBACK_USER, $title, $fallbackAccess);

@@ -30,7 +30,7 @@ This module contains utility functions and helper classes used throughout the ap
 
 ```
 CurlHttpClient.php ──→ (used by revids_bot.php, WikiApi.php)
-crypt_helps.php   ──→ (used by sql/access_helps.php)
+crypt_helps.php   ──→ (used by sql/AccessHelps.php)
 files_helps.php   ──→ (used by process/ProcessEdit.php)
 wd.php            ──→ (used by process/ProcessEdit.php)
 revids_bot.php    ──→ (used by process/start.php)

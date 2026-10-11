@@ -11,7 +11,6 @@ src/
 │   │   ├── helps.php
 │   │   ├── index.php
 │   │   ├── README.md
-│   │   ├── revids_bot.php
 │   │   └── wd.php
 │   ├── CurlRequests/
 │   │   ├── CurlHttpClient.php
@@ -31,7 +30,7 @@ src/
 │   │   ├── ProcessEdit.php
 │   │   └── StartController.php
 │   ├── sql/
-│   │   ├── access_helps.php
+│   │   ├── AccessHelps.php
 │   │   ├── mdwiki_sql.php
 │   │   └── README.md
 │   ├── utils/
