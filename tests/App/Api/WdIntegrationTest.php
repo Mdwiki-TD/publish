@@ -6,9 +6,6 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Publish\Api\WdApi;
 
-use PHPUnit\Framework\Attributes\CoversClass;
-
-#[CoversClass(WdApi::class)]
 class WdIntegrationTest extends TestCase
 {
     private WdApi $api;
