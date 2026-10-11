@@ -24,11 +24,10 @@
 
 ```
 app/
-├── include.php        # Master bootstrap - loads all modules and external dependencies
+├── bootstrap.php        # Master bootstrap - loads all modules and external dependencies
 ├── config.php         # OAuth consumer key/secret from environment
 ├── cors.php           # CORS domain validation (referer/origin checking)
 ├── load_env.php       # Development environment variables (WARNING: contains credentials)
-├── text_edit.php      # Wikitext preprocessing via fix_refs integration
 ├── api/               # Wikipedia API interaction layer
 │   ├── DoEdit.php    # OAuth-authenticated edit execution
 │   └── WikiApi.php   # Title/page information queries
@@ -63,11 +62,10 @@ app/
 ### Module Dependency Graph
 
 ```
-include.php (bootstrap)
+bootstrap.php (bootstrap)
   ├── vendor_load.php → Composer autoloader
   ├── config.php → OAuth credentials
   ├── cors.php → Domain validation
-  ├── text_edit.php → fix_refs integration
   ├── utils/start_utils.php → Formatting, error classification
   ├── process/
   │   ├── start.php → Main orchestrator
@@ -99,7 +97,7 @@ include.php (bootstrap)
 1. Entry point (index.php/token.php)
 2. CORS validation (cors.php)
 3. Secret key verification (index.php)
-4. Bootstrap all modules (include.php)
+4. Bootstrap all modules (bootstrap.php)
 5. User access validation (sql/AccessHelps.php)
 6. Revision ID lookup
 7. Wikitext preprocessing (text_edit.php → fix_refs)
@@ -115,7 +113,7 @@ include.php (bootstrap)
 
 ### Design Patterns
 
--   **Bootstrap/Include pattern** - `include.php` loads all dependencies manually
+-   **Bootstrap/Include pattern** - `bootstrap.php` loads all dependencies manually
 -   **Procedural with namespaces** - Functions organized under `Publish\*` namespaces
 -   **Gateway pattern** - `Database` class wraps PDO
 -   **Pipeline pattern** - Request flows through sequential processing stages

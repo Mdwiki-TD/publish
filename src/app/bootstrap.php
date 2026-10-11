@@ -20,7 +20,6 @@ spl_autoload_register(static function (string $class): void {
     }
 });
 
-include_once __DIR__ . '/text_edit.php';
 
 $home = getenv('HOME') ?: ($_SERVER['HOME'] ?? "");
 

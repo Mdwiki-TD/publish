@@ -1,35 +1,26 @@
 ```
 tests/
 ├── integration/
-│   ├── api/
+│   ├── Api/
+│   │   ├── WdIntegrationTest.php
 │   │   └── WikiApiTest.php
-│   ├── bots/
-│   │   ├── CurlHttpClientTest.php
-│   │   └── WdIntegrationTest.php
+│   ├── CurlRequests/
+│   │   └── CurlHttpClientTest.php
 │   ├── cxtoken/
 │   ├── MediaWikiClient/
 │   │   └── MediaWikiEditClientTest.php
-│   ├── process/
-│   │   ├── ProcessEditTest.php
-│   │   └── StartTest.php
-│   └── sql/
-│       └── MdwikiSqlTest.php
+│   └── process/
+│       ├── ProcessEditTest.php
+│       └── StartTest.php
 ├── unit/
-│   ├── api/
-│   ├── bots/
-│   │   ├── CryptHelpsTest.php
-│   │   ├── FilesHelpsTest.php
-│   │   ├── HelpsTest.php
-│   │   ├── RevidsTest.php
-│   │   └── WdUnitTest.php
-│   ├── cxtoken/
-│   ├── mw_client/
-│   ├── process/
-│   │   └── EditProcessTest.php
-│   ├── sql/
-│   │   ├── AccessHelpsTest.php
+│   ├── AddToDb/
 │   │   └── PublishReportsRepositoryTest.php
-│   ├── utils/
+│   ├── Api/
+│   │   └── WdUnitTest.php
+│   ├── Process/
+│   │   └── EditProcessTest.php
+│   ├── Utils/
+│   │   ├── FilesHelpsTest.php
 │   │   └── StartUtilsTest.php
 │   └── CorsTest.php
 ├── bootstrap.php

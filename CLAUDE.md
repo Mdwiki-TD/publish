@@ -23,7 +23,7 @@ Add `?test` query parameter to any request to enable verbose error reporting and
 
 ### Request Flow
 
-1. `src/index.php` - Entry point, includes dependencies via `include.php`
+1. `src/index.php` - Entry point, includes dependencies via `bootstrap.php`
 2. `src/app/start.php` - Main `run()` function orchestrates the publish workflow:
     - Validates user access credentials from database
     - Gets revision ID for source article

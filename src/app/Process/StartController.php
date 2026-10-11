@@ -3,11 +3,12 @@
 namespace Publish\Process;
 
 use Publish\AddToDb\PublishReportsRepository;
-use Publish\Process\ProcessEdit;
 
-use function Publish\EditProcess\text_changes;
+use Publish\Process\ProcessEdit;
+use Publish\Process\EditProcess;
+
+use Publish\Utils\FilesHelps;
 use Publish\Logger;
-use function Publish\FilesHelps\to_do;
 use Publish\MdwikiSql\AccessHelps;
 use Publish\Utils\StartUtils;
 
@@ -94,7 +95,7 @@ class StartController
     /** Apply text fixes (refs, ...) and record whether anything changed. */
     private function prepareText(array &$tab, string $text): string
     {
-        $newText = text_changes($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $tab['revid']);
+        $newText = EditProcess::text_changes($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $tab['revid']);
 
         if (empty($newText)) {
             return $text;
@@ -140,7 +141,7 @@ class StartController
         ];
         $tab['result_to_cx'] = $response;
 
-        to_do($tab, "noaccess", $randId);
+        FilesHelps::to_do($tab, "noaccess", $randId);
 
         $repository = new PublishReportsRepository();
         $repository->insertPublishReports(

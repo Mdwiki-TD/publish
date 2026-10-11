@@ -82,7 +82,7 @@ vendor/bin/phpstan analyse src --level=5
 -   Test files in `tests/` directory with `Test.php` suffix
 -   Extend `PHPUnit\Framework\TestCase`
 -   Use `declare(strict_types=1);` in all test files
--   Mock database connections; don't load `include.php` in tests
+-   Mock database connections; don't load `bootstrap.php` in tests
 -   Backup/restore `$_REQUEST` when testing request-dependent code
 
 ## Architecture Notes

@@ -16,7 +16,7 @@ use Publish\Api\WdApi;
 
 class ProcessEdit
 {
-    private const FALLBACK_USER = 'Mr. Ibrahem';
+    private const FALLBACK_USER     = 'Mr. Ibrahem';
     private const USER_TABLE_FILTER = 'abusefilter-warning-39';
 
     private EditProcessLog $editProcessLog;
@@ -83,13 +83,13 @@ class ProcessEdit
 
         if (isset($linkTowd['error'])) {
             $tab3 = [
-                'error' => $linkTowd['error'],
-                'qid' => $linkTowd['qid'] ?? "",
-                'title' => $title,
+                'error'       => $linkTowd['error'],
+                'qid'         => $linkTowd['qid'] ?? "",
+                'title'       => $title,
                 'sourcetitle' => $sourcetitle,
-                'fallback' => $linkTowd['fallback'] ?? "",
-                'lang' => $lang,
-                'username' => $user
+                'fallback'    => $linkTowd['fallback'] ?? "",
+                'lang'        => $lang,
+                'username'    => $user
             ];
             // if str($linkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
             $fileName = StartUtils::get_errors_file($linkTowd['error'], "wd_errors");
@@ -111,12 +111,12 @@ class ProcessEdit
     public static function prepareApiParams($title, $summary, $text, $request): array
     {
         $apiParams = [
-            'action' => 'edit',
-            'title' => $title,
+            'action'  => 'edit',
+            'title'   => $title,
             // 'section' => 'new',
             'summary' => $summary,
-            'text' => $text,
-            'format' => 'json',
+            'text'    => $text,
+            'format'  => 'json',
         ];
 
         // wpCaptchaId, wpCaptchaWord
@@ -198,8 +198,8 @@ class ProcessEdit
             $toUsersTable,
             $tab['campaign'],
             $tab['sourcetitle'],
-            (string)($tab['revid'] ?? ""),
-            (string)$tab['words'],
+            (string) ($tab['revid'] ?? ""),
+            (string) $tab['words'],
             $trType
         );
         return $editit;
