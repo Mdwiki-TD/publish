@@ -11,19 +11,22 @@ use Publish\Process\EditProcess;
 use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MdwikiSql\AccessHelps;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+
+#[CoversClass(StartController::class)]
 final class StartControllerTest extends TestCase
 {
     public function testEnrichTabUsesWAllWordsWhenTrTypeIsNotLead(): void
     {
         $mockAccessHelps = $this->createMock(AccessHelps::class);
         $mockAccessHelps->method('getAccess')->willReturn([
-            'access_key' => 'key',
+            'access_key'    => 'key',
             'access_secret' => 'secret',
         ]);
         $mockAccessHelps->method('loadTitleData')->willReturn([
             'w_lead_words' => 50,
-            'w_all_words' => 200,
-            'revid' => 123,
+            'w_all_words'  => 200,
+            'revid'        => 123,
         ]);
 
         $mockProcessEdit = $this->createMock(ProcessEdit::class);
@@ -53,10 +56,10 @@ final class StartControllerTest extends TestCase
         );
 
         $request = [
-            'tr_type' => 'all',
-            'title' => 'Test_Title',
-            'user' => 'TestUser',
-            'target' => 'en',
+            'tr_type'     => 'all',
+            'title'       => 'Test_Title',
+            'user'        => 'TestUser',
+            'target'      => 'en',
             'sourcetitle' => 'Source_Title',
         ];
 
@@ -68,13 +71,13 @@ final class StartControllerTest extends TestCase
     {
         $mockAccessHelps = $this->createMock(AccessHelps::class);
         $mockAccessHelps->method('getAccess')->willReturn([
-            'access_key' => 'key',
+            'access_key'    => 'key',
             'access_secret' => 'secret',
         ]);
         $mockAccessHelps->method('loadTitleData')->willReturn([
             'w_lead_words' => 50,
-            'w_all_words' => 200,
-            'revid' => 123,
+            'w_all_words'  => 200,
+            'revid'        => 123,
         ]);
 
         $mockProcessEdit = $this->createMock(ProcessEdit::class);
@@ -104,10 +107,10 @@ final class StartControllerTest extends TestCase
         );
 
         $request = [
-            'tr_type' => 'lead',
-            'title' => 'Test_Title',
-            'user' => 'TestUser',
-            'target' => 'en',
+            'tr_type'     => 'lead',
+            'title'       => 'Test_Title',
+            'user'        => 'TestUser',
+            'target'      => 'en',
             'sourcetitle' => 'Source_Title',
         ];
 

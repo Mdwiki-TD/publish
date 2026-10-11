@@ -8,10 +8,9 @@ use PHPUnit\Framework\Attributes\Group;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 use MediaWiki\OAuthClient\Token;
 
-/**
- * Integration Tests for src/app/MediaWikiClient/MediaWikiEditClient.php
- * publish_do_edit
- */
+use PHPUnit\Framework\Attributes\CoversClass;
+
+#[CoversClass(MediaWikiEditClient::class)]
 class MediaWikiEditClientTest extends TestCase
 {
     // -----------------------------------------------------------------------
