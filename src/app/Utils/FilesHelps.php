@@ -26,7 +26,6 @@ class FilesHelps
         $publishReportsPath = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
 
         if (empty($publishReportsPath)) {
-            error_log("PUBLISH_REPORTS_PATH is not set");
             $publishReportsPath = getenv("HOME") . "/data/publish_reports_data";
         }
         ;

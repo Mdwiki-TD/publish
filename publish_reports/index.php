@@ -7,8 +7,14 @@
 
 include_once __DIR__ . "/reports_config.php";
 
+$publishReportsPath = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
+
+if (empty($publishReportsPath)) {
+    $publishReportsPath = getenv("HOME") . "/data/publish_reports_data/reports_by_day";
+}
+
 if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
-    define("PUBLISH_REPORTS_DIR_BY_DAY", "/tmp");
+    define("PUBLISH_REPORTS_DIR_BY_DAY", $publishReportsPath);
 }
 
 $hoste = ($_SERVER["SERVER_NAME"] == "localhost")
@@ -118,15 +124,15 @@ function makeYearsNav($currentYear)
 function makeMonthsNav($currentYear, $currentMonth)
 {
     $months = [
-        1 => 'January',
-        2 => 'February',
-        3 => 'March',
-        4 => 'April',
-        5 => 'May',
-        6 => 'June',
-        7 => 'July',
-        8 => 'August',
-        9 => 'September',
+        1  => 'January',
+        2  => 'February',
+        3  => 'March',
+        4  => 'April',
+        5  => 'May',
+        6  => 'June',
+        7  => 'July',
+        8  => 'August',
+        9  => 'September',
         10 => 'October',
         11 => 'November',
         12 => 'December'
@@ -135,7 +141,7 @@ function makeMonthsNav($currentYear, $currentMonth)
     $nav = '<ul class="nav nav-tabs">';
 
     foreach ($months as $monthNum => $monthName) {
-        $monthLink = str_pad((string)$monthNum, 2, '0', STR_PAD_LEFT);
+        $monthLink = str_pad((string) $monthNum, 2, '0', STR_PAD_LEFT);
         $active = $monthNum == $currentMonth || $monthLink == $currentMonth ? 'active' : '';
         $monthDir = PUBLISH_REPORTS_DIR_BY_DAY . "$currentYear/$monthLink";
 
@@ -170,10 +176,12 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
     $dailyReportLinks = "";
     $count = 0;
     foreach ($dailyReports as $report) {
-        if ($report === '.' || $report === '..') continue;
+        if ($report === '.' || $report === '..')
+            continue;
         $oneReportDir = $dayReportDir . '/' . $report;
         $jsonFiles = glob($oneReportDir . '/*.json');
-        if (!$jsonFiles) continue;
+        if (!$jsonFiles)
+            continue;
         $dirTime = filectime($oneReportDir);
         $time = add_time_badge($dirTime, $formattedDate);
         $user = "";
@@ -191,10 +199,10 @@ function makeDayReports($year, $month, $day, $dayReportDir, $monthDir)
             // $url = "$monthDir/$day/$report/$name";
             $urlParams = [
                 "report" => $report,
-                "year" => $year,
-                "month" => $month,
-                "day" => $day,
-                "name" => $name,
+                "year"   => $year,
+                "month"  => $month,
+                "day"    => $day,
+                "name"   => $name,
             ];
             $url = "open_file.php?" . http_build_query($urlParams);
             $ul .= <<<HTML
@@ -261,7 +269,8 @@ function makeMonthReports($year, $month)
         return strcmp($b, $a);
     });
     foreach ($daysDirs as $day) {
-        if ($day === '.' || $day === '..') continue;
+        if ($day === '.' || $day === '..')
+            continue;
         $dayReportDir = $monthDirPath . '/' . $day;
         if (!is_dir($dayReportDir)) {
             continue;
@@ -291,7 +300,9 @@ $reports = makeMonthReports($year, $month);
                 <a class="navbar-brand mb-0 h1" href="/publish_reports" style="color:#0d6efd;">
                     Publish Reports
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false"
+                    aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
