@@ -7,16 +7,20 @@ header('Content-Type: application/json');
 
 include_once __DIR__ . "/reports_config.php";
 
-if (!defined("PUBLISH_REPORTS_DIR_BY_DAY")) {
-    define("PUBLISH_REPORTS_DIR_BY_DAY", "/tmp");
+$publishReportsPath = getenv("PUBLISH_REPORTS_PATH") ?: ($_ENV['PUBLISH_REPORTS_PATH'] ?? "");
+
+if (empty($publishReportsPath)) {
+    $publishReportsPath = getenv("HOME") . "/data/publish_reports_data";
 }
+
+
 // open_file.php?report=bbbb&year=2025&month=04&day=15&name=success.json
 
 $report = $_GET['report'] ?? '';
-$year   = $_GET['year'] ?? '';
-$month  = $_GET['month'] ?? '';
-$day    = $_GET['day'] ?? '';
-$name   = $_GET['name'] ?? '';
+$year = $_GET['year'] ?? '';
+$month = $_GET['month'] ?? '';
+$day = $_GET['day'] ?? '';
+$name = $_GET['name'] ?? '';
 
 // Validate name: alphanumeric, hyphens, underscores, dots only (allowlist for filename)
 if (!preg_match('/^\d+$/', $year) || !preg_match('/^\d+$/', $month) || !preg_match('/^\d+$/', $day)) {
@@ -38,7 +42,7 @@ if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name) || !preg_match('/^[a-zA-Z0-9_.-]+$
     exit;
 }
 
-$filePath = PUBLISH_REPORTS_DIR_BY_DAY . "/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
+$filePath = rtrim($publishReportsPath, '/') . "/reports_by_day/" . $year . "/" . $month . "/" . $day . "/" . $report . "/" . $name;
 
 $data = [];
 if (file_exists($filePath)) {

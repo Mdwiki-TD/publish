@@ -3,22 +3,18 @@ src/
 ├── app/
 │   ├── AddToDb/
 │   │   └── PublishReportsRepository.php
-│   ├── api/
+│   ├── Api/
+│   │   ├── WdApi.php
 │   │   └── WikiApi.php
-│   ├── bots/
-│   │   ├── crypt_helps.php
-│   │   ├── files_helps.php
-│   │   ├── helps.php
-│   │   ├── index.php
-│   │   ├── README.md
-│   │   ├── revids_bot.php
-│   │   └── wd.php
 │   ├── CurlRequests/
 │   │   ├── CurlHttpClient.php
 │   │   └── HttpClientInterface.php
 │   ├── Http/
 │   │   ├── CxTokenEndpoint.php
 │   │   └── PublishEndpoint.php
+│   ├── MdwikiSql/
+│   │   ├── AccessHelps.php
+│   │   └── Database.php
 │   ├── MediaWikiClient/
 │   │   ├── MediaWikiEditClient.php
 │   │   ├── MediaWikiOAuthClientAdapter.php
@@ -26,23 +22,18 @@ src/
 │   │   ├── OAuthClientFactoryInterface.php
 │   │   ├── OAuthHttpClientInterface.php
 │   │   └── README.md
-│   ├── process/
+│   ├── Process/
 │   │   ├── EditProcessLog.php
 │   │   ├── ProcessEdit.php
 │   │   └── StartController.php
-│   ├── sql/
-│   │   ├── access_helps.php
-│   │   ├── mdwiki_sql.php
-│   │   └── README.md
-│   ├── utils/
-│   │   ├── README.md
-│   │   └── start_utils.php
-│   ├── config.php
-│   ├── cors.php
-│   ├── Database.php
-│   ├── include.php
+│   ├── Utils/
+│   │   ├── FilesHelps.php
+│   │   └── StartUtils.php
+│   ├── bootstrap.php
+│   ├── Cors.php
+│   ├── Logger.php
 │   ├── README.md
-│   └── text_edit.php
+│   ├── Settings.php
 ├── index.php
 ├── main.php
 ├── README.md

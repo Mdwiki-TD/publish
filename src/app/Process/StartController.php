@@ -2,22 +2,15 @@
 
 namespace Publish\Process;
 
-use Publish\AddToDb\PublishReportsRepository;
+use Publish\MdwikiSql\PublishReportsRepository;
+
 use Publish\Process\ProcessEdit;
-use Publish\Settings;
+use Publish\Process\EditProcess;
 
-use function Publish\EditProcess\text_changes;
-use function Publish\Helps\pub_test_print;
-use function Publish\AccessHelps\get_access_from_db;
-use function Publish\FilesHelps\to_do;
-
-use function Publish\Revids\get_revid_db;
-use function Publish\Revids\get_revid;
-
-use function Publish\StartUtils\make_summary;
-use function Publish\StartUtils\formatTitle;
-use function Publish\StartUtils\formatUser;
-use function Publish\StartUtils\determineHashtag;
+use Publish\Utils\FilesHelps;
+use Publish\Logger;
+use Publish\MdwikiSql\AccessHelps;
+use Publish\Utils\StartUtils;
 
 /**
  * Front controller for the publish flow.
@@ -32,13 +25,23 @@ use function Publish\StartUtils\determineHashtag;
 class StartController
 {
     private const DEFAULT_TR_TYPE = 'lead';
-    private const WORDS_FILE = 'jsons/words.json';
 
-    private ProcessEdit $processEdit;
+    private ProcessEdit              $processEdit;
+    private EditProcess              $editProcess;
+    private AccessHelps              $accessHelps;
+    private PublishReportsRepository $repository;
 
-    public function __construct(?ProcessEdit $processEdit = null)
-    {
+    public function __construct(
+        ?ProcessEdit $processEdit = null,
+        ?EditProcess $editProcess = null,
+        ?PublishReportsRepository $repository = null,
+        ?AccessHelps $accessHelps = null,
+    ) {
         $this->processEdit = $processEdit ?? new ProcessEdit();
+        $this->editProcess = $editProcess ?? new EditProcess();
+        $this->repository = $repository ?? new PublishReportsRepository();
+        $this->accessHelps = $accessHelps ?? AccessHelps::getInstance();
+
     }
 
     // ------------------------------------------------------------
@@ -54,61 +57,56 @@ class StartController
     /** Handle the request and return the response (no output, easy to test). */
     public function handle(array $request): array
     {
-        $randId = $this->generateRequestId();
-        $user   = formatUser($request['user'] ?? '');
-        $tab    = $this->buildInitialTab($request, $user);
+        $trType = $request['tr_type'] ?? self::DEFAULT_TR_TYPE;
 
-        $access = get_access_from_db($user);
+        $randId = $this->generateRequestId();
+        $user = StartUtils::formatUser($request['user'] ?? '');
+        $tab = $this->buildInitialTab($request, $user);
+
+        $access = $this->accessHelps->getAccess($user);
         if (empty($access)) {
             return $this->handleNoAccess($user, $tab, $randId);
         }
 
-        $tab  = $this->enrichTab($tab, $request, $user);
+        $tab = $this->enrichTab($tab, $request, $user, $trType);
         $text = $this->prepareText($tab, $request['text'] ?? '');
-
-        $trType = $request['tr_type'] ?? self::DEFAULT_TR_TYPE;
 
         return $this->processEdit->handle($request, $access, $text, $user, $tab, $randId, $trType);
     }
 
     /** Add words count, revid and summary to the tab. */
-    private function enrichTab(array $tab, array $request, string $user): array
+    private function enrichTab(array $tab, array $request, string $user, string $trType): array
     {
-        $wordsTable = $this->loadWordsTable();
-        $tab['words'] = $wordsTable[$tab['title']] ?? 0;
+        $titleData = $this->accessHelps->loadTitleData($tab['title']);
 
-        [$revid, $revidMissing] = $this->resolveRevid($tab['sourcetitle'], $request);
-        if ($revidMissing) {
-            $tab['empty revid'] = 'Can not get revid from all_pages_revids.json';
+        $words = 0;
+        if ($titleData) {
+            $words = $trType === "lead"
+                ? $titleData['w_lead_words'] ?? 0
+                : $titleData['w_all_words'] ?? 0;
+        }
+
+        $tab['words'] = $words;
+
+        $revid = $request['revid'] ?? $request['revision'] ?? '';
+        if (empty($revid)) {
+            $revid = $titleData['revid'] ?? 0;
+        }
+        if (empty($revid)) {
+            $tab['empty revid'] = 'Can not get revid';
         }
         $tab['revid'] = $revid;
 
-        $hashtag = determineHashtag($tab['title'], $user);
-        $tab['summary'] = make_summary($revid, $tab['sourcetitle'], $tab['lang'], $hashtag);
+        $hashtag = StartUtils::determineHashtag($tab['title'], $user);
+        $tab['summary'] = StartUtils::make_summary($revid, $tab['sourcetitle'], $tab['lang'], $hashtag);
 
         return $tab;
-    }
-
-    /**
-     * @return array{0: mixed, 1: bool} [revid, wasMissingFromSources]
-     */
-    private function resolveRevid(string $sourcetitle, array $request): array
-    {
-        $revid = get_revid($sourcetitle);
-        if (empty($revid)) {
-            $revid = get_revid_db($sourcetitle);
-        }
-        if (!empty($revid)) {
-            return [$revid, false];
-        }
-        $revid = $request['revid'] ?? $request['revision'] ?? '';
-        return [$revid, true];
     }
 
     /** Apply text fixes (refs, ...) and record whether anything changed. */
     private function prepareText(array &$tab, string $text): string
     {
-        $newText = text_changes($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $tab['revid']);
+        $newText = $this->editProcess->text_changes($tab['sourcetitle'], $tab['title'], $text, $tab['lang'], $tab['revid']);
 
         if (empty($newText)) {
             return $text;
@@ -119,7 +117,7 @@ class StartController
     private function buildInitialTab(array $request, string $user): array
     {
         return [
-            'title'       => formatTitle($request['title'] ?? ''),
+            'title'       => StartUtils::formatTitle($request['title'] ?? ''),
             'summary'     => "",
             'lang'        => $request['target'] ?? '',
             'user'        => $user,
@@ -141,36 +139,6 @@ class StartController
     }
 
     // ------------------------------------------------------------
-    // Words table
-    // ------------------------------------------------------------
-
-    private function resolveTablesPath(): string
-    {
-        $settings = Settings::getInstance();
-        $path = $settings->TablesPath;
-        if (!empty($path)) {
-            return $path;
-        }
-        $home = getenv('HOME') ?: ($_SERVER['HOME'] ?? "");
-        return $home . "/public_html/td/Tables/";
-    }
-
-    private function loadWordsTable(): array
-    {
-        $wordFile = $this->resolveTablesPath() . "/" . self::WORDS_FILE;
-
-        try {
-            $content = file_get_contents($wordFile);
-            // $content = file_get_contents("https://mdwiki.toolforge.org/td/Tables/jsons/words.json");
-
-            $table = $content === false ? [] : json_decode($content, true);
-        } catch (\Exception $e) {
-            $table = [];
-        }
-        return is_array($table) ? $table : [];
-    }
-
-    // ------------------------------------------------------------
     // Error / response handling
     // ------------------------------------------------------------
 
@@ -184,10 +152,9 @@ class StartController
         ];
         $tab['result_to_cx'] = $response;
 
-        to_do($tab, "noaccess", $randId);
+        FilesHelps::to_do($tab, "noaccess", $randId);
 
-        $repository = new PublishReportsRepository();
-        $repository->insertPublishReports(
+        $this->repository->insertPublishReports(
             $tab['title'],
             $user,
             $tab['lang'],
@@ -201,9 +168,9 @@ class StartController
 
     private function render(array $response): void
     {
-        pub_test_print("\n<br>");
-        pub_test_print("\n<br>");
+        Logger::debug("\n<br>");
+        Logger::debug("\n<br>");
 
-        print(json_encode($response, JSON_PRETTY_PRINT));
+        print (json_encode($response, JSON_PRETTY_PRINT));
     }
 }

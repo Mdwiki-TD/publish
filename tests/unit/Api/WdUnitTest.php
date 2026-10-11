@@ -4,11 +4,22 @@ namespace Tests\Bots\Unit;
 
 use PHPUnit\Framework\TestCase;
 
+use Publish\MdwikiSql\DatabaseInterface;
+use Publish\Api\WdApi;
+
 class WdUnitTest extends TestCase
 {
+    private WdApi $api;
+
+    protected function setUp(): void
+    {
+        $dbMock = $this->createStub(DatabaseInterface::class);
+        $this->api = new WdApi($dbMock);
+    }
+
     public function testGetAccessCredentialsReturnsSuppliedKeysDirectly(): void
     {
-        $result = \Publish\WD\getAccessCredentials(
+        $result = $this->api->getAccessCredentials(
             'user',
             'my_key',
             'my_secret'
@@ -19,7 +30,7 @@ class WdUnitTest extends TestCase
 
     public function testGetAccessCredentialsReturnsTwoElements(): void
     {
-        $result = \Publish\WD\getAccessCredentials(
+        $result = $this->api->getAccessCredentials(
             'user',
             'k',
             's'
@@ -30,7 +41,7 @@ class WdUnitTest extends TestCase
 
     public function testGetAccessCredentialsReturnsNullForEmptyKeys(): void
     {
-        $result = \Publish\WD\getAccessCredentials(
+        $result = $this->api->getAccessCredentials(
             'user',
             '',
             ''
@@ -42,10 +53,10 @@ class WdUnitTest extends TestCase
     public function testLinkToWikidataReturnsErrorWhenNoCredentials(): void
     {
         $access = [
-            'access_key' => "",
+            'access_key'    => "",
             'access_secret' => "",  // empty access_secret
         ];
-        $result = \Publish\WD\LinkToWikidata(
+        $result = $this->api->LinkToWikidata(
             'Title',
             'es',
             'ghost_user',
@@ -60,10 +71,10 @@ class WdUnitTest extends TestCase
     public function testLinkToWikidataReturnsErrorWhenOnlyOneKeyProvided(): void
     {
         $access = [
-            'access_key' => "only_key",
+            'access_key'    => "only_key",
             'access_secret' => "",  // empty access_secret
         ];
-        $result = \Publish\WD\LinkToWikidata(
+        $result = $this->api->LinkToWikidata(
             'Title',
             'es',
             'user',

@@ -1,16 +1,16 @@
 <?php
 
-namespace Tests\AddToDb;
+namespace Tests\MdwikiSql;
 
-use Publish\AddToDb\PublishReportsRepository;
-use Publish\MdwikiSql\Database;
+use Publish\MdwikiSql\PublishReportsRepository;
+use Publish\MdwikiSql\DatabaseInterface;
 use PHPUnit\Framework\TestCase;
 
 class PublishReportsRepositoryTest extends TestCase
 {
     public function testInsertPublishReportsBuildsCorrectQueryAndParams(): void
     {
-        $dbMock = $this->createMock(Database::class);
+        $dbMock = $this->createMock(DatabaseInterface::class);
 
         $dbMock->expects($this->once())
             ->method('executeQuery')
@@ -43,7 +43,7 @@ class PublishReportsRepositoryTest extends TestCase
 
     public function testInsertPageTargetRejectsInvalidTableName(): void
     {
-        $dbMock = $this->createMock(Database::class);
+        $dbMock = $this->createMock(DatabaseInterface::class);
         $dbMock->expects($this->never())->method('executeQuery');
 
         $repo = new PublishReportsRepository($dbMock);

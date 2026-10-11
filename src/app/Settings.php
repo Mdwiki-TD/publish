@@ -1,7 +1,7 @@
 <?php
 // src/app/Settings.php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Publish;
 
@@ -18,7 +18,6 @@ use Defuse\Crypto\Key;
  * @property string $appEnv
  * @property Key|null $cookieKey
  * @property Key|null $cryptKey
- * @property string $TablesPath
  */
 final class Settings
 {
@@ -30,32 +29,35 @@ final class Settings
     public string $apiUrl;
     public string $consumerKey;
     public string $consumerSecret;
+    public string $wikidataDomain;
     public string $appEnv;
-    public ?Key $cookieKey;
-    public ?Key $cryptKey;
-    public string $TablesPath;
+    public ?Key   $cookieKey;
+    public ?Key   $cryptKey;
 
     private static ?self $instance = null;
 
     private function __construct()
     {
-        $this->domain    = $_SERVER['SERVER_NAME'] ?? 'localhost';
+        $this->domain = $_SERVER['SERVER_NAME'] ?? 'localhost';
         $this->ServerUrl = $this->generateServerUrl();
         $this->userAgent = 'mdwiki MediaWiki OAuth Client/1.0';
-        $this->oauthUrl  = 'https://meta.wikimedia.org/w/index.php?title=Special:OAuth';
-        $this->apiUrl    = preg_replace('/index\.php.*/', 'api.php', $this->oauthUrl);
+        $this->oauthUrl = 'https://meta.wikimedia.org/w/index.php?title=Special:OAuth';
+        $this->apiUrl = preg_replace('/index\.php.*/', 'api.php', $this->oauthUrl);
 
-        $appEnv         = $this->envVar('APP_ENV');
-        $consumerKey    = $this->envVar('CONSUMER_KEY');
+        $this->wikidataDomain = $this->envVar('WIKIDATA_DOMAIN') ?: 'www.wikidata.org';
+
+        $appEnv = $this->envVar('APP_ENV');
+        $consumerKey = $this->envVar('CONSUMER_KEY');
         $consumerSecret = $this->envVar('CONSUMER_SECRET');
-        $cookieKey      = $this->envVar('COOKIE_KEY');
-        $cryptKey       = $this->envVar('CRYPTO_KEY');
-        $TablesPath     = $this->envVar('TABLES_PATH');
+        $cookieKey = $this->envVar('COOKIE_KEY');
+        $cryptKey = $this->envVar('CRYPTO_KEY');
 
-        if ($appEnv === 'production' && (
-            empty($consumerKey) || empty($consumerSecret) ||
-            empty($cookieKey) || empty($cryptKey)
-        )) {
+        if (
+            $appEnv === 'production' && (
+                empty($consumerKey) || empty($consumerSecret) ||
+                empty($cookieKey) || empty($cryptKey)
+            )
+        ) {
             http_response_code(500);
             error_log('Required configuration directives not found in environment variables!');
             echo 'Required configuration directives not found';
@@ -64,13 +66,11 @@ final class Settings
             throw new \RuntimeException('Required configuration directives not found in environment variables!');
         }
 
-        $this->appEnv         = $appEnv;
-        $this->consumerKey    = $consumerKey;
+        $this->appEnv = $appEnv;
+        $this->consumerKey = $consumerKey;
         $this->consumerSecret = $consumerSecret;
-        $this->cookieKey      = $cookieKey ? Key::loadFromAsciiSafeString($cookieKey) : null;
-        $this->cryptKey       = $cryptKey ? Key::loadFromAsciiSafeString($cryptKey) : null;
-
-        $this->TablesPath = $TablesPath;
+        $this->cookieKey = $cookieKey ? Key::loadFromAsciiSafeString($cookieKey) : null;
+        $this->cryptKey = $cryptKey ? Key::loadFromAsciiSafeString($cryptKey) : null;
     }
 
     /**
@@ -86,7 +86,7 @@ final class Settings
         // 1. Detect Protocol: Works for local development and production proxies
         $protocol = 'http';
 
-        if (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
             // Standard SSL detection
             $protocol = 'https';
         } elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
@@ -213,7 +213,8 @@ final class Settings
     }
     // Prevent cloning and unserialization of the singleton instance
     private function __clone()
-    {}
+    {
+    }
 
     public function __wakeup(): void
     {

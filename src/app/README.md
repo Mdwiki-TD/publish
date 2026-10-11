@@ -24,11 +24,10 @@
 
 ```
 app/
-├── include.php        # Master bootstrap - loads all modules and external dependencies
+├── bootstrap.php        # Master bootstrap - loads all modules and external dependencies
 ├── config.php         # OAuth consumer key/secret from environment
 ├── cors.php           # CORS domain validation (referer/origin checking)
 ├── load_env.php       # Development environment variables (WARNING: contains credentials)
-├── text_edit.php      # Wikitext preprocessing via fix_refs integration
 ├── api/               # Wikipedia API interaction layer
 │   ├── DoEdit.php    # OAuth-authenticated edit execution
 │   └── WikiApi.php   # Title/page information queries
@@ -38,7 +37,6 @@ app/
 │   ├── crypt_helps.php    # Encryption/decryption
 │   ├── files_helps.php    # Report file logging
 │   ├── helps.php          # Debug output helper
-│   ├── revids_bot.php     # Revision ID lookup
 │   └── wd.php             # Wikidata integration
 ├── cxtoken/           # ContentTranslation token management
 │   ├── get_token.php      # CX token retrieval from Wikipedia
@@ -51,7 +49,7 @@ app/
 │   └── EditProcessLog.php # Database insertion logic
 ├── sql/               # Database access layer
 │   ├── mdwiki_sql.php     # PDO Database class and query wrappers
-│   ├── access_helps.php   # OAuth token CRUD
+│   ├── AccessHelps.php   # OAuth token CRUD
 │   ├── PublishReportsRepository.php      # Publish report and page tracking inserts
 │   ├── sql.php            # General queries (QID, categories, upsert)
 │   └── table_name.php     # Placeholder/empty namespace
@@ -64,11 +62,10 @@ app/
 ### Module Dependency Graph
 
 ```
-include.php (bootstrap)
+bootstrap.php (bootstrap)
   ├── vendor_load.php → Composer autoloader
   ├── config.php → OAuth credentials
   ├── cors.php → Domain validation
-  ├── text_edit.php → fix_refs integration
   ├── utils/start_utils.php → Formatting, error classification
   ├── process/
   │   ├── start.php → Main orchestrator
@@ -76,7 +73,7 @@ include.php (bootstrap)
   │   └── EditProcessLog.php → DB logging
   ├── sql/
   │   ├── mdwiki_sql.php → Database class
-  │   ├── access_helps.php → Token storage
+  │   ├── AccessHelps.php → Token storage
   │   ├── PublishReportsRepository.php → Record insertion
   │   └── sql.php → General queries
   ├── MediaWikiClient/index.php → OAuth client
@@ -88,7 +85,6 @@ include.php (bootstrap)
   │   ├── crypt_helps.php → Encryption
   │   ├── files_helps.php → File logging
   │   ├── helps.php → Debug helper
-  │   ├── revids_bot.php → Revision lookup
   │   └── wd.php → Wikidata linking
   └── cxtoken/
       ├── get_token.php → CX token fetch
@@ -101,9 +97,9 @@ include.php (bootstrap)
 1. Entry point (index.php/token.php)
 2. CORS validation (cors.php)
 3. Secret key verification (index.php)
-4. Bootstrap all modules (include.php)
-5. User access validation (sql/access_helps.php)
-6. Revision ID lookup (bots/revids_bot.php)
+4. Bootstrap all modules (bootstrap.php)
+5. User access validation (sql/AccessHelps.php)
+6. Revision ID lookup
 7. Wikitext preprocessing (text_edit.php → fix_refs)
 8. Edit execution (api/DoEdit.php)
 9. Post-edit operations (process/ProcessEdit.php)
@@ -117,7 +113,7 @@ include.php (bootstrap)
 
 ### Design Patterns
 
--   **Bootstrap/Include pattern** - `include.php` loads all dependencies manually
+-   **Bootstrap/Include pattern** - `bootstrap.php` loads all dependencies manually
 -   **Procedural with namespaces** - Functions organized under `Publish\*` namespaces
 -   **Gateway pattern** - `Database` class wraps PDO
 -   **Pipeline pattern** - Request flows through sequential processing stages

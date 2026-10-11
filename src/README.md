@@ -34,11 +34,10 @@ src/
 ├── pup2.html          # Static HTML page (publish UI)
 ├── reports.html       # Static HTML page (reports viewer)
 └── app/                # Core application module ("Start Up")
-    ├── include.php    # Master include file - loads all modules
+    ├── bootstrap.php    # Master include file - loads all modules
     ├── config.php     # OAuth consumer key/secret from environment
     ├── cors.php       # CORS domain validation
     ├── load_env.php   # Development environment variables
-    ├── text_edit.php  # Wikitext preprocessing via fix_refs
     ├── api/           # Wikipedia API interaction layer
     ├── bots/          # Utility/helper modules
     ├── cxtoken/       # ContentTranslation token management
@@ -76,13 +75,13 @@ POST /index.php
 
 ### Code Organization
 
-The codebase uses a **functional/procedural architecture** with PSR-4 namespaced functions (not classes). Each module file defines a namespace and exports standalone functions. The `include.php` file acts as a manual dependency injection container, loading all modules via `include_once`.
+The codebase uses a **functional/procedural architecture** with PSR-4 namespaced functions (not classes). Each module file defines a namespace and exports standalone functions. The `bootstrap.php` file acts as a manual dependency injection container, loading all modules via `include_once`.
 
 ### Design Patterns
 
 -   **Procedural with namespaces** - Functions are organized by domain concern under `Publish\*` namespaces
 -   **Gateway pattern** - `Database` class wraps PDO for SQL operations
--   **Facade pattern** - `include.php` provides a single entry to load all dependencies
+-   **Facade pattern** - `bootstrap.php` provides a single entry to load all dependencies
 
 ### SOLID Principles Compliance
 

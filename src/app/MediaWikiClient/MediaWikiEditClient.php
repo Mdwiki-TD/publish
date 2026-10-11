@@ -1,7 +1,7 @@
 <?php
 namespace Publish\MediaWikiClient;
 
-use function Publish\Helps\pub_test_print;
+use Publish\Logger;
 use MediaWiki\OAuthClient\Token;
 use Publish\MediaWikiClient\MediaWikiOAuthClientAdapter;
 use Publish\MediaWikiClient\MediaWikiOAuthClientFactory;
@@ -32,7 +32,7 @@ class MediaWikiEditClient
 
         if ($data === null || ! isset($data->query->tokens->csrftoken)) {
             // Handle error
-            pub_test_print('<br>getEditsToken Error: ' . json_last_error() . ' ' . json_last_error_msg());
+            Logger::debug('<br>getEditsToken Error: ' . json_last_error() . ' ' . json_last_error_msg());
 
             return null;
         }
@@ -51,8 +51,8 @@ class MediaWikiEditClient
 
         if ($data === null || ! isset($data['query']['tokens']['csrftoken'])) {
             // Handle error
-            pub_test_print('<br>get_csrftoken Error: ' . json_last_error() . ' ' . json_last_error_msg());
-            pub_test_print($data);
+            Logger::debug('<br>get_csrftoken Error: ' . json_last_error() . ' ' . json_last_error_msg());
+            Logger::debug($data);
         }
 
         return $data;
@@ -79,7 +79,7 @@ class MediaWikiEditClient
 
         $apiParams['format'] = 'json';
 
-        pub_test_print('postParams: apiParams:' . json_encode($apiParams, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        Logger::debug('postParams: apiParams:' . json_encode($apiParams, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
         $apiParams['token'] = $csrftoken;
 

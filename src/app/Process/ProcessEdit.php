@@ -4,32 +4,47 @@ namespace Publish\Process;
 
 use MediaWiki\OAuthClient\Token;
 
-use Publish\AddToDb\PublishReportsRepository;
+use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 use Publish\Process\EditProcessLog;
-
-use function Publish\Helps\pub_test_print;
-use function Publish\WD\LinkToWikidata;
-use function Publish\FilesHelps\to_do;
-use function Publish\AccessHelps\get_access_from_db;
-use function Publish\WikiApi\GetTitleInfo;
-use function Publish\StartUtils\get_errors_file;
+use Publish\MdwikiSql\AccessHelps;
+use Publish\Utils\StartUtils;
+use Publish\Logger;
+use Publish\Utils\FilesHelps;
+use Publish\Api\WikiApi;
+use Publish\Api\WdApi;
 
 class ProcessEdit
 {
-    private const FALLBACK_USER = 'Mr. Ibrahem';
+    private const FALLBACK_USER     = 'Mr. Ibrahem';
     private const USER_TABLE_FILTER = 'abusefilter-warning-39';
 
-    private EditProcessLog $editProcessLog;
+    private EditProcessLog           $editProcessLog;
+    private AccessHelps              $accessHelps;
+    private PublishReportsRepository $repository;
+    private MediaWikiEditClient      $editClient;
+    private WdApi                    $wdApi;
+    private WikiApi                  $wikiApi;
 
-    public function __construct(?EditProcessLog $editProcessLog = null)
-    {
+    public function __construct(
+        ?EditProcessLog $editProcessLog = null,
+        ?WdApi $wdApi = null,
+        ?AccessHelps $accessHelps = null,
+        ?MediaWikiEditClient $editClient = null,
+        ?PublishReportsRepository $repository = null,
+        ?WikiApi $wikiApi = null,
+    ) {
         $this->editProcessLog = $editProcessLog ?? new EditProcessLog();
+        $this->wdApi = $wdApi ?? WdApi::getInstance();
+        $this->wikiApi = $wikiApi ?? new WikiApi();
+        $this->accessHelps = $accessHelps ?? AccessHelps::getInstance();
+        $this->editClient = $editClient ?? new MediaWikiEditClient();
+        $this->repository = $repository ?? PublishReportsRepository::getInstance();
     }
 
     public function shouldAddedToWikidata(string $lang, string $title): bool
     {
-        $pageInformations = GetTitleInfo($title, $lang);
+        $pageInformations = $this->wikiApi->GetTitleInfo($title, $lang);
         if (!$pageInformations) {
             return false;
         }
@@ -41,19 +56,19 @@ class ProcessEdit
     public function retryWithFallbackUser($sourcetitle, $lang, $title, $user): array
     {
         $linkTowd = [];
-        pub_test_print("getCsrfTokenData failed for user: $user, retrying with " . self::FALLBACK_USER);
+        Logger::debug("getCsrfTokenData failed for user: $user, retrying with " . self::FALLBACK_USER);
 
         // Get fresh credentials from database
-        $fallbackAccess = get_access_from_db(self::FALLBACK_USER);
+        $fallbackAccess = $this->accessHelps->getAccess(self::FALLBACK_USER);
 
         if (!empty($fallbackAccess)) {
-            $linkTowd = LinkToWikidata($sourcetitle, $lang, self::FALLBACK_USER, $title, $fallbackAccess);
+            $linkTowd = $this->wdApi->LinkToWikidata($sourcetitle, $lang, self::FALLBACK_USER, $title, $fallbackAccess);
 
             // Add a note that fallback was used
             if (!isset($linkTowd['error'])) {
                 $linkTowd['fallback_user'] = self::FALLBACK_USER;
                 $linkTowd['original_user'] = $user;
-                pub_test_print("Successfully linked using " . self::FALLBACK_USER . " fallback credentials");
+                Logger::debug("Successfully linked using " . self::FALLBACK_USER . " fallback credentials");
             }
         }
         return $linkTowd;
@@ -68,7 +83,7 @@ class ProcessEdit
         $linkTowd = [];
 
         try {
-            $linkTowd = LinkToWikidata($sourcetitle, $lang, $user, $title, $access);
+            $linkTowd = $this->wdApi->LinkToWikidata($sourcetitle, $lang, $user, $title, $access);
             // Check if the error is getCsrfTokenData failure and user is not already the fallback user
             if (
                 isset($linkTowd['error'])
@@ -79,25 +94,24 @@ class ProcessEdit
             }
             // Log errors if they still exist after retry
         } catch (\Exception $e) {
-            pub_test_print($e->getMessage());
+            Logger::debug($e->getMessage());
         }
 
         if (isset($linkTowd['error'])) {
             $tab3 = [
-                'error' => $linkTowd['error'],
-                'qid' => $linkTowd['qid'] ?? "",
-                'title' => $title,
+                'error'       => $linkTowd['error'],
+                'qid'         => $linkTowd['qid'] ?? "",
+                'title'       => $title,
                 'sourcetitle' => $sourcetitle,
-                'fallback' => $linkTowd['fallback'] ?? "",
-                'lang' => $lang,
-                'username' => $user
+                'fallback'    => $linkTowd['fallback'] ?? "",
+                'lang'        => $lang,
+                'username'    => $user
             ];
             // if str($linkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
-            $fileName = get_errors_file($linkTowd['error'], "wd_errors");
-            to_do($tab3, $fileName, $randId);
+            $fileName = StartUtils::get_errors_file($linkTowd['error'], "wd_errors");
+            FilesHelps::to_do($tab3, $fileName, $randId);
 
-            $repository = new PublishReportsRepository();
-            $repository->insertPublishReports(
+            $this->repository->insertPublishReports(
                 $title,
                 $user,
                 $lang,
@@ -112,12 +126,12 @@ class ProcessEdit
     public static function prepareApiParams($title, $summary, $text, $request): array
     {
         $apiParams = [
-            'action' => 'edit',
-            'title' => $title,
+            'action'  => 'edit',
+            'title'   => $title,
             // 'section' => 'new',
             'summary' => $summary,
-            'text' => $text,
-            'format' => 'json',
+            'text'    => $text,
+            'format'  => 'json',
         ];
 
         // wpCaptchaId, wpCaptchaWord
@@ -146,7 +160,7 @@ class ProcessEdit
         } elseif ($editit['edit']['captcha'] ?? null) {
             $toDoFile = "captcha";
         } else {
-            $toDoFile = get_errors_file($editit, "errors");
+            $toDoFile = StartUtils::get_errors_file($editit, "errors");
         }
 
         $tab['result_to_cx'] = $editit;
@@ -158,10 +172,9 @@ class ProcessEdit
 
     private function logResult(array $tab, $user, string $toDoFile, $randId): void
     {
-        to_do($tab, $toDoFile, $randId);
+        FilesHelps::to_do($tab, $toDoFile, $randId);
 
-        $repository = new PublishReportsRepository();
-        $repository->insertPublishReports(
+        $this->repository->insertPublishReports(
             $tab['title'],
             $user,
             $tab['lang'],
@@ -175,8 +188,7 @@ class ProcessEdit
     {
         $accessToken = new Token($access["access_key"], $access["access_secret"]);
 
-        $editClient = new MediaWikiEditClient();
-        return $editClient->publishEdit($apiParams, $lang, $accessToken);
+        return $this->editClient->publishEdit($apiParams, $lang, $accessToken);
     }
 
     /** Link to Wikidata, then record the page in the database. */
@@ -199,8 +211,8 @@ class ProcessEdit
             $toUsersTable,
             $tab['campaign'],
             $tab['sourcetitle'],
-            (string)($tab['revid'] ?? ""),
-            (string)$tab['words'],
+            (string) ($tab['revid'] ?? ""),
+            (string) $tab['words'],
             $trType
         );
         return $editit;

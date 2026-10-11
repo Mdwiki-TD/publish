@@ -23,7 +23,7 @@ Add `?test` query parameter to any request to enable verbose error reporting and
 
 ### Request Flow
 
-1. `src/index.php` - Entry point, includes dependencies via `include.php`
+1. `src/index.php` - Entry point, includes dependencies via `bootstrap.php`
 2. `src/app/start.php` - Main `run()` function orchestrates the publish workflow:
     - Validates user access credentials from database
     - Gets revision ID for source article
@@ -37,12 +37,11 @@ Add `?test` query parameter to any request to enable verbose error reporting and
 | File                                        | Purpose                                                                   |
 | ------------------------------------------- | ------------------------------------------------------------------------- |
 | `config.php`                                | OAuth configuration (consumer key/secret from INI file)                   |
-| `mdwiki_sql.php`                            | PDO database wrapper with `fetchQuery()` and `executeQuery()`           |
+| `mdwiki_sql.php`                            | PDO database wrapper with `fetchQuery()` and `executeQuery()`             |
 | `DoEdit.php`                                | Makes OAuth-authenticated edit requests to Wikipedia API                  |
 | `ProcessEdit.php`                           | Orchestrates edit workflow, handles success/error cases                   |
 | `wd.php`                                    | Wikidata integration - links translated articles via `wbsetsitelink`      |
-| `access_helps.php` / `access_helps_new.php` | Retrieves encrypted OAuth tokens from database                            |
-| `revids_bot.php`                            | Fetches revision IDs from JSON file or API                                |
+| `AccessHelps.php` / `access_helps_new.php` | Retrieves encrypted OAuth tokens from database                            |
 | `PublishReportsRepository.php`              | Inserts publish records to `pages`/`pages_users`/`publish_reports` tables |
 | `files_helps.php`                           | Logs results to JSON files in `publish_reports/reports_by_day/`           |
 

@@ -1,5 +1,5 @@
 <?php
-namespace Publish\AddToDb;
+namespace Publish\MdwikiSql;
 
 use Publish\MdwikiSql\Database;
 
@@ -11,8 +11,18 @@ class PublishReportsRepository
      */
     private const ALLOWED_TABLES = ['pages', 'pages_users'];
 
-    private Database $db;
+    private DatabaseInterface $db;
 
+    private static ?self $instance = null;
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
     /**
      * Inject the Database instance from outside instead of creating it inside the class.
      * This allows tests to pass a mock/fake instead of a real database connection.
@@ -21,9 +31,9 @@ class PublishReportsRepository
      * class still works out of the box in production code, e.g.:
      *     new PublishReportsRepository()
      */
-    public function __construct(?Database $db = null)
+    public function __construct(?DatabaseInterface $db = null)
     {
-        $this->db = $db ?? new Database('DB_NAME');
+        $this->db = $db ?? new Database();
     }
 
     /**
@@ -73,7 +83,7 @@ class PublishReportsRepository
         string $mdwikiRevid,
         string $words
     ): bool {
-        if (! in_array($tableName, self::ALLOWED_TABLES, true)) {
+        if (!in_array($tableName, self::ALLOWED_TABLES, true)) {
             error_log("InsertPageTarget: Invalid table name: $tableName");
             return false;
         }

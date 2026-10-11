@@ -21,23 +21,18 @@
     failOnRisky="false"
     failOnWarning="false">
     <testsuites>
-        <testsuite name="default">
-            <directory>tests</directory>
+        <testsuite name="Project Test Suite">
+            <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
     <source>
         <include>
             <directory suffix=".php">src</directory>
         </include>
-        <exclude>
-            <directory>vendor</directory>
-            <directory>tests</directory>
-        </exclude>
     </source>
-    <!-- <coverage>
-        <report>
-            <html outputDirectory="build/coverage-html" />
-            <text outputFile="php://stdout" showUncoveredFiles="false" />
-        </report>
-    </coverage> -->
+    <groups>
+        <exclude>
+            <group>network</group>
+        </exclude>
+    </groups>
 </phpunit>

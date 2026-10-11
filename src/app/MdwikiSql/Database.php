@@ -7,6 +7,7 @@
  */
 
 namespace Publish\MdwikiSql;
+use Publish\MdwikiSql\DatabaseInterface;
 
 use PDO;
 use PDOException;
@@ -19,7 +20,7 @@ use PDOException;
  *
  * @package MdwikiSql
  */
-class Database
+class Database implements DatabaseInterface
 {
 
     private $db;
