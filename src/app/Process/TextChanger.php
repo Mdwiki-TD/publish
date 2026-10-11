@@ -4,7 +4,7 @@ namespace Publish\Process;
 
 use Publish\MdwikiSql\Database;
 
-class EditProcess
+class TextChanger
 {
     private Database $db;
 

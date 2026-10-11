@@ -18,8 +18,60 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(ProcessEdit::class)]
 class ProcessEditTest extends TestCase
 {
-    public function testPlaceholder(): void
+    public static function setUpBeforeClass(): void
     {
-        $this->markTestIncomplete('Tests for ProcessEdit are not written yet.');
+    }
+
+    public function testPrepareApiParamsReturnsCorrectStructure(): void
+    {
+        $title = 'Test Page';
+        $summary = 'Test summary';
+        $text = 'Test content';
+        $request = [];
+
+        $result = ProcessEdit::prepareApiParams($title, $summary, $text, $request);
+
+        $this->assertEquals('edit', $result['action']);
+        $this->assertEquals($title, $result['title']);
+        $this->assertEquals($summary, $result['summary']);
+        $this->assertEquals($text, $result['text']);
+        $this->assertEquals('json', $result['format']);
+    }
+
+    public function testPrepareApiParamsIncludesCaptchaFields(): void
+    {
+        $request = [
+            'wpCaptchaId'   => '12345',
+            'wpCaptchaWord' => 'answer'
+        ];
+
+        $result = ProcessEdit::prepareApiParams('Test', 'Summary', 'Content', $request);
+
+        $this->assertEquals('12345', $result['wpCaptchaId']);
+        $this->assertEquals('answer', $result['wpCaptchaWord']);
+    }
+
+    public function testPrepareApiParamsBasicFields(): void
+    {
+        $params = ProcessEdit::prepareApiParams('MyTitle', 'My summary', 'Article body', []);
+        $this->assertSame('edit', $params['action']);
+        $this->assertSame('MyTitle', $params['title']);
+        $this->assertSame('json', $params['format']);
+        $this->assertArrayNotHasKey('wpCaptchaId', $params);
+    }
+
+    public function testPrepareApiParamsIncludesCaptchaWhenPresent(): void
+    {
+        $request = ['wpCaptchaId' => 'abc123', 'wpCaptchaWord' => 'xkcd'];
+        $params = ProcessEdit::prepareApiParams('T', 'S', 'B', $request);
+        $this->assertSame('abc123', $params['wpCaptchaId']);
+        $this->assertSame('xkcd', $params['wpCaptchaWord']);
+    }
+
+    public function testPrepareApiParamsOmitsCaptchaWhenPartiallyPresent(): void
+    {
+        $params = ProcessEdit::prepareApiParams('T', 'S', 'B', ['wpCaptchaId' => 'only-id']);
+        $this->assertArrayNotHasKey('wpCaptchaId', $params);
+        $this->assertArrayNotHasKey('wpCaptchaWord', $params);
     }
 }

@@ -7,7 +7,7 @@ namespace Tests\Process;
 use PHPUnit\Framework\TestCase;
 use Publish\Process\StartController;
 use Publish\Process\ProcessEdit;
-use Publish\Process\EditProcess;
+use Publish\Process\TextChanger;
 use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MdwikiSql\AccessHelps;
 
@@ -45,7 +45,7 @@ final class StartControllerTest extends TestCase
             )
             ->willReturn(['result' => 'success']);
 
-        $mockEditProcess = $this->createMock(EditProcess::class);
+        $mockEditProcess = $this->createMock(TextChanger::class);
         $mockRepository = $this->createMock(PublishReportsRepository::class);
 
         $controller = new StartController(
@@ -96,7 +96,7 @@ final class StartControllerTest extends TestCase
             )
             ->willReturn(['result' => 'success']);
 
-        $mockEditProcess = $this->createMock(EditProcess::class);
+        $mockEditProcess = $this->createMock(TextChanger::class);
         $mockRepository = $this->createMock(PublishReportsRepository::class);
 
         $controller = new StartController(

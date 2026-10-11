@@ -5,7 +5,7 @@ namespace Publish\Process;
 use Publish\MdwikiSql\PublishReportsRepository;
 
 use Publish\Process\ProcessEdit;
-use Publish\Process\EditProcess;
+use Publish\Process\TextChanger;
 
 use Publish\Utils\FilesHelps;
 use Publish\Logger;
@@ -27,18 +27,18 @@ class StartController
     private const DEFAULT_TR_TYPE = 'lead';
 
     private ProcessEdit              $processEdit;
-    private EditProcess              $editProcess;
+    private TextChanger              $editProcess;
     private AccessHelps              $accessHelps;
     private PublishReportsRepository $repository;
 
     public function __construct(
         ?ProcessEdit $processEdit = null,
-        ?EditProcess $editProcess = null,
+        ?TextChanger $editProcess = null,
         ?PublishReportsRepository $repository = null,
         ?AccessHelps $accessHelps = null,
     ) {
         $this->processEdit = $processEdit ?? new ProcessEdit();
-        $this->editProcess = $editProcess ?? new EditProcess();
+        $this->editProcess = $editProcess ?? new TextChanger();
         $this->repository = $repository ?? new PublishReportsRepository();
         $this->accessHelps = $accessHelps ?? AccessHelps::getInstance();
 
