@@ -2,10 +2,12 @@
 
 namespace Tests\MdwikiSql;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MdwikiSql\DatabaseInterface;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(PublishReportsRepository::class)]
 class PublishReportsRepositoryTest extends TestCase
 {
     public function testInsertPublishReportsBuildsCorrectQueryAndParams(): void

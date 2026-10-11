@@ -1,56 +1,138 @@
 <?php
 
-namespace Tests\Bots\Integration;
+declare(strict_types=1);
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\Group;
+namespace Tests\MediaWikiClient;
 
-use Publish\MediaWikiClient\MediaWikiEditClient;
 use MediaWiki\OAuthClient\Token;
-
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
+use Publish\MediaWikiClient\MediaWikiEditClient;
+use Publish\MediaWikiClient\MediaWikiOAuthClientAdapter;
+use Publish\MediaWikiClient\MediaWikiOAuthClientFactory;
 
 #[CoversClass(MediaWikiEditClient::class)]
-class MediaWikiEditClientTest extends TestCase
+final class MediaWikiEditClientTest extends TestCase
 {
-    // -----------------------------------------------------------------------
-    // publish_do_edit
-    // -----------------------------------------------------------------------
-    /**
-     * Edit the Main Page in English Wikipedia.
-     */
-    #[Group('network')]
-    public function testpublishEditEditsMainPage(): void
+    public function testGetEditsTokenReturnsTokenOnSuccess(): void
     {
-        $access = [
-            'access_key'    => "access_key",
-            'access_secret' => "access_secret",
-        ];
-        $apiParams = [
-            'action'  => 'edit',
-            'title'   => 'User:Sandbox/test Page',
-            // 'section' => 'new',
-            'summary' => "",
-            'token'   => "fake_token",
-            'text'    => "",
-            'format'  => 'json',
-        ];
-        $accessToken = new Token($access["access_key"], $access["access_secret"]);
+        $mockAdapter = $this->createMock(MediaWikiOAuthClientAdapter::class);
+        $mockAdapter->expects($this->once())
+            ->method('makeOAuthCall')
+            ->with($this->anything(), 'https://en.wikipedia.org/w/api.php?action=query&meta=tokens&format=json')
+            ->willReturn(json_encode([
+                'query' => [
+                    'tokens' => [
+                        'csrftoken' => 'test_csrf_token_123',
+                    ],
+                ],
+            ]));
 
-        $editClient = new MediaWikiEditClient();
-        $result = $editClient->publishEdit($apiParams, 'en', $accessToken);
+        $client = new MediaWikiEditClient();
+        $token = new Token('key', 'secret');
 
-        $expected_error = [
-            'code' => 'mwoauth-invalid-authorization',
-            'info' => 'The authorization headers in your request are not valid: Invalid consumer',
-            '*'    => 'See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.',
-        ];
+        $csrftoken = $client->getEditsToken($mockAdapter, $token, 'https://en.wikipedia.org/w/api.php');
+        $this->assertSame('test_csrf_token_123', $csrftoken);
+    }
 
-        $this->assertIsArray($result);
-        $this->assertSame($expected_error, $result["error"]);
+    public function testGetEditsTokenReturnsNullOnInvalidJsonResponse(): void
+    {
+        $mockAdapter = $this->createMock(MediaWikiOAuthClientAdapter::class);
+        $mockAdapter->expects($this->once())
+            ->method('makeOAuthCall')
+            ->willReturn('invalid json');
 
-        // $this->assertArrayHasKey('edit', $result);
-        // $this->assertArrayHasKey('result', $result['edit']);
-        // $this->assertSame('Success', $result['edit']['result']);
+        $client = new MediaWikiEditClient();
+        $token = new Token('key', 'secret');
+
+        $csrftoken = $client->getEditsToken($mockAdapter, $token, 'https://en.wikipedia.org/w/api.php');
+        $this->assertNull($csrftoken);
+    }
+
+    public function testPostParamsReturnsErrorWhenCsrfTokenFails(): void
+    {
+        $mockAdapter = $this->createMock(MediaWikiOAuthClientAdapter::class);
+        $mockAdapter->method('makeOAuthCall')->willReturn('{}');
+
+        $mockFactory = $this->createMock(MediaWikiOAuthClientFactory::class);
+        $mockFactory->expects($this->once())
+            ->method('createForDomain')
+            ->with('https://en.wikipedia.org')
+            ->willReturn($mockAdapter);
+
+        $client = new MediaWikiEditClient($mockFactory);
+
+        $response = $client->postParams(
+            ['action' => 'cxtoken'],
+            'https://en.wikipedia.org',
+            'key',
+            'secret'
+        );
+
+        $decoded = json_decode($response, true);
+        $this->assertSame('get_csrftoken failed', $decoded['error']);
+    }
+
+    public function testPostParamsExecutesOAuthCallWithCsrfToken(): void
+    {
+        $mockAdapter = $this->createMock(MediaWikiOAuthClientAdapter::class);
+        $mockAdapter->expects($this->exactly(2))
+            ->method('makeOAuthCall')
+            ->willReturnOnConsecutiveCalls(
+                json_encode([
+                    'query' => [
+                        'tokens' => [
+                            'csrftoken' => 'csrf_token_456',
+                        ],
+                    ],
+                ]),
+                json_encode(['result' => 'success'])
+            );
+
+        $mockFactory = $this->createMock(MediaWikiOAuthClientFactory::class);
+        $mockFactory->expects($this->once())
+            ->method('createForDomain')
+            ->with('https://ar.wikipedia.org')
+            ->willReturn($mockAdapter);
+
+        $client = new MediaWikiEditClient($mockFactory);
+
+        $response = $client->postParams(
+            ['action' => 'edit', 'title' => 'Test'],
+            'https://ar.wikipedia.org',
+            'key',
+            'secret'
+        );
+
+        $decoded = json_decode($response, true);
+        $this->assertSame(['result' => 'success'], $decoded);
+    }
+
+    public function testPublishEditWithPredefinedToken(): void
+    {
+        $mockAdapter = $this->createMock(MediaWikiOAuthClientAdapter::class);
+        $mockAdapter->expects($this->once())
+            ->method('makeOAuthCall')
+            ->with(
+                $this->anything(),
+                'https://en.wikipedia.org/w/api.php',
+                true,
+                $this->callback(function (array $params) {
+                    return $params['token'] === 'existing_token';
+                })
+            )
+            ->willReturn(json_encode(['edit' => ['result' => 'Success']]));
+
+        $mockFactory = $this->createMock(MediaWikiOAuthClientFactory::class);
+        $mockFactory->expects($this->once())
+            ->method('createForDomain')
+            ->with('en.wikipedia.org')
+            ->willReturn($mockAdapter);
+
+        $client = new MediaWikiEditClient($mockFactory);
+        $token = new Token('key', 'secret');
+
+        $result = $client->publishEdit(['token' => 'existing_token', 'title' => 'Test'], 'en', $token);
+        $this->assertSame(['edit' => ['result' => 'Success']], $result);
     }
 }

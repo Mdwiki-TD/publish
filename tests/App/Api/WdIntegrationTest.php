@@ -2,10 +2,15 @@
 
 namespace Tests\Bots\Integration;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Publish\Api\WdApi;
 
+/**
+ * Integration Tests for src/bots/wd.php (namespace Publish\WD)
+ */
+#[CoversClass(WdApi::class)]
 class WdIntegrationTest extends TestCase
 {
     private WdApi $api;

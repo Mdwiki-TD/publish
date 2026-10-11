@@ -2,6 +2,7 @@
 
 namespace Tests\Bots;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use Publish\Utils\StartUtils;
@@ -9,6 +10,7 @@ use Publish\Utils\StartUtils;
 /**
  * Tests for StartUtils.php
  */
+#[CoversClass(StartUtils::class)]
 class StartUtilsTest extends TestCase
 {
     public static function setUpBeforeClass(): void {}

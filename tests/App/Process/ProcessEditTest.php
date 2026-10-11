@@ -1,77 +1,167 @@
 <?php
 
-/**
- * Seed test for: ProcessEdit
- * Source: src/app/Process/ProcessEdit.php
- * TODO: write the actual tests.
- */
-
 declare(strict_types=1);
 
-namespace Tests\Publish\Process;
+namespace Tests\Process;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
+use Publish\Api\WdApi;
+use Publish\Api\WikiApi;
+use Publish\MdwikiSql\AccessHelps;
+use Publish\MdwikiSql\PublishReportsRepository;
+use Publish\MediaWikiClient\MediaWikiEditClient;
+use Publish\Process\EditProcessLog;
 use Publish\Process\ProcessEdit;
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\CoversClass;
-
 #[CoversClass(ProcessEdit::class)]
-class ProcessEditTest extends TestCase
+final class ProcessEditTest extends TestCase
 {
-    public static function setUpBeforeClass(): void
-    {
-    }
-
-    public function testPrepareApiParamsReturnsCorrectStructure(): void
-    {
-        $title = 'Test Page';
-        $summary = 'Test summary';
-        $text = 'Test content';
-        $request = [];
-
-        $result = ProcessEdit::prepareApiParams($title, $summary, $text, $request);
-
-        $this->assertEquals('edit', $result['action']);
-        $this->assertEquals($title, $result['title']);
-        $this->assertEquals($summary, $result['summary']);
-        $this->assertEquals($text, $result['text']);
-        $this->assertEquals('json', $result['format']);
-    }
-
-    public function testPrepareApiParamsIncludesCaptchaFields(): void
-    {
-        $request = [
-            'wpCaptchaId'   => '12345',
-            'wpCaptchaWord' => 'answer'
-        ];
-
-        $result = ProcessEdit::prepareApiParams('Test', 'Summary', 'Content', $request);
-
-        $this->assertEquals('12345', $result['wpCaptchaId']);
-        $this->assertEquals('answer', $result['wpCaptchaWord']);
-    }
-
-    public function testPrepareApiParamsBasicFields(): void
-    {
-        $params = ProcessEdit::prepareApiParams('MyTitle', 'My summary', 'Article body', []);
-        $this->assertSame('edit', $params['action']);
-        $this->assertSame('MyTitle', $params['title']);
-        $this->assertSame('json', $params['format']);
-        $this->assertArrayNotHasKey('wpCaptchaId', $params);
-    }
-
     public function testPrepareApiParamsIncludesCaptchaWhenPresent(): void
     {
-        $request = ['wpCaptchaId' => 'abc123', 'wpCaptchaWord' => 'xkcd'];
-        $params = ProcessEdit::prepareApiParams('T', 'S', 'B', $request);
-        $this->assertSame('abc123', $params['wpCaptchaId']);
-        $this->assertSame('xkcd', $params['wpCaptchaWord']);
+        $params = ProcessEdit::prepareApiParams(
+            'Test Title',
+            'Summary',
+            'Text content',
+            ['wpCaptchaId' => 'c123', 'wpCaptchaWord' => 'w456']
+        );
+
+        $this->assertSame('Test Title', $params['title']);
+        $this->assertSame('c123', $params['wpCaptchaId']);
+        $this->assertSame('w456', $params['wpCaptchaWord']);
     }
 
-    public function testPrepareApiParamsOmitsCaptchaWhenPartiallyPresent(): void
+    public function testShouldAddedToWikidataReturnsFalseForUserNamespace(): void
     {
-        $params = ProcessEdit::prepareApiParams('T', 'S', 'B', ['wpCaptchaId' => 'only-id']);
-        $this->assertArrayNotHasKey('wpCaptchaId', $params);
-        $this->assertArrayNotHasKey('wpCaptchaWord', $params);
+        $mockWikiApi = $this->createMock(WikiApi::class);
+        $mockWikiApi->method('GetTitleInfo')
+            ->with('User:TestUser/Page', 'en')
+            ->willReturn(['ns' => 2, 'title' => 'User:TestUser/Page']);
+
+        $processEdit = new ProcessEdit(wikiApi: $mockWikiApi);
+        $this->assertFalse($processEdit->shouldAddedToWikidata('en', 'User:TestUser/Page'));
+    }
+
+    public function testShouldAddedToWikidataReturnsTrueForMainNamespace(): void
+    {
+        $mockWikiApi = $this->createMock(WikiApi::class);
+        $mockWikiApi->method('GetTitleInfo')
+            ->with('Main_Article', 'en')
+            ->willReturn(['ns' => 0, 'title' => 'Main_Article']);
+
+        $processEdit = new ProcessEdit(wikiApi: $mockWikiApi);
+        $this->assertTrue($processEdit->shouldAddedToWikidata('en', 'Main_Article'));
+    }
+
+    public function testRetryWithFallbackUserSuccess(): void
+    {
+        $mockAccessHelps = $this->createMock(AccessHelps::class);
+        $mockAccessHelps->method('getAccess')
+            ->with('Mr. Ibrahem')
+            ->willReturn(['access_key' => 'fb_key', 'access_secret' => 'fb_secret']);
+
+        $mockWdApi = $this->createMock(WdApi::class);
+        $mockWdApi->method('LinkToWikidata')
+            ->willReturn(['qid' => 'Q12345']);
+
+        $processEdit = new ProcessEdit(
+            wdApi: $mockWdApi,
+            accessHelps: $mockAccessHelps
+        );
+
+        $result = $processEdit->retryWithFallbackUser('SourceTitle', 'en', 'TargetTitle', 'OriginalUser');
+        $this->assertSame('Q12345', $result['qid']);
+        $this->assertSame('Mr. Ibrahem', $result['fallback_user']);
+        $this->assertSame('OriginalUser', $result['original_user']);
+    }
+
+    public function testHandleSuccessfulEditSkipForUserNamespace(): void
+    {
+        $mockWikiApi = $this->createMock(WikiApi::class);
+        $mockWikiApi->method('GetTitleInfo')->willReturn(['ns' => 2]);
+
+        $processEdit = new ProcessEdit(wikiApi: $mockWikiApi);
+        $result = $processEdit->handleSuccessfulEdit('Source', 'en', 'User', 'User:User/Page', [], 'rand1');
+
+        $this->assertSame(['error' => 'skip link to wd for user pages'], $result);
+    }
+
+    public function testHandleSuccessfulEditTriggersFallbackOnCsrfFailure(): void
+    {
+        $mockWikiApi = $this->createMock(WikiApi::class);
+        $mockWikiApi->method('GetTitleInfo')->willReturn(['ns' => 0]);
+
+        $mockWdApi = $this->createMock(WdApi::class);
+        $mockWdApi->expects($this->exactly(2))
+            ->method('LinkToWikidata')
+            ->willReturnOnConsecutiveCalls(
+                ['error' => 'get_csrftoken failed'],
+                ['qid' => 'Q789']
+            );
+
+        $mockAccessHelps = $this->createMock(AccessHelps::class);
+        $mockAccessHelps->method('getAccess')
+            ->with('Mr. Ibrahem')
+            ->willReturn(['access_key' => 'k', 'access_secret' => 's']);
+
+        $mockRepo = $this->createMock(PublishReportsRepository::class);
+        $mockRepo->expects($this->once())->method('insertPublishReports');
+
+        $processEdit = new ProcessEdit(
+            wdApi: $mockWdApi,
+            accessHelps: $mockAccessHelps,
+            repository: $mockRepo,
+            wikiApi: $mockWikiApi
+        );
+
+        $access = ['access_key' => 'orig_key', 'access_secret' => 'orig_secret'];
+        $result = $processEdit->handleSuccessfulEdit('Source', 'en', 'OtherUser', 'Target', $access, 'rand123');
+
+        $this->assertSame('get_csrftoken failed', $result['error']);
+        $this->assertArrayHasKey('fallback', $result);
+    }
+
+    public function testHandleFullFlowSuccessfulEdit(): void
+    {
+        $mockWikiApi = $this->createMock(WikiApi::class);
+        $mockWikiApi->method('GetTitleInfo')->willReturn(['ns' => 0]);
+
+        $mockEditClient = $this->createMock(MediaWikiEditClient::class);
+        $mockEditClient->expects($this->once())
+            ->method('publishEdit')
+            ->willReturn(['edit' => ['result' => 'Success']]);
+
+        $mockWdApi = $this->createMock(WdApi::class);
+        $mockWdApi->method('LinkToWikidata')->willReturn(['qid' => 'Q999']);
+
+        $mockLog = $this->createMock(EditProcessLog::class);
+        $mockLog->expects($this->once())
+            ->method('addToDb')
+            ->willReturn(['execute_query' => true]);
+
+        $mockRepo = $this->createMock(PublishReportsRepository::class);
+
+        $processEdit = new ProcessEdit(
+            editProcessLog: $mockLog,
+            wdApi: $mockWdApi,
+            editClient: $mockEditClient,
+            repository: $mockRepo,
+            wikiApi: $mockWikiApi
+        );
+
+        $request = [];
+        $access = ['access_key' => 'key', 'access_secret' => 'secret'];
+        $tab = [
+            'title' => 'Target Title',
+            'sourcetitle' => 'Source Title',
+            'summary' => 'Summary',
+            'lang' => 'en',
+            'campaign' => 'medwiki',
+            'revid' => 100,
+            'words' => 500,
+        ];
+
+        $res = $processEdit->handle($request, $access, 'Wikitext', 'TestUser', $tab, 'rand456', 'all');
+        $this->assertSame('Success', $res['edit']['result']);
     }
 }

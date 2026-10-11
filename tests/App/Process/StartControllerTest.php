@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Process;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Publish\Process\StartController;
 use Publish\Process\ProcessEdit;
-use Publish\Process\TextChanger;
+use Publish\Process\EditProcess;
 use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MdwikiSql\AccessHelps;
-
-use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(StartController::class)]
 final class StartControllerTest extends TestCase
@@ -20,13 +19,13 @@ final class StartControllerTest extends TestCase
     {
         $mockAccessHelps = $this->createMock(AccessHelps::class);
         $mockAccessHelps->method('getAccess')->willReturn([
-            'access_key'    => 'key',
+            'access_key' => 'key',
             'access_secret' => 'secret',
         ]);
         $mockAccessHelps->method('loadTitleData')->willReturn([
             'w_lead_words' => 50,
-            'w_all_words'  => 200,
-            'revid'        => 123,
+            'w_all_words' => 200,
+            'revid' => 123,
         ]);
 
         $mockProcessEdit = $this->createMock(ProcessEdit::class);
@@ -45,7 +44,7 @@ final class StartControllerTest extends TestCase
             )
             ->willReturn(['result' => 'success']);
 
-        $mockEditProcess = $this->createMock(TextChanger::class);
+        $mockEditProcess = $this->createMock(EditProcess::class);
         $mockRepository = $this->createMock(PublishReportsRepository::class);
 
         $controller = new StartController(
@@ -56,10 +55,10 @@ final class StartControllerTest extends TestCase
         );
 
         $request = [
-            'tr_type'     => 'all',
-            'title'       => 'Test_Title',
-            'user'        => 'TestUser',
-            'target'      => 'en',
+            'tr_type' => 'all',
+            'title' => 'Test_Title',
+            'user' => 'TestUser',
+            'target' => 'en',
             'sourcetitle' => 'Source_Title',
         ];
 
@@ -71,13 +70,13 @@ final class StartControllerTest extends TestCase
     {
         $mockAccessHelps = $this->createMock(AccessHelps::class);
         $mockAccessHelps->method('getAccess')->willReturn([
-            'access_key'    => 'key',
+            'access_key' => 'key',
             'access_secret' => 'secret',
         ]);
         $mockAccessHelps->method('loadTitleData')->willReturn([
             'w_lead_words' => 50,
-            'w_all_words'  => 200,
-            'revid'        => 123,
+            'w_all_words' => 200,
+            'revid' => 123,
         ]);
 
         $mockProcessEdit = $this->createMock(ProcessEdit::class);
@@ -96,7 +95,7 @@ final class StartControllerTest extends TestCase
             )
             ->willReturn(['result' => 'success']);
 
-        $mockEditProcess = $this->createMock(TextChanger::class);
+        $mockEditProcess = $this->createMock(EditProcess::class);
         $mockRepository = $this->createMock(PublishReportsRepository::class);
 
         $controller = new StartController(
@@ -107,10 +106,10 @@ final class StartControllerTest extends TestCase
         );
 
         $request = [
-            'tr_type'     => 'lead',
-            'title'       => 'Test_Title',
-            'user'        => 'TestUser',
-            'target'      => 'en',
+            'tr_type' => 'lead',
+            'title' => 'Test_Title',
+            'user' => 'TestUser',
+            'target' => 'en',
             'sourcetitle' => 'Source_Title',
         ];
 

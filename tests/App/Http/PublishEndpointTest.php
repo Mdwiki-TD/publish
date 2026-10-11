@@ -2,33 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Tests\Publish\Http;
+namespace Tests\Http;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Publish\Http\PublishEndpoint;
 use Publish\Process\StartController;
 
-use PHPUnit\Framework\Attributes\CoversClass;
-
 #[CoversClass(PublishEndpoint::class)]
 final class PublishEndpointTest extends TestCase
 {
-    private array $originalServer;
-
-    protected function setUp(): void
-    {
-        $this->originalServer = $_SERVER;
-        putenv('PUBLISH_SECRET_CODE=secret123');
-    }
-
     protected function tearDown(): void
     {
-        $_SERVER = $this->originalServer;
+        unset($_SERVER['REQUEST_METHOD'], $_SERVER['HTTP_X_SECRET_KEY']);
         putenv('PUBLISH_SECRET_CODE=');
     }
 
-    public function testRunExecutesControllerWhenAuthorizedAndPost(): void
+    public function testRunExecutesControllerWhenAuthorizedPostRequest(): void
     {
+        putenv('PUBLISH_SECRET_CODE=secret123');
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['HTTP_X_SECRET_KEY'] = 'secret123';
         $_POST = ['test' => 'data'];
@@ -40,9 +32,54 @@ final class PublishEndpointTest extends TestCase
 
         $endpoint = new PublishEndpoint($mockController);
 
-        // Capture header output / buffer
-        ob_start();
-        $endpoint->run();
-        ob_end_clean();
+        @$endpoint->run();
+    }
+
+    public function testRunFailsWhenNotPostRequest(): void
+    {
+        $code = '
+            require "vendor/autoload.php";
+            require "src/app/bootstrap.php";
+            putenv("PUBLISH_SECRET_CODE=secret123");
+            $_SERVER["REQUEST_METHOD"] = "GET";
+            $_SERVER["HTTP_X_SECRET_KEY"] = "secret123";
+            $endpoint = new Publish\Http\PublishEndpoint();
+            @$endpoint->run();
+        ';
+
+        $output = shell_exec('php -r ' . escapeshellarg($code));
+        $this->assertStringContainsString('Only POST requests are allowed', (string) $output);
+    }
+
+    public function testRunFailsWhenUnauthorizedKey(): void
+    {
+        $code = '
+            require "vendor/autoload.php";
+            require "src/app/bootstrap.php";
+            putenv("PUBLISH_SECRET_CODE=secret123");
+            $_SERVER["REQUEST_METHOD"] = "POST";
+            $_SERVER["HTTP_X_SECRET_KEY"] = "wrong_secret";
+            $endpoint = new Publish\Http\PublishEndpoint();
+            @$endpoint->run();
+        ';
+
+        $output = shell_exec('php -r ' . escapeshellarg($code));
+        $this->assertStringContainsString('Access denied', (string) $output);
+    }
+
+    public function testRunFailsWhenSecretEnvNotSet(): void
+    {
+        $code = '
+            require "vendor/autoload.php";
+            require "src/app/bootstrap.php";
+            putenv("PUBLISH_SECRET_CODE=");
+            $_SERVER["REQUEST_METHOD"] = "POST";
+            $_SERVER["HTTP_X_SECRET_KEY"] = "anything";
+            $endpoint = new Publish\Http\PublishEndpoint();
+            @$endpoint->run();
+        ';
+
+        $output = shell_exec('php -r ' . escapeshellarg($code));
+        $this->assertStringContainsString('Access denied', (string) $output);
     }
 }
