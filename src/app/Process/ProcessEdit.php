@@ -8,12 +8,12 @@ use Publish\AddToDb\PublishReportsRepository;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 use Publish\Process\EditProcessLog;
 use Publish\MdwikiSql\AccessHelps;
+use Publish\Utils\StartUtils;
 
 use function Publish\Helps\pub_test_print;
 use function Publish\WD\LinkToWikidata;
 use function Publish\FilesHelps\to_do;
-use function Publish\WikiApi\GetTitleInfo;
-use function Publish\StartUtils\get_errors_file;
+use Publish\Api\WikiApi;
 
 class ProcessEdit
 {
@@ -29,7 +29,7 @@ class ProcessEdit
 
     public function shouldAddedToWikidata(string $lang, string $title): bool
     {
-        $pageInformations = GetTitleInfo($title, $lang);
+        $pageInformations = WikiApi::GetTitleInfo($title, $lang);
         if (!$pageInformations) {
             return false;
         }
@@ -93,7 +93,7 @@ class ProcessEdit
                 'username' => $user
             ];
             // if str($linkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
-            $fileName = get_errors_file($linkTowd['error'], "wd_errors");
+            $fileName = StartUtils::get_errors_file($linkTowd['error'], "wd_errors");
             to_do($tab3, $fileName, $randId);
 
             $repository = new PublishReportsRepository();
@@ -146,7 +146,7 @@ class ProcessEdit
         } elseif ($editit['edit']['captcha'] ?? null) {
             $toDoFile = "captcha";
         } else {
-            $toDoFile = get_errors_file($editit, "errors");
+            $toDoFile = StartUtils::get_errors_file($editit, "errors");
         }
 
         $tab['result_to_cx'] = $editit;

@@ -8,12 +8,8 @@ use Publish\Process\ProcessEdit;
 use function Publish\EditProcess\text_changes;
 use function Publish\Helps\pub_test_print;
 use function Publish\FilesHelps\to_do;
-
 use Publish\MdwikiSql\AccessHelps;
-use function Publish\StartUtils\make_summary;
-use function Publish\StartUtils\formatTitle;
-use function Publish\StartUtils\formatUser;
-use function Publish\StartUtils\determineHashtag;
+use Publish\Utils\StartUtils;
 
 /**
  * Front controller for the publish flow.
@@ -52,7 +48,7 @@ class StartController
         $trType = $request['tr_type'] ?? self::DEFAULT_TR_TYPE;
 
         $randId = $this->generateRequestId();
-        $user = formatUser($request['user'] ?? '');
+        $user = StartUtils::formatUser($request['user'] ?? '');
         $tab = $this->buildInitialTab($request, $user);
 
         $access = AccessHelps::getAccess($user);
@@ -89,8 +85,8 @@ class StartController
         }
         $tab['revid'] = $revid;
 
-        $hashtag = determineHashtag($tab['title'], $user);
-        $tab['summary'] = make_summary($revid, $tab['sourcetitle'], $tab['lang'], $hashtag);
+        $hashtag = StartUtils::determineHashtag($tab['title'], $user);
+        $tab['summary'] = StartUtils::make_summary($revid, $tab['sourcetitle'], $tab['lang'], $hashtag);
 
         return $tab;
     }
@@ -109,7 +105,7 @@ class StartController
     private function buildInitialTab(array $request, string $user): array
     {
         return [
-            'title'       => formatTitle($request['title'] ?? ''),
+            'title'       => StartUtils::formatTitle($request['title'] ?? ''),
             'summary'     => "",
             'lang'        => $request['target'] ?? '',
             'user'        => $user,

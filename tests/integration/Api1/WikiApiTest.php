@@ -4,7 +4,7 @@ namespace Tests\Bots\Integration;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
-use function Publish\WikiApi\GetTitleInfo;
+use Publish\Api\WikiApi;
 
 /**
  * Integration Tests for src/app/api/WikiApi.php (namespace Publish\WD)
@@ -22,7 +22,7 @@ class WikiApiTest extends TestCase
     #[Group('readonly')]
     public function testGetTitleInfoReturnsCorrectPageIdForMainPageEn(): void
     {
-        $result = GetTitleInfo('Main Page', 'en');
+        $result = WikiApi::GetTitleInfo('Main Page', 'en');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('pageid', $result);
@@ -37,8 +37,8 @@ class WikiApiTest extends TestCase
     #[Group('readonly')]
     public function testGetTitleInfoReturnsCorrectDataForMgUserPage(): void
     {
-        $title  = "Mpikambana:Doc James/Fahaverezan'ny volo";
-        $result = GetTitleInfo($title, 'mg');
+        $title = "Mpikambana:Doc James/Fahaverezan'ny volo";
+        $result = WikiApi::GetTitleInfo($title, 'mg');
 
         $this->assertIsArray($result);
         $this->assertSame(298895, $result['pageid']);
@@ -52,8 +52,8 @@ class WikiApiTest extends TestCase
     #[Group('readonly')]
     public function testGetTitleInfoReturnsCorrectDataForBsUserPage(): void
     {
-        $title  = "Korisnik:Doc James/Analna fistula";
-        $result = GetTitleInfo($title, 'bs');
+        $title = "Korisnik:Doc James/Analna fistula";
+        $result = WikiApi::GetTitleInfo($title, 'bs');
 
         $this->assertIsArray($result);
         $this->assertSame(531525, $result['pageid']);
@@ -68,7 +68,7 @@ class WikiApiTest extends TestCase
     public function testGetTitleInfoReturnsMissingFlagForNonExistentPage(): void
     {
         // Wikipedia returns { "missing": true } for missing pages
-        $result = GetTitleInfo('ThisPageDefinitelyDoesNotExist_XYZ_12345', 'en');
+        $result = WikiApi::GetTitleInfo('ThisPageDefinitelyDoesNotExist_XYZ_12345', 'en');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('missing', $result);
@@ -81,7 +81,7 @@ class WikiApiTest extends TestCase
     #[Group('readonly')]
     public function testGetTitleInfoHandlesTitleWithSpaces(): void
     {
-        $result = GetTitleInfo('United States', 'en');
+        $result = WikiApi::GetTitleInfo('United States', 'en');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('pageid', $result);
@@ -94,7 +94,7 @@ class WikiApiTest extends TestCase
     #[Group('readonly')]
     public function testGetTitleInfoHandlesUnicodeTitles(): void
     {
-        $result = GetTitleInfo('メインページ', 'ja');
+        $result = WikiApi::GetTitleInfo('メインページ', 'ja');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('pageid', $result);
@@ -108,11 +108,11 @@ class WikiApiTest extends TestCase
     {
         $this->markTestSkipped(
             'Requires real network access and cURL timeout (~11s) for a non-existent domain. '
-                . 'Run manually or via --group network when needed.'
+            . 'Run manually or via --group network when needed.'
         );
 
         // zz.wikipedia.org does not exist → exception → null
-        $result = GetTitleInfo('SomePage', 'zz_invalid_lang_xyz');
+        $result = WikiApi::GetTitleInfo('SomePage', 'zz_invalid_lang_xyz');
 
         $this->assertNull($result);
     }
