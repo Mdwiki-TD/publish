@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Process;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Publish\Process\StartController;
 use Publish\Process\ProcessEdit;
@@ -11,6 +12,7 @@ use Publish\Process\EditProcess;
 use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MdwikiSql\AccessHelps;
 
+#[CoversClass(StartController::class)]
 final class StartControllerTest extends TestCase
 {
     public function testEnrichTabUsesWAllWordsWhenTrTypeIsNotLead(): void

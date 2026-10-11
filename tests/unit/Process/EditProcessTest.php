@@ -2,10 +2,13 @@
 
 namespace Tests\Bots;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+use Publish\Process\EditProcess;
 use Publish\Process\ProcessEdit;
 
+#[CoversClass(EditProcess::class)]
 class EditProcessTest extends TestCase
 {
     public static function setUpBeforeClass(): void {}

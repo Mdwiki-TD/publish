@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Publish\Tests\Bots;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use Publish\Utils\FilesHelps;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(FilesHelps::class)]
 final class FilesHelpsTest extends TestCase
 {
     protected function setUp(): void
