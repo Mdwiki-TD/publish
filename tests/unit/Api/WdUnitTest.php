@@ -2,11 +2,13 @@
 
 namespace Tests\Bots\Unit;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use Publish\MdwikiSql\DatabaseInterface;
 use Publish\Api\WdApi;
 
+#[CoversClass(WdApi::class)]
 class WdUnitTest extends TestCase
 {
     private WdApi $api;

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\MdwikiSql;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Publish\MdwikiSql\AccessHelps;
 use Publish\MdwikiSql\Database;
 
+#[CoversClass(AccessHelps::class)]
 final class AccessHelpsTest extends TestCase
 {
     public function testLoadTitleDataReturnsFirstRowArrayWhenFound(): void

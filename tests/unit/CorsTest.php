@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Bots;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Publish\Cors;
 
@@ -11,6 +12,7 @@ use Publish\Cors;
  * incoming request originates from one of the whitelisted domains.
  */
 
+#[CoversClass(Cors::class)]
 class CorsTest extends TestCase
 {
     protected function setUp(): void
