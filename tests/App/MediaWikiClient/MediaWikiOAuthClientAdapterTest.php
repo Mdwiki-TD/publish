@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\MediaWikiClient;
+namespace Tests\Publish\MediaWikiClient;
 
 use MediaWiki\OAuthClient\Client;
 use MediaWiki\OAuthClient\Token;
@@ -23,11 +23,11 @@ final class MediaWikiOAuthClientAdapterTest extends TestCase
         $mockClient->expects($this->once())
             ->method('makeOAuthCall')
             ->with($token, $url, true, $params)
-            ->willReturn('{"query":{}}');
+            ->willReturn('{"response":"ok"}');
 
         $adapter = new MediaWikiOAuthClientAdapter($mockClient);
         $result = $adapter->makeOAuthCall($token, $url, true, $params);
 
-        $this->assertSame('{"query":{}}', $result);
+        $this->assertSame('{"response":"ok"}', $result);
     }
 }

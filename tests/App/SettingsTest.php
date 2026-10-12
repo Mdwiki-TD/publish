@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace Tests\Publish;
 
 use Defuse\Crypto\Key;
 use PHPUnit\Framework\Attributes\CoversClass;

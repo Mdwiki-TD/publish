@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Process;
+namespace Tests\Publish\Process;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -152,13 +152,13 @@ final class ProcessEditTest extends TestCase
         $request = [];
         $access = ['access_key' => 'key', 'access_secret' => 'secret'];
         $tab = [
-            'title' => 'Target Title',
+            'title'       => 'Target Title',
             'sourcetitle' => 'Source Title',
-            'summary' => 'Summary',
-            'lang' => 'en',
-            'campaign' => 'medwiki',
-            'revid' => 100,
-            'words' => 500,
+            'summary'     => 'Summary',
+            'lang'        => 'en',
+            'campaign'    => 'medwiki',
+            'revid'       => 100,
+            'words'       => 500,
         ];
 
         $res = $processEdit->handle($request, $access, 'Wikitext', 'TestUser', $tab, 'rand456', 'all');
