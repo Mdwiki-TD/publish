@@ -9,7 +9,7 @@ use Publish\MdwikiSql\DatabaseInterface;
 use Publish\Api\WdApi;
 
 #[CoversClass(WdApi::class)]
-class WdUnitTest extends TestCase
+class WdApiTest extends TestCase
 {
     private WdApi $api;
 
