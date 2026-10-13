@@ -6,6 +6,9 @@ use Publish\CurlRequests\CurlHttpClient;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+
+#[CoversClass(CurlHttpClient::class)]
 class CurlHttpClientTest extends TestCase
 {
     #[Group('network')]

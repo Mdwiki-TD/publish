@@ -21,13 +21,13 @@ final class AccessHelpsTest extends TestCase
             ->willReturn([
                 [
                     'w_lead_words' => 15,
-                    'w_all_words' => 120,
-                    'revid' => 999,
+                    'w_all_words'  => 120,
+                    'revid'        => 999,
                 ],
                 [
                     'w_lead_words' => 20,
-                    'w_all_words' => 200,
-                    'revid' => 1000,
+                    'w_all_words'  => 200,
+                    'revid'        => 1000,
                 ],
             ]);
 
@@ -36,8 +36,8 @@ final class AccessHelpsTest extends TestCase
 
         $this->assertSame([
             'w_lead_words' => 15,
-            'w_all_words' => 120,
-            'revid' => 999,
+            'w_all_words'  => 120,
+            'revid'        => 999,
         ], $result);
     }
 

@@ -1,28 +1,41 @@
 ```
 tests/
-├── integration/
-│   ├── Api/
-│   │   ├── WdIntegrationTest.php
-│   │   └── WikiApiTest.php
-│   ├── CurlRequests/
-│   │   └── CurlHttpClientTest.php
-│   ├── cxtoken/
-│   ├── MediaWikiClient/
-│   │   └── MediaWikiEditClientTest.php
-│   └── process/
-│       ├── ProcessEditTest.php
-│       └── StartTest.php
-├── unit/
+├── App/
 │   ├── AddToDb/
 │   │   └── PublishReportsRepositoryTest.php
 │   ├── Api/
-│   │   └── WdUnitTest.php
+│   │   ├── WdApiTest.php
+│   │   ├── WdIntegrationTest.php
+│   │   ├── WdUnitTest.php
+│   │   └── WikiApiTest.php
+│   ├── CurlRequests/
+│   │   ├── CurlHttpClientTest.php
+│   │   └── HttpClientInterfaceTest.php
+│   ├── Http/
+│   │   ├── CxTokenEndpointTest.php
+│   │   └── PublishEndpointTest.php
+│   ├── MdwikiSql/
+│   │   ├── AccessHelpsTest.php
+│   │   ├── DatabaseInterfaceTest.php
+│   │   ├── DatabaseTest.php
+│   │   └── PublishReportsRepositoryTest.php
+│   ├── MediaWikiClient/
+│   │   ├── MediaWikiEditClientTest.php
+│   │   ├── MediaWikiOAuthClientAdapterTest.php
+│   │   ├── MediaWikiOAuthClientFactoryTest.php
+│   │   ├── OAuthClientFactoryInterfaceTest.php
+│   │   └── OAuthHttpClientInterfaceTest.php
 │   ├── Process/
-│   │   └── EditProcessTest.php
+│   │   ├── EditProcessLogTest.php
+│   │   ├── EditProcessTest.php
+│   │   ├── ProcessEditTest.php
+│   │   └── StartControllerTest.php
 │   ├── Utils/
 │   │   ├── FilesHelpsTest.php
 │   │   └── StartUtilsTest.php
-│   └── CorsTest.php
+│   ├── CorsTest.php
+│   ├── LoggerTest.php
+│   └── SettingsTest.php
 ├── bootstrap.php
 └── syntaxTest.php
 

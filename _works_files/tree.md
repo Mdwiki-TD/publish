@@ -1,8 +1,6 @@
 ```
 src/
 ├── app/
-│   ├── AddToDb/
-│   │   └── PublishReportsRepository.php
 │   ├── Api/
 │   │   ├── WdApi.php
 │   │   └── WikiApi.php
@@ -14,7 +12,9 @@ src/
 │   │   └── PublishEndpoint.php
 │   ├── MdwikiSql/
 │   │   ├── AccessHelps.php
-│   │   └── Database.php
+│   │   ├── Database.php
+│   │   ├── DatabaseInterface.php
+│   │   └── PublishReportsRepository.php
 │   ├── MediaWikiClient/
 │   │   ├── MediaWikiEditClient.php
 │   │   ├── MediaWikiOAuthClientAdapter.php
@@ -23,6 +23,7 @@ src/
 │   │   ├── OAuthHttpClientInterface.php
 │   │   └── README.md
 │   ├── Process/
+│   │   ├── EditProcess.php
 │   │   ├── EditProcessLog.php
 │   │   ├── ProcessEdit.php
 │   │   └── StartController.php
@@ -33,7 +34,7 @@ src/
 │   ├── Cors.php
 │   ├── Logger.php
 │   ├── README.md
-│   ├── Settings.php
+│   └── Settings.php
 ├── index.php
 ├── main.php
 ├── README.md

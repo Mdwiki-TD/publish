@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Process;
+namespace Tests\Publish\Process;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;

@@ -7,10 +7,9 @@ use PHPUnit\Framework\Attributes\Group;
 use Publish\CurlRequests\HttpClientInterface;
 use Publish\Api\WikiApi;
 
-/**
- * Integration Tests for src/app/api/WikiApi.php (namespace Publish\WD)
- *
- */
+use PHPUnit\Framework\Attributes\CoversClass;
+
+#[CoversClass(WikiApi::class)]
 class WikiApiTest extends TestCase
 {
     private WikiApi $wikiApi;

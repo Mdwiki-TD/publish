@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Http;
+namespace Tests\Publish\Http;
 
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Publish\Http\CxTokenEndpoint;
 use Publish\MdwikiSql\AccessHelps;
 use Publish\MediaWikiClient\MediaWikiEditClient;
+
+use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(CxTokenEndpoint::class)]
 final class CxTokenEndpointTest extends TestCase
@@ -34,7 +35,6 @@ final class CxTokenEndpointTest extends TestCase
                 'secret_456'
             )
             ->willReturn(json_encode(['cxtoken' => 'token_val']));
-
         $endpoint = new CxTokenEndpoint(client: $mockClient);
         $result = $endpoint->getCxToken('en', ['access_key' => 'key_123', 'access_secret' => 'secret_456']);
 
