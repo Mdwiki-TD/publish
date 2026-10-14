@@ -6,7 +6,7 @@ use Publish\Logger;
 class FilesHelps
 {
 
-    public static function to_do($tab, $fileName, $randId)
+    public static function to_do(array $tab, string $fileName, string|int $randId)
     {
         $mainDirByDay = self::check_dirs($randId, 'reports_by_day');
         $tab['time'] = time();

@@ -105,7 +105,7 @@ class ProcessEdit
                 'sourcetitle' => $sourcetitle,
                 'fallback'    => $linkTowd['fallback'] ?? "",
                 'lang'        => $lang,
-                'user'    => $user
+                'user'        => $user
             ];
             // if str($linkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
             $fileName = StartUtils::get_errors_file($linkTowd['error'], "wd_errors");
@@ -142,8 +142,15 @@ class ProcessEdit
     // Main flow
     // ------------------------------------------------------------
 
-    public function handle($request, $access, $text, $user, $tab, $randId, $trType): array
-    {
+    public function handle(
+        array $request,
+        array $access,
+        string $text,
+        string $user,
+        array $tab,
+        string $randId,
+        string $trType
+    ): array {
         $apiParams = $this->prepareApiParams($tab['title'], $tab['summary'], $text, $request);
 
         $editit = $this->publishEdit($apiParams, $tab['lang'], $access);
@@ -166,7 +173,7 @@ class ProcessEdit
         return $editit;
     }
 
-    private function logResult(array $tab, $user, string $toDoFile, $randId): void
+    private function logResult(array $tab, string $user, string $toDoFile, string|int $randId): void
     {
         FilesHelps::to_do($tab, $toDoFile, $randId);
 

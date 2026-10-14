@@ -161,7 +161,15 @@ final class ProcessEditTest extends TestCase
             'words'       => 500,
         ];
 
-        $res = $processEdit->handle($request, $access, 'Wikitext', 'TestUser', $tab, 'rand456', 'all');
+        $res = $processEdit->handle(
+            $request,
+            $access,
+            'Wikitext',
+            'TestUser',
+            $tab,
+            'rand456',
+            'all'
+        );
         $this->assertSame('Success', $res['edit']['result']);
     }
 }
