@@ -76,10 +76,8 @@ class StartController
             $requestObj->toArray(),
             $access,
             $text,
-            $requestObj->user,
             $result->toArray(),   // TODO: pass $result once ProcessEdit is migrated
             $randId,
-            $requestObj->trType
         );
     }
 
@@ -153,7 +151,7 @@ class StartController
         ];
         $result->resultToCx = $response;
 
-        $tab = $result->toArray(); // TODO: remove once these accept Result
+        $tab = $result->toArray();
         FilesHelps::to_do($tab, "noaccess", $randId);
         $this->repository->insertPublishReports($tab, "noaccess");
 

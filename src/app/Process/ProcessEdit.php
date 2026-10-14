@@ -146,10 +146,8 @@ class ProcessEdit
         array $request,
         array $access,
         string $text,
-        string $user,
         array $tab,
         string $randId,
-        string $trType
     ): array {
         $apiParams = $this->prepareApiParams($tab['title'], $tab['summary'], $text, $request);
 
@@ -158,7 +156,14 @@ class ProcessEdit
         $tab['result'] = $editit['edit']['result'] ?? '';
 
         if ($tab['result'] === 'Success') {
-            $editit = $this->onSuccess($editit, $tab, $user, $access, $randId, $trType);
+            $editit = $this->onSuccess(
+                $editit,
+                $tab,
+                $request['user'],
+                $access,
+                $randId,
+                $request['tr_type']
+            );
             $toDoFile = "success";
         } elseif ($editit['edit']['captcha'] ?? null) {
             $toDoFile = "captcha";
@@ -168,7 +173,7 @@ class ProcessEdit
 
         $tab['result_to_cx'] = $editit;
 
-        $this->logResult($tab, $user, $toDoFile, $randId);
+        $this->logResult($tab, $request['user'], $toDoFile, $randId);
 
         return $editit;
     }
@@ -192,8 +197,14 @@ class ProcessEdit
     }
 
     /** Link to Wikidata, then record the page in the database. */
-    private function onSuccess(array $editit, array $tab, $user, $access, $randId, $trType): array
-    {
+    private function onSuccess(
+        array $editit,
+        array $tab,
+        $user,
+        $access,
+        $randId,
+        $trType
+    ): array {
         $linkToWikidata = $this->handleSuccessfulEdit(
             $tab['sourcetitle'],
             $tab['lang'],
@@ -203,7 +214,9 @@ class ProcessEdit
             $randId
         );
         $editit['LinkToWikidata'] = $linkToWikidata;
+
         $toUsersTable = $this->shouldUseUsersTable($linkToWikidata);
+
         $editit['sql_result'] = $this->editProcessLog->addToDb(
             $tab['title'],
             $tab['lang'],
@@ -215,6 +228,7 @@ class ProcessEdit
             (string) $tab['words'],
             $trType
         );
+
         return $editit;
     }
 

@@ -149,7 +149,10 @@ final class ProcessEditTest extends TestCase
             wikiApi: $mockWikiApi
         );
 
-        $request = [];
+        $request = [
+            'user'    => 'TestUser',
+            'tr_type' => 'all',
+        ];
         $access = ['access_key' => 'key', 'access_secret' => 'secret'];
         $tab = [
             'title'       => 'Target Title',
@@ -165,10 +168,8 @@ final class ProcessEditTest extends TestCase
             $request,
             $access,
             'Wikitext',
-            'TestUser',
             $tab,
             'rand456',
-            'all'
         );
         $this->assertSame('Success', $res['edit']['result']);
     }
