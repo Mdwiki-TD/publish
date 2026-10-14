@@ -32,12 +32,11 @@ class PublishReportsRepositoryTest extends TestCase
         $repo = new PublishReportsRepository($dbMock);
 
         $result = $repo->insertPublishReports(
-            'Some Title',
-            'SomeUser',
-            'ar',
-            'Source Title',
+            [
+                'key'  => 'value',
+                'user' => 'SomeUser'
+            ],
             'success.json',
-            ['key' => 'value']
         );
 
         $this->assertTrue($result);
@@ -51,8 +50,15 @@ class PublishReportsRepositoryTest extends TestCase
         $repo = new PublishReportsRepository($dbMock);
 
         $result = $repo->insertPageTarget(
-            'Source', 'type', 'cat', 'ar', 'user',
-            'target', 'malicious_table', 'rev1', 'words'
+            'Source',
+            'type',
+            'cat',
+            'ar',
+            'user',
+            'target',
+            'malicious_table',
+            'rev1',
+            'words'
         );
 
         $this->assertFalse($result);

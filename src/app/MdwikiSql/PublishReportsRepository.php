@@ -46,12 +46,8 @@ class PublishReportsRepository
     }
 
     public function insertPublishReports(
-        string $title,
-        string $user,
-        string $lang,
-        string $sourcetitle,
-        string $result,
-        $data
+        array $data,
+        string $result
     ): bool {
         // Validate required parameters
         /*
@@ -60,14 +56,21 @@ class PublishReportsRepository
             return false;
         }
         */
-        $query = "INSERT INTO publish_reports (`date`, `title`, `user`, `lang`, `sourcetitle`, `result`, `data`) VALUES (NOW(), ?, ?, ?, ?, ?, ?)";
-
-        $reportData = json_encode($data);
+        $query = "INSERT INTO publish_reports (`date`, `title`, `user`, `lang`, `sourcetitle`, `result`, `data`)
+            VALUES (NOW(), ?, ?, ?, ?, ?, ?)
+        ";
 
         // Remove .json from $result
         $result = str_replace('.json', '', $result);
 
-        $params = [$title, $user, $lang, $sourcetitle, $result, $reportData];
+        $params = [
+            $data['title'],
+            $data['user'],
+            $data['lang'],
+            $data['sourcetitle'],
+            $result,
+            json_encode($data)
+        ];
 
         return $this->executeQuery($query, $params);
     }

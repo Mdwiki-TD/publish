@@ -7,6 +7,7 @@ use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\Process\ProcessEdit;
 use Publish\Process\TextChanger;
 
+use Publish\DTO\PageRequest;
 use Publish\Utils\FilesHelps;
 use Publish\Logger;
 use Publish\MdwikiSql\AccessHelps;
@@ -151,16 +152,13 @@ class StartController
             'username' => $user,
         ];
         $tab['result_to_cx'] = $response;
+        $tab['user'] = $user;
 
         FilesHelps::to_do($tab, "noaccess", $randId);
 
         $this->repository->insertPublishReports(
-            $tab['title'],
-            $user,
-            $tab['lang'],
-            $tab['sourcetitle'],
+            $tab,
             "noaccess",
-            $tab
         );
 
         return $response;

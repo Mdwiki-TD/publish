@@ -105,19 +105,15 @@ class ProcessEdit
                 'sourcetitle' => $sourcetitle,
                 'fallback'    => $linkTowd['fallback'] ?? "",
                 'lang'        => $lang,
-                'username'    => $user
+                'user'    => $user
             ];
             // if str($linkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
             $fileName = StartUtils::get_errors_file($linkTowd['error'], "wd_errors");
             FilesHelps::to_do($tab3, $fileName, $randId);
 
             $this->repository->insertPublishReports(
-                $title,
-                $user,
-                $lang,
-                $sourcetitle,
+                $tab3,
                 $fileName,
-                $tab3
             );
         }
         return $linkTowd;
@@ -174,13 +170,10 @@ class ProcessEdit
     {
         FilesHelps::to_do($tab, $toDoFile, $randId);
 
+        $tab['user'] = $user;
         $this->repository->insertPublishReports(
-            $tab['title'],
-            $user,
-            $tab['lang'],
-            $tab['sourcetitle'],
-            $toDoFile,
-            $tab
+            $tab,
+            $toDoFile
         );
     }
 
