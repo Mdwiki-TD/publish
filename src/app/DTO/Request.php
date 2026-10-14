@@ -59,6 +59,7 @@ final class Request
             'sourcetitle'   => $this->sourcetitle,
             'wpCaptchaId'   => $this->wpCaptchaId,
             'wpCaptchaWord' => $this->wpCaptchaWord,
+            'tr_type'       => $this->trType,
         ];
     }
 }

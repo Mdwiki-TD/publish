@@ -56,24 +56,23 @@ class StartController
     }
 
     /** Handle the request and return the response (no output, easy to test). */
-    public function handle(array $request): array
+    public function handle(array $rawRequest): array
     {
-        $requestObj = Request::fromArray($request);
+        $request = Request::fromArray($rawRequest);
+        $result = Result::fromRequest($request);
 
         $randId = $this->generateRequestId();
-        $result = Result::fromRequest($requestObj);
-
-        $access = $this->accessHelps->getAccess($requestObj->user);
+        $access = $this->accessHelps->getAccess($request->user);
         if (empty($access)) {
             return $this->handleNoAccess($result, $randId);
         }
 
-        $this->enrichResult($result, $requestObj);
-        $text = $this->prepareText($requestObj);
-        $result->fixRefs = ($requestObj->text != $text) ? 'yes' : 'no';
+        $this->enrichResult($result, $request);
+        $text = $this->prepareText($request);
+        $result->fixRefs = ($request->text != $text) ? 'yes' : 'no';
 
         return $this->processEdit->handle(
-            $requestObj->toArray(),
+            $request->toArray(),
             $access,
             $text,
             $result->toArray(),   // TODO: pass $result once ProcessEdit is migrated
