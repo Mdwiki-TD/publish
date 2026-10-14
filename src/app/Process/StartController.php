@@ -8,7 +8,7 @@ use Publish\Process\ProcessEdit;
 use Publish\Process\TextChanger;
 
 use Publish\DTO\Result;
-use Publish\DTO\PageRequest;
+use Publish\DTO\Request;
 use Publish\Utils\FilesHelps;
 use Publish\Logger;
 use Publish\MdwikiSql\AccessHelps;
@@ -58,33 +58,33 @@ class StartController
     /** Handle the request and return the response (no output, easy to test). */
     public function handle(array $request): array
     {
-        $requestObj = PageRequest::fromArray($request);
+        $requestObj = Request::fromArray($request);
 
         $randId = $this->generateRequestId();
-        $tab = $this->buildInitialTab($requestObj);
+        $result = Result::fromRequest($requestObj);
 
         $access = $this->accessHelps->getAccess($requestObj->user);
         if (empty($access)) {
-            return $this->handleNoAccess($tab, $randId);
+            return $this->handleNoAccess($result, $randId);
         }
 
-        $tab = $this->enrichTab($tab, $requestObj);
+        $this->enrichResult($result, $requestObj);
         $text = $this->prepareText($requestObj);
-        $tab['fix_refs'] = ($requestObj->text != $text) ? 'yes' : 'no';
+        $result->fixRefs = ($requestObj->text != $text) ? 'yes' : 'no';
 
         return $this->processEdit->handle(
             $requestObj->toArray(),
             $access,
             $text,
             $requestObj->user,
-            $tab,
+            $result->toArray(),   // TODO: pass $result once ProcessEdit is migrated
             $randId,
             $requestObj->trType
         );
     }
 
-    /** Add words count, revid and summary to the tab. */
-    private function enrichTab(array $tab, PageRequest $request): array
+    /** Add words count, revid and summary to the result. */
+    private function enrichResult(Result $result, Request $request): void
     {
         $titleData = $this->accessHelps->loadTitleData($request->title);
 
@@ -94,31 +94,28 @@ class StartController
                 ? $titleData['w_lead_words'] ?? 0
                 : $titleData['w_all_words'] ?? 0;
         }
-
-        $tab['words'] = $words;
+        $result->words = $words;
 
         if (empty($request->revid)) {
             $request->revid = $titleData['revid'] ?? 0;
         }
 
         if (empty($request->revid)) {
-            $tab['empty revid'] = 'Can not get revid';
+            $result->emptyRevid = 'Can not get revid';
         }
-        $tab['revid'] = $request->revid;
+        $result->revid = $request->revid;
 
         $hashtag = StartUtils::determineHashtag($request->title, $request->user);
-        $tab['summary'] = StartUtils::make_summary(
+        $result->summary = StartUtils::make_summary(
             $request->revid,
             $request->sourcetitle,
             $request->target,
             $hashtag
         );
-
-        return $tab;
     }
 
     /** Apply text fixes (refs, ...) and record whether anything changed. */
-    private function prepareText(PageRequest $request): string
+    private function prepareText(Request $request): string
     {
         $newText = $this->editProcess->text_changes(
             $request->sourcetitle,
@@ -133,24 +130,6 @@ class StartController
         }
         return $newText;
     }
-    private function buildInitialTab(PageRequest $request): array
-    {
-        return [
-            'title'        => $request->title,
-            'lang'         => $request->target,
-            'user'         => $request->user,
-            'campaign'     => $request->campaign,
-            'sourcetitle'  => $request->sourcetitle,
-
-            'request'      => $request->toArray(),
-            'edit'         => [],
-            'result_to_cx' => [],
-            'summary'      => "",
-            'result'       => "",
-            'words'        => "",
-        ];
-    }
-
     // ------------------------------------------------------------
     // Request preparation
     // ------------------------------------------------------------
@@ -164,22 +143,19 @@ class StartController
     // Error / response handling
     // ------------------------------------------------------------
 
-    private function handleNoAccess(array $tab, string $randId): array
+    private function handleNoAccess(Result $result, string $randId): array
     {
         $error = ['code' => 'noaccess', 'info' => 'noaccess'];
         $response = [
             'error'    => $error,
-            'edit'     => ['error' => $error, 'username' => $tab['user']],
-            'username' => $tab['user'],
+            'edit'     => ['error' => $error, 'username' => $result->user],
+            'username' => $result->user,
         ];
-        $tab['result_to_cx'] = $response;
+        $result->resultToCx = $response;
 
+        $tab = $result->toArray(); // TODO: remove once these accept Result
         FilesHelps::to_do($tab, "noaccess", $randId);
-
-        $this->repository->insertPublishReports(
-            $tab,
-            "noaccess",
-        );
+        $this->repository->insertPublishReports($tab, "noaccess");
 
         return $response;
     }
