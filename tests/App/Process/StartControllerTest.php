@@ -92,7 +92,6 @@ final class StartControllerTest extends TestCase
                     return $tab['words'] === 50;
                 }),
                 $this->anything(),
-                'lead'
             )
             ->willReturn(['result' => 'success']);
 
