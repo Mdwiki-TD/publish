@@ -23,8 +23,8 @@ class PublishReportsRepositoryTest extends TestCase
                     'SomeUser',
                     'ar',
                     'Source Title',
-                    'success', // .json لازم تنشال
-                    json_encode(['key' => 'value']),
+                    'success',
+                    '{"title":"Some Title","lang":"ar","sourcetitle":"Source Title","key":"value","user":"SomeUser"}',
                 ]
             )
             ->willReturn(true);
@@ -33,8 +33,11 @@ class PublishReportsRepositoryTest extends TestCase
 
         $result = $repo->insertPublishReports(
             [
-                'key'  => 'value',
-                'user' => 'SomeUser'
+                'title'       => 'Some Title',
+                'lang'        => 'ar',
+                'sourcetitle' => 'Source Title',
+                'key'         => 'value',
+                'user'        => 'SomeUser'
             ],
             'success.json',
         );
@@ -49,6 +52,8 @@ class PublishReportsRepositoryTest extends TestCase
 
         $repo = new PublishReportsRepository($dbMock);
 
+        $this->expectOutputRegex('/InsertPageTarget: Invalid table name: malicious_table/');
+
         $result = $repo->insertPageTarget(
             'Source',
             'type',
@@ -60,7 +65,6 @@ class PublishReportsRepositoryTest extends TestCase
             'rev1',
             'words'
         );
-
         $this->assertFalse($result);
     }
 }
