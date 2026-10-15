@@ -42,7 +42,7 @@ class TextChanger
     /**
      * The callable that fixes page text, or null when none is available.
      */
-    protected function resolveFixer(): ?callable
+    protected function resolveFixer()
     {
         if ($this->fixer !== null) {
             return $this->fixer;
