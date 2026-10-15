@@ -131,7 +131,7 @@ class ProcessEdit
         ];
 
         // wpCaptchaId, wpCaptchaWord
-        if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
+        if (!empty($request['wpCaptchaId'] ?? "") && !empty($request['wpCaptchaWord'] ?? "")) {
             $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
             $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
         }

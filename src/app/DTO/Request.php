@@ -17,9 +17,9 @@ final class Request
         public readonly string $target,
         public readonly string $campaign,
         public readonly string $sourcetitle,
-        public readonly string $wpCaptchaId,
-        public readonly string $wpCaptchaWord,
         public readonly string $trType,
+        public readonly ?string $wpCaptchaId = null,
+        public readonly ?string $wpCaptchaWord = null,
     ) {
     }
 
@@ -41,25 +41,35 @@ final class Request
             target: (string) ($request['target'] ?? ''),
             campaign: (string) ($request['campaign'] ?? ''),
             sourcetitle: (string) ($request['sourcetitle'] ?? ''),
-            wpCaptchaId: (string) ($request['wpCaptchaId'] ?? ''),
-            wpCaptchaWord: (string) ($request['wpCaptchaWord'] ?? ''),
+            wpCaptchaId: isset($request['wpCaptchaId']) ? (string) $request['wpCaptchaId'] : null,
+            wpCaptchaWord: isset($request['wpCaptchaWord']) ? (string) $request['wpCaptchaWord'] : null,
             trType: $trType,
         );
     }
+    public function hasCaptcha()
+    {
+        return !empty($this->wpCaptchaId) && !empty($this->wpCaptchaWord);
+    }
     public function toArray()
     {
-        return [
-            'title'         => $this->title,
-            'revid'         => $this->revid,
-            'text'          => $this->text,
-            'user'          => $this->user,
-            'summary'       => $this->summary,
-            'target'        => $this->target,
-            'campaign'      => $this->campaign,
-            'sourcetitle'   => $this->sourcetitle,
-            'wpCaptchaId'   => $this->wpCaptchaId,
-            'wpCaptchaWord' => $this->wpCaptchaWord,
-            'tr_type'       => $this->trType,
+        $data = [
+            'title'       => $this->title,
+            'revid'       => $this->revid,
+            'text'        => $this->text,
+            'user'        => $this->user,
+            'summary'     => $this->summary,
+            'target'      => $this->target,
+            'campaign'    => $this->campaign,
+            'sourcetitle' => $this->sourcetitle,
+            // 'wpCaptchaId'   => $this->wpCaptchaId,
+            // 'wpCaptchaWord' => $this->wpCaptchaWord,
+            'tr_type'     => $this->trType,
         ];
+        if ($this->hasCaptcha()) {
+            $data['wpCaptchaId'] = $this->wpCaptchaId;
+            $data['wpCaptchaWord'] = $this->wpCaptchaWord;
+        }
+        return $data;
+
     }
 }
