@@ -36,12 +36,10 @@ final class StartControllerTest extends TestCase
                 $this->anything(),
                 $this->anything(),
                 $this->anything(),
-                $this->anything(),
                 $this->callback(function (array $tab) {
                     return $tab['words'] === 200;
                 }),
                 $this->anything(),
-                'all'
             )
             ->willReturn(['result' => 'success']);
 
@@ -84,7 +82,6 @@ final class StartControllerTest extends TestCase
         $mockProcessEdit->expects($this->once())
             ->method('handle')
             ->with(
-                $this->anything(),
                 $this->anything(),
                 $this->anything(),
                 $this->anything(),
