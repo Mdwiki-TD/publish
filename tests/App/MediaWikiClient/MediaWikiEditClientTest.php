@@ -6,11 +6,13 @@ namespace Tests\MediaWikiClient;
 
 use MediaWiki\OAuthClient\Token;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 use Publish\MediaWikiClient\MediaWikiOAuthClientAdapter;
 use Publish\MediaWikiClient\MediaWikiOAuthClientFactory;
 
+#[AllowMockObjectsWithoutExpectations]
 #[CoversClass(MediaWikiEditClient::class)]
 final class MediaWikiEditClientTest extends TestCase
 {
