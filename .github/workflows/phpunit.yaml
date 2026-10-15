@@ -26,4 +26,4 @@ jobs:
 
             - name: Run PHPUnit
               # --do-not-cache-result: Prevents PHPUnit from caching test results (test status/order)
-              run: vendor/bin/phpunit tests --testdox --colors=always -c phpunit.xml --do-not-cache-result
+              run: vendor/bin/phpunit tests -c phpunit.xml --no-coverage
