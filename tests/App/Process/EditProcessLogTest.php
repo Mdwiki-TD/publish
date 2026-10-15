@@ -10,6 +10,9 @@ use Publish\MdwikiSql\Database;
 use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\Process\EditProcessLog;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+
+#[AllowMockObjectsWithoutExpectations]
 #[CoversClass(EditProcessLog::class)]
 final class EditProcessLogTest extends TestCase
 {

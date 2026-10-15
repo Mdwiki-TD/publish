@@ -12,7 +12,9 @@ use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MdwikiSql\AccessHelps;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 #[CoversClass(StartController::class)]
 final class StartControllerTest extends TestCase
 {

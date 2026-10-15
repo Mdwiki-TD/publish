@@ -14,6 +14,9 @@ use Publish\MediaWikiClient\MediaWikiEditClient;
 use Publish\Process\EditProcessLog;
 use Publish\Process\ProcessEdit;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+
+#[AllowMockObjectsWithoutExpectations]
 #[CoversClass(ProcessEdit::class)]
 final class ProcessEditTest extends TestCase
 {
@@ -70,6 +73,7 @@ final class ProcessEditTest extends TestCase
         );
 
         $result = $processEdit->retryWithFallbackUser('SourceTitle', 'en', 'TargetTitle', 'OriginalUser');
+
         $this->assertSame('Q12345', $result['qid']);
         $this->assertSame('Mr. Ibrahem', $result['fallback_user']);
         $this->assertSame('OriginalUser', $result['original_user']);
