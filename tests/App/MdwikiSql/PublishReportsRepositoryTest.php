@@ -1,25 +1,70 @@
 <?php
 
-/**
- * Seed test for: PublishReportsRepository
- * Source: src/app/MdwikiSql/PublishReportsRepository.php
- * TODO: write the actual tests.
- */
+namespace Tests\MdwikiSql;
 
-declare(strict_types=1);
-
-namespace Tests\Publish\MdwikiSql;
-
-use Publish\MdwikiSql\PublishReportsRepository;
-
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Publish\MdwikiSql\PublishReportsRepository;
+use Publish\MdwikiSql\DatabaseInterface;
+use PHPUnit\Framework\TestCase;
 
 #[CoversClass(PublishReportsRepository::class)]
 class PublishReportsRepositoryTest extends TestCase
 {
-    public function testPlaceholder(): void
+    public function testInsertPublishReportsBuildsCorrectQueryAndParams(): void
     {
-        $this->markTestIncomplete('Tests for PublishReportsRepository are not written yet.');
+        $dbMock = $this->createMock(DatabaseInterface::class);
+
+        $dbMock->expects($this->once())
+            ->method('executeQuery')
+            ->with(
+                $this->stringContains('INSERT INTO publish_reports'),
+                [
+                    'Some Title',
+                    'SomeUser',
+                    'ar',
+                    'Source Title',
+                    'success',
+                    '{"title":"Some Title","lang":"ar","sourcetitle":"Source Title","key":"value","user":"SomeUser"}',
+                ]
+            )
+            ->willReturn(true);
+
+        $repo = new PublishReportsRepository($dbMock);
+
+        $result = $repo->insertPublishReports(
+            [
+                'title'       => 'Some Title',
+                'lang'        => 'ar',
+                'sourcetitle' => 'Source Title',
+                'key'         => 'value',
+                'user'        => 'SomeUser'
+            ],
+            'success.json',
+        );
+
+        $this->assertTrue($result);
+    }
+
+    public function testInsertPageTargetRejectsInvalidTableName(): void
+    {
+        $dbMock = $this->createMock(DatabaseInterface::class);
+        $dbMock->expects($this->never())->method('executeQuery');
+
+        $repo = new PublishReportsRepository($dbMock);
+
+        // $this->expectOutputRegex('/InsertPageTarget: Invalid table name: malicious_table/');
+
+        $result = $repo->insertPageTarget(
+            'Source',
+            'type',
+            'cat',
+            'ar',
+            'user',
+            'target',
+            'malicious_table',
+            'rev1',
+            'words'
+        );
+        $this->assertFalse($result);
     }
 }
