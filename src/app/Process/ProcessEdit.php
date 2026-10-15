@@ -105,19 +105,15 @@ class ProcessEdit
                 'sourcetitle' => $sourcetitle,
                 'fallback'    => $linkTowd['fallback'] ?? "",
                 'lang'        => $lang,
-                'username'    => $user
+                'user'        => $user
             ];
             // if str($linkTowd['error']) has "Links to user pages"  then file_name='wd_user_pages' else 'wd_errors'
             $fileName = StartUtils::get_errors_file($linkTowd['error'], "wd_errors");
             FilesHelps::to_do($tab3, $fileName, $randId);
 
             $this->repository->insertPublishReports(
-                $title,
-                $user,
-                $lang,
-                $sourcetitle,
+                $tab3,
                 $fileName,
-                $tab3
             );
         }
         return $linkTowd;
@@ -135,7 +131,7 @@ class ProcessEdit
         ];
 
         // wpCaptchaId, wpCaptchaWord
-        if (isset($request['wpCaptchaId']) && isset($request['wpCaptchaWord'])) {
+        if (!empty($request['wpCaptchaId'] ?? "") && !empty($request['wpCaptchaWord'] ?? "")) {
             $apiParams['wpCaptchaId'] = $request['wpCaptchaId'];
             $apiParams['wpCaptchaWord'] = $request['wpCaptchaWord'];
         }
@@ -146,8 +142,13 @@ class ProcessEdit
     // Main flow
     // ------------------------------------------------------------
 
-    public function handle($request, $access, $text, $user, $tab, $randId, $trType): array
-    {
+    public function handle(
+        array $request,
+        array $access,
+        string $text,
+        array $tab,
+        string $randId,
+    ): array {
         $apiParams = $this->prepareApiParams($tab['title'], $tab['summary'], $text, $request);
 
         $editit = $this->publishEdit($apiParams, $tab['lang'], $access);
@@ -155,7 +156,14 @@ class ProcessEdit
         $tab['result'] = $editit['edit']['result'] ?? '';
 
         if ($tab['result'] === 'Success') {
-            $editit = $this->onSuccess($editit, $tab, $user, $access, $randId, $trType);
+            $editit = $this->onSuccess(
+                $editit,
+                $tab,
+                $request['user'],
+                $access,
+                $randId,
+                $request['tr_type']
+            );
             $toDoFile = "success";
         } elseif ($editit['edit']['captcha'] ?? null) {
             $toDoFile = "captcha";
@@ -165,22 +173,19 @@ class ProcessEdit
 
         $tab['result_to_cx'] = $editit;
 
-        $this->logResult($tab, $user, $toDoFile, $randId);
+        $this->logResult($tab, $request['user'], $toDoFile, $randId);
 
         return $editit;
     }
 
-    private function logResult(array $tab, $user, string $toDoFile, $randId): void
+    private function logResult(array $tab, string $user, string $toDoFile, string|int $randId): void
     {
         FilesHelps::to_do($tab, $toDoFile, $randId);
 
+        $tab['user'] = $user;
         $this->repository->insertPublishReports(
-            $tab['title'],
-            $user,
-            $tab['lang'],
-            $tab['sourcetitle'],
-            $toDoFile,
-            $tab
+            $tab,
+            $toDoFile
         );
     }
 
@@ -192,8 +197,14 @@ class ProcessEdit
     }
 
     /** Link to Wikidata, then record the page in the database. */
-    private function onSuccess(array $editit, array $tab, $user, $access, $randId, $trType): array
-    {
+    private function onSuccess(
+        array $editit,
+        array $tab,
+        $user,
+        $access,
+        $randId,
+        $trType
+    ): array {
         $linkToWikidata = $this->handleSuccessfulEdit(
             $tab['sourcetitle'],
             $tab['lang'],
@@ -203,7 +214,9 @@ class ProcessEdit
             $randId
         );
         $editit['LinkToWikidata'] = $linkToWikidata;
+
         $toUsersTable = $this->shouldUseUsersTable($linkToWikidata);
+
         $editit['sql_result'] = $this->editProcessLog->addToDb(
             $tab['title'],
             $tab['lang'],
@@ -215,6 +228,7 @@ class ProcessEdit
             (string) $tab['words'],
             $trType
         );
+
         return $editit;
     }
 

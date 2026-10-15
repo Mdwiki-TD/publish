@@ -35,3 +35,4 @@ z.php
 fix.php
 vendor1/**
 seed_tests.py
+/coverage-report

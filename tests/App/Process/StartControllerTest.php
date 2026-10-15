@@ -12,7 +12,9 @@ use Publish\MdwikiSql\PublishReportsRepository;
 use Publish\MdwikiSql\AccessHelps;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 #[CoversClass(StartController::class)]
 final class StartControllerTest extends TestCase
 {
@@ -36,12 +38,10 @@ final class StartControllerTest extends TestCase
                 $this->anything(),
                 $this->anything(),
                 $this->anything(),
-                $this->anything(),
                 $this->callback(function (array $tab) {
                     return $tab['words'] === 200;
                 }),
                 $this->anything(),
-                'all'
             )
             ->willReturn(['result' => 'success']);
 
@@ -87,12 +87,10 @@ final class StartControllerTest extends TestCase
                 $this->anything(),
                 $this->anything(),
                 $this->anything(),
-                $this->anything(),
                 $this->callback(function (array $tab) {
                     return $tab['words'] === 50;
                 }),
                 $this->anything(),
-                'lead'
             )
             ->willReturn(['result' => 'success']);
 

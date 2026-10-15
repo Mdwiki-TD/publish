@@ -9,8 +9,11 @@
 namespace Publish\MdwikiSql;
 use Publish\MdwikiSql\DatabaseInterface;
 
+use Publish\Logger;
+
 use PDO;
 use PDOException;
+use RuntimeException;
 
 /**
  * Database Connection and Query Management Class
@@ -23,13 +26,13 @@ use PDOException;
 class Database implements DatabaseInterface
 {
 
-    private $db;
-    private $host;
-    private $user;
-    private $password;
-    private $dbname;
-    private $appEnv;
-    private $groupByModeDisabled = false;
+    private ?PDO   $db                  = null;
+    private string $host                = "";
+    private string $user                = "";
+    private string $password            = "";
+    private string $dbname              = "";
+    private string $appEnv              = "";
+    private bool   $groupByModeDisabled = false;
 
     public function __construct(string $dbnameVar = 'DB_NAME')
     {
@@ -37,7 +40,7 @@ class Database implements DatabaseInterface
         $this->setDb($dbnameVar);
     }
 
-    private function envVar(string $key)
+    private function envVar(string $key): string
     {
         $value = getenv($key);
         if ($value !== false) {
@@ -50,10 +53,11 @@ class Database implements DatabaseInterface
 
         return "";
     }
+
     private function buildDsn(string $dbnameVar): string
     {
         // Load host and database name from environment variables, falling back to a default host
-        $this->host   = $this->envVar('DB_HOST_TOOLS') ?: 'tools.db.svc.wikimedia.cloud';
+        $this->host = $this->envVar('DB_HOST_TOOLS') ?: 'tools.db.svc.wikimedia.cloud';
         $this->dbname = $this->envVar($dbnameVar);
 
         // Build the PDO Data Source Name (DSN) string for MySQL connection
@@ -63,24 +67,24 @@ class Database implements DatabaseInterface
     private function hasValidCredentials(): bool
     {
         // Check whether all required connection credentials are present
-        return ! empty($this->host) && ! empty($this->dbname) && ! empty($this->user) && ! empty($this->password);
+        return !empty($this->host) && !empty($this->dbname) && !empty($this->user) && !empty($this->password);
     }
 
-    private function setDb(string $dbnameVar)
+    private function setDb(string $dbnameVar): void
     {
         // Build the DSN and populate $this->host / $this->dbname along the way
         $dsn = $this->buildDsn($dbnameVar);
 
         // Load remaining credentials from environment variables
-        $this->user     = $this->envVar('TOOL_TOOLSDB_USER');
+        $this->user = $this->envVar('TOOL_TOOLSDB_USER');
         $this->password = $this->envVar('TOOL_TOOLSDB_PASSWORD');
 
         // If any required credential is missing, skip the connection attempt entirely
         // instead of letting PDO fail with a connection error
-        if (! $this->hasValidCredentials()) {
+        if (!$this->hasValidCredentials()) {
             $this->db = null;
             error_log('Database credentials are not fully configured; skipping DB connection.');
-            $this->testPrint('Database credentials are not fully configured; skipping DB connection.');
+            Logger::debug('Database credentials are not fully configured; skipping DB connection.');
             return;
         }
 
@@ -90,7 +94,7 @@ class Database implements DatabaseInterface
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             $this->db = null;
-            $this->testPrint($e->getMessage());
+            Logger::debug($e->getMessage());
             // Log the error message
             error_log($e->getMessage());
             if ($this->appEnv === 'testing') {
@@ -101,21 +105,6 @@ class Database implements DatabaseInterface
             throw new \RuntimeException('Database connection failed');
         }
     }
-    public function testPrint($s)
-    {
-        if (isset($_COOKIE['test']) && $_COOKIE['test'] == 'x') {
-            return;
-        }
-
-        $print_t = (isset($_REQUEST['test']) || isset($_COOKIE['test'])) ? true : false;
-
-        if ($print_t && is_string($s)) {
-            echo "\n<br>\n$s";
-        } elseif ($print_t) {
-            echo "\n<br>\n";
-            print_r($s);
-        }
-    }
 
     public function disableFullGroupByMode(string $sqlQuery): void
     {
@@ -124,7 +113,7 @@ class Database implements DatabaseInterface
         }
 
         // if the query contains "GROUP BY", disable ONLY_FULL_GROUP_BY, strtoupper() is for case insensitive
-        if (strpos(strtoupper($sqlQuery), 'GROUP BY') !== false && ! $this->groupByModeDisabled) {
+        if (strpos(strtoupper($sqlQuery), 'GROUP BY') !== false && !$this->groupByModeDisabled) {
             try {
                 // More precise SQL mode modification
                 $this->db->exec("SET SESSION sql_mode=(SELECT REPLACE(@@SESSION.sql_mode,'ONLY_FULL_GROUP_BY',''))");
@@ -142,6 +131,7 @@ class Database implements DatabaseInterface
             error_log("Database connection is not established.");
             return [];
         }
+        Logger::debug("fetchQuery: | Query: " . $sqlQuery);
 
         try {
             $this->disableFullGroupByMode($sqlQuery);
@@ -158,7 +148,7 @@ class Database implements DatabaseInterface
             return $result;
         } catch (PDOException $e) {
             error_log("SQL Error in fetchQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
-            $this->testPrint("SQL Error in fetchQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
+            Logger::debug("SQL Error in fetchQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
             // In testing mode, re-throw to allow tests to skip
             if ($this->appEnv === 'testing') {
                 throw $e;
@@ -166,12 +156,15 @@ class Database implements DatabaseInterface
             return [];
         }
     }
+
     public function executeQuery(string $sqlQuery, ?array $params = null): bool
     {
         if ($this->db === null) {
             error_log("Database connection is not established.");
             return false;
         }
+        Logger::debug("executeQuery: | Query: " . $sqlQuery);
+
         try {
             $this->disableFullGroupByMode($sqlQuery);
 
@@ -185,7 +178,7 @@ class Database implements DatabaseInterface
             return true;
         } catch (PDOException $e) {
             error_log("SQL Error in executeQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
-            $this->testPrint("SQL Error in executeQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
+            Logger::debug("SQL Error in executeQuery: " . $e->getMessage() . " | Query: " . $sqlQuery);
             // In testing mode, re-throw to allow tests to skip
             if ($this->appEnv === 'testing') {
                 throw $e;
@@ -227,7 +220,7 @@ class Database implements DatabaseInterface
 
     public function commit(): bool
     {
-        if ($this->db === null || ! $this->db->inTransaction()) {
+        if ($this->db === null || !$this->db->inTransaction()) {
             return false;
         }
 
@@ -244,7 +237,7 @@ class Database implements DatabaseInterface
 
     public function rollback(): bool
     {
-        if ($this->db === null || ! $this->db->inTransaction()) {
+        if ($this->db === null || !$this->db->inTransaction()) {
             return false;
         }
 

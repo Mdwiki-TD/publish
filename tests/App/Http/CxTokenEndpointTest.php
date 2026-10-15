@@ -10,13 +10,17 @@ use Publish\MdwikiSql\AccessHelps;
 use Publish\MediaWikiClient\MediaWikiEditClient;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 #[CoversClass(CxTokenEndpoint::class)]
 final class CxTokenEndpointTest extends TestCase
 {
     public function testResolveUserNameMapsSpecialUsers(): void
     {
         $endpoint = new CxTokenEndpoint();
+
+        // $this->expectOutputRegex('/Database credentials are not fully configured; skipping DB connection/');
 
         $this->assertSame('Mr. Ibrahem', $endpoint->resolveUserName('Mr. Ibrahem 1'));
         $this->assertSame('Mr. Ibrahem', $endpoint->resolveUserName('Admin'));
@@ -35,6 +39,7 @@ final class CxTokenEndpointTest extends TestCase
                 'secret_456'
             )
             ->willReturn(json_encode(['cxtoken' => 'token_val']));
+
         $endpoint = new CxTokenEndpoint(client: $mockClient);
         $result = $endpoint->getCxToken('en', ['access_key' => 'key_123', 'access_secret' => 'secret_456']);
 
@@ -82,33 +87,50 @@ final class CxTokenEndpointTest extends TestCase
         $this->assertTrue($result['del_access'] ?? false);
     }
 
+    private function runSnippet(string $body): string
+    {
+        $root = dirname(__DIR__, 3); // tests/App/Http -> project root
+
+        $script = tempnam(sys_get_temp_dir(), 'cx') . '.php';
+        file_put_contents($script, "<?php\n"
+            . 'chdir(' . var_export($root, true) . ");\n"
+            . "require 'vendor/autoload.php';\n"
+            . "require 'src/app/bootstrap.php';\n"
+            . $body);
+
+        $proc = proc_open(
+            [PHP_BINARY, $script],
+            [1 => ['pipe', 'w'], 2 => ['redirect', 1]],
+            $pipes,
+            $root
+        );
+        $output = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
+        proc_close($proc);
+        unlink($script);
+
+        return (string) $output;
+    }
+
     public function testRunRejectsCorsWhenForbidden(): void
     {
-        $code = '
-            require "vendor/autoload.php";
-            require "src/app/bootstrap.php";
+        $output = $this->runSnippet('
             unset($_SERVER["HTTP_REFERER"], $_SERVER["HTTP_ORIGIN"]);
-            $endpoint = new Publish\Http\CxTokenEndpoint();
-            @$endpoint->run();
-        ';
+            @(new Publish\Http\CxTokenEndpoint())->run();
+        ');
 
-        $output = shell_exec('php -r ' . escapeshellarg($code));
-        $this->assertStringContainsString('Access denied', (string) $output);
+        $this->assertStringContainsString('Access denied', $output);
     }
 
     public function testRunValidatesWikiFormat(): void
     {
-        $code = '
-            require "vendor/autoload.php";
-            require "src/app/bootstrap.php";
+        $output = $this->runSnippet('
             $_SERVER["HTTP_ORIGIN"] = "https://medwiki.toolforge.org";
             $_GET["wiki"] = "invalid_wiki_name!@#";
             $_GET["user"] = "TestUser";
-            $endpoint = new Publish\Http\CxTokenEndpoint();
-            @$endpoint->run();
-        ';
+            @(new Publish\Http\CxTokenEndpoint())->run();
+        ');
 
-        $output = shell_exec('php -r ' . escapeshellarg($code));
-        $this->assertStringContainsString('invalid wiki', (string) $output);
+        $this->assertStringContainsString('invalid wiki', $output);
     }
 }

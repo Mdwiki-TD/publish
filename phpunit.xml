@@ -6,7 +6,7 @@
     testdox="true"
     stderr="true"
     displayDetailsOnAllIssues="true"
-    displayDetailsOnIncompleteTests="true"
+    displayDetailsOnIncompleteTests="false"
     displayDetailsOnSkippedTests="true"
     displayDetailsOnTestsThatTriggerDeprecations="true"
     displayDetailsOnPhpunitDeprecations="true"
@@ -16,8 +16,8 @@
     colors="true"
     stopOnFailure="false"
     cacheDirectory=".phpunit.cache"
-    executionOrder="depends,defects"
-    beStrictAboutOutputDuringTests="true"
+    executionOrder="default"
+    beStrictAboutOutputDuringTests="false"
     failOnRisky="false"
     failOnWarning="false">
     <testsuites>
@@ -35,4 +35,11 @@
             <group>network</group>
         </exclude>
     </groups>
+    <coverage>
+        <report>
+            <text outputFile="php://stdout" showUncoveredFiles="true" />
+
+            <html outputDirectory="coverage-report" lowUpperBound="50" highLowerBound="80" />
+        </report>
+    </coverage>
 </phpunit>

@@ -48,36 +48,4 @@ final class DatabaseTest extends TestCase
         $this->assertFalse($db->inTransaction());
     }
 
-    public function testTestPrintWithRequestAndCookieSet(): void
-    {
-        $db = new Database();
-
-        $_REQUEST['test'] = '1';
-
-        ob_start();
-        $db->testPrint('Test string message');
-        $output = ob_get_clean();
-        $this->assertStringContainsString('Test string message', $output);
-
-        ob_start();
-        $db->testPrint(['key' => 'val']);
-        $output2 = ob_get_clean();
-        $this->assertStringContainsString('Array', $output2);
-
-        unset($_REQUEST['test']);
-    }
-
-    public function testTestPrintSkippedWhenCookieTestX(): void
-    {
-        $_COOKIE['test'] = 'x';
-        $_REQUEST['test'] = '1';
-
-        ob_start();
-        $db = new Database();
-        $db->testPrint('Should not print');
-        $output = ob_get_clean();
-        $this->assertSame('', $output);
-
-        unset($_COOKIE['test'], $_REQUEST['test']);
-    }
 }
