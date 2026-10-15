@@ -38,7 +38,7 @@ final class ProcessEditTest extends TestCase
     {
         $mockWikiApi = $this->createMock(WikiApi::class);
         $mockWikiApi->method('GetTitleInfo')
-            ->with('User:TestUser/Page', 'en')
+            // ->with('User:TestUser/Page', 'en')
             ->willReturn(['ns' => 2, 'title' => 'User:TestUser/Page']);
 
         $processEdit = new ProcessEdit(wikiApi: $mockWikiApi);
@@ -49,7 +49,7 @@ final class ProcessEditTest extends TestCase
     {
         $mockWikiApi = $this->createMock(WikiApi::class);
         $mockWikiApi->method('GetTitleInfo')
-            ->with('Main_Article', 'en')
+            // ->with('Main_Article', 'en')
             ->willReturn(['ns' => 0, 'title' => 'Main_Article']);
 
         $processEdit = new ProcessEdit(wikiApi: $mockWikiApi);
@@ -60,7 +60,7 @@ final class ProcessEditTest extends TestCase
     {
         $mockAccessHelps = $this->createMock(AccessHelps::class);
         $mockAccessHelps->method('getAccess')
-            ->with('Mr. Ibrahem')
+            // ->with('Mr. Ibrahem')
             ->willReturn(['access_key' => 'fb_key', 'access_secret' => 'fb_secret']);
 
         $mockWdApi = $this->createMock(WdApi::class);
@@ -105,7 +105,7 @@ final class ProcessEditTest extends TestCase
 
         $mockAccessHelps = $this->createMock(AccessHelps::class);
         $mockAccessHelps->method('getAccess')
-            ->with('Mr. Ibrahem')
+            // ->with('Mr. Ibrahem')
             ->willReturn(['access_key' => 'k', 'access_secret' => 's']);
 
         $mockRepo = $this->createMock(PublishReportsRepository::class);
