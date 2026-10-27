@@ -6,22 +6,22 @@ This directory contains the core source code for the **MDWiki Publish API** - a 
 
 ### Main Features
 
--   Publishes translated Wikipedia articles via MediaWiki OAuth API
--   Preprocesses wikitext (fixes references, expands infoboxes, adds categories)
--   Links published articles to Wikidata via `wbsetsitelink`
--   Retrieves and manages CX (ContentTranslation) tokens
--   Logs all publish attempts to database and JSON report files
--   CORS-restricted token endpoint for frontend integration
+- Publishes translated Wikipedia articles via MediaWiki OAuth API
+- Preprocesses wikitext (fixes references, expands infoboxes, adds categories)
+- Links published articles to Wikidata via `wbsetsitelink`
+- Retrieves and manages CX (ContentTranslation) tokens
+- Logs all publish attempts to database and JSON report files
+- CORS-restricted token endpoint for frontend integration
 
 ### Technologies
 
--   **Language:** PHP 8.0+
--   **Framework:** None (procedural/functional architecture with PSR-4 namespaces)
--   **Database:** MySQL/MariaDB (PDO)
--   **External Libraries:**
-    -   `mediawiki/oauthclient` ^1.2 - MediaWiki OAuth 1.0a client
-    -   `defuse/php-encryption` ^2.4 - Symmetric encryption for token storage
--   **Testing:** PHPUnit 10, PHPStan level 5
+- **Language:** PHP 8.0+
+- **Framework:** None (procedural/functional architecture with PSR-4 namespaces)
+- **Database:** MySQL/MariaDB (PDO)
+- **External Libraries:**
+    - `mediawiki/oauthclient` ^1.2 - MediaWiki OAuth 1.0a client
+    - `defuse/php-encryption` ^2.4 - Symmetric encryption for token storage
+- **Testing:** PHPUnit 10, PHPStan level 5
 
 ## Project Structure
 
@@ -79,29 +79,29 @@ The codebase uses a **functional/procedural architecture** with PSR-4 namespaced
 
 ### Design Patterns
 
--   **Procedural with namespaces** - Functions are organized by domain concern under `Publish\*` namespaces
--   **Gateway pattern** - `Database` class wraps PDO for SQL operations
--   **Facade pattern** - `bootstrap.php` provides a single entry to load all dependencies
+- **Procedural with namespaces** - Functions are organized by domain concern under `Publish\*` namespaces
+- **Gateway pattern** - `Database` class wraps PDO for SQL operations
+- **Facade pattern** - `bootstrap.php` provides a single entry to load all dependencies
 
 ### SOLID Principles Compliance
 
--   **SRP:** Partially followed - each file has a focused purpose, but some functions mix concerns (e.g., `ProcessEdit.handle` handles editing, Wikidata linking, DB logging, and file logging)
--   **OCP:** Not applicable (procedural code, no inheritance)
--   **LSP:** Not applicable
--   **ISP:** Not applicable
--   **DIP:** Not followed - functions directly instantiate `Database` objects and call global functions
+- **SRP:** Partially followed - each file has a focused purpose, but some functions mix concerns (e.g., `ProcessEdit.handle` handles editing, Wikidata linking, DB logging, and file logging)
+- **OCP:** Not applicable (procedural code, no inheritance)
+- **LSP:** Not applicable
+- **ISP:** Not applicable
+- **DIP:** Not followed - functions directly instantiate `Database` objects and call global functions
 
 ### Maintainability
 
--   Moderate - code is readable but tightly coupled through global function calls
--   No dependency injection framework; dependencies are resolved via `include_once` chains
--   Naming conventions are inconsistent (`fetchQuery` vs `fetchQuery`, `executeQuery` vs `executeQuery`)
+- Moderate - code is readable but tightly coupled through global function calls
+- No dependency injection framework; dependencies are resolved via `include_once` chains
+- Naming conventions are inconsistent (`fetchQuery` vs `fetchQuery`, `executeQuery` vs `executeQuery`)
 
 ### Scalability
 
--   Each database call creates a new `Database` instance (no connection pooling)
--   File-based logging creates directory trees per request (potential I/O bottleneck under load)
--   No caching layer for frequently accessed data (e.g., word counts, QIDs)
+- Each database call creates a new `Database` instance (no connection pooling)
+- File-based logging creates directory trees per request (potential I/O bottleneck under load)
+- No caching layer for frequently accessed data (e.g., word counts, QIDs)
 
 ## Strengths
 
@@ -180,14 +180,14 @@ pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
 
 ## Areas That Need Attention
 
--   **Missing input validation** - No centralized validation for POST parameters (`title`, `user`, `target`, `text`)
--   **Missing rate limiting** - No protection against abuse of the publish endpoint
--   **Hardcoded admin username** - `"Mr. Ibrahem"` is hardcoded as fallback user in multiple files
--   **No request logging** - No middleware to log incoming requests for audit trails
--   **Outdated patterns** - `include_once` chains should be replaced with Composer autoloading
--   **Missing `.gitignore` entry** for `load_env.php` with real credentials
--   **No HTTPS enforcement** - No redirect from HTTP to HTTPS
--   **Test coverage gaps** - Integration tests exist but core `process/start.php` has limited unit test coverage
+- **Missing input validation** - No centralized validation for POST parameters (`title`, `user`, `target`, `text`)
+- **Missing rate limiting** - No protection against abuse of the publish endpoint
+- **Hardcoded admin username** - `"Mr. Ibrahem"` is hardcoded as fallback user in multiple files
+- **No request logging** - No middleware to log incoming requests for audit trails
+- **Outdated patterns** - `include_once` chains should be replaced with Composer autoloading
+- **Missing `.gitignore` entry** for `load_env.php` with real credentials
+- **No HTTPS enforcement** - No redirect from HTTP to HTTPS
+- **Test coverage gaps** - Integration tests exist but core `process/start.php` has limited unit test coverage
 
 ## Improvement Plan
 
@@ -230,10 +230,10 @@ pub_test_print("sql error:" . $e->getMessage() . "<br>" . $sql_query);
 
 ### Prerequisites
 
--   PHP 8.0+
--   Composer
--   MySQL/MariaDB database access
--   MediaWiki OAuth consumer credentials
+- PHP 8.0+
+- Composer
+- MySQL/MariaDB database access
+- MediaWiki OAuth consumer credentials
 
 ### Installation
 

@@ -31,11 +31,11 @@ class PublishEndpoint
     {
         $this->sendJsonHeaders();
 
-        if (! $this->isPostRequest()) {
+        if (!$this->isPostRequest()) {
             $this->fail(405, 'Only POST requests are allowed'); // Method Not Allowed
         }
 
-        if (! $this->isAuthorized()) {
+        if (!$this->isAuthorized()) {
             $this->fail(403, 'Access denied. Invalid or missing secret key.'); // Forbidden
         }
 
@@ -125,7 +125,7 @@ class PublishEndpoint
 
         // json_decode() returns null on invalid JSON, and may return a scalar
         // for valid-but-unexpected input (e.g. "123"). Only accept an object/array.
-        if (json_last_error() !== JSON_ERROR_NONE || ! is_array($data)) {
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
             $this->fail(400, 'Invalid JSON body'); // Bad Request
         }
 

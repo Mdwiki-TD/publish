@@ -11,10 +11,10 @@ const ALLOWED_DOMAINS = [
 
 class Cors
 {
-    public static function isAllowed(?array $serverRequest = null): bool | string
+    public static function isAllowed(?array $serverRequest = null): bool|string
     {
         $serverRequest = $serverRequest ?? $_SERVER;
-        $env           = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? '');
+        $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? '');
 
         if ($env === 'development') {
             Logger::debug("Skip Cors checking in development env");
@@ -23,7 +23,7 @@ class Cors
 
         // Check if the request is coming from allowed domains
         $referer = isset($serverRequest['HTTP_REFERER']) ? $serverRequest['HTTP_REFERER'] : '';
-        $origin  = isset($serverRequest['HTTP_ORIGIN']) ? $serverRequest['HTTP_ORIGIN'] : '';
+        $origin = isset($serverRequest['HTTP_ORIGIN']) ? $serverRequest['HTTP_ORIGIN'] : '';
 
         $allowed = false;
         foreach (ALLOWED_DOMAINS as $domain) {
