@@ -99,7 +99,7 @@ final class ProcessEditTest extends TestCase
         $mockWdApi->expects($this->exactly(2))
             ->method('LinkToWikidata')
             ->willReturnOnConsecutiveCalls(
-                ['error' => 'get_csrftoken failed'],
+                ['error' => 'get_csrf_token failed'],
                 ['qid' => 'Q789']
             );
 
@@ -121,7 +121,7 @@ final class ProcessEditTest extends TestCase
         $access = ['access_key' => 'orig_key', 'access_secret' => 'orig_secret'];
         $result = $processEdit->handleSuccessfulEdit('Source', 'en', 'OtherUser', 'Target', $access, 'rand123');
 
-        $this->assertSame('get_csrftoken failed', $result['error']);
+        $this->assertSame('get_csrf_token failed', $result['error']);
         $this->assertArrayHasKey('fallback', $result);
     }
 

@@ -51,7 +51,7 @@ class MediaWikiEditClient
 
         if ($data === null || ! isset($data['query']['tokens']['csrftoken'])) {
             // Handle error
-            Logger::debug('<br>get_csrftoken Error: ' . json_last_error() . ' ' . json_last_error_msg());
+            Logger::debug('<br>get_csrf_token Error: ' . json_last_error() . ' ' . json_last_error_msg());
             Logger::debug($data);
         }
 
@@ -69,7 +69,7 @@ class MediaWikiEditClient
 
         if ($csrftoken === null) {
             $data = [
-                'error'          => 'get_csrftoken failed',
+                'error'          => 'get_csrf_token failed',
                 'rand'           => rand(),
                 'csrftoken_data' => $csrfTokenData,
             ];

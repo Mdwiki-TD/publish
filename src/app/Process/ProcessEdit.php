@@ -87,7 +87,7 @@ class ProcessEdit
             // Check if the error is getCsrfTokenData failure and user is not already the fallback user
             if (
                 isset($linkTowd['error'])
-                && $linkTowd['error'] == 'get_csrftoken failed'
+                && $linkTowd['error'] == 'get_csrf_token failed'
                 && $user !== self::FALLBACK_USER
             ) {
                 $linkTowd['fallback'] = $this->retryWithFallbackUser($sourcetitle, $lang, $title, $user);

@@ -72,7 +72,7 @@ final class MediaWikiEditClientTest extends TestCase
         );
 
         $decoded = json_decode($response, true);
-        $this->assertSame('get_csrftoken failed', $decoded['error']);
+        $this->assertSame('get_csrf_token failed', $decoded['error']);
     }
 
     public function testPostParamsExecutesOAuthCallWithCsrfToken(): void
