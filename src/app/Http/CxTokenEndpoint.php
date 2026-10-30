@@ -132,7 +132,7 @@ class CxTokenEndpoint
 
     private function isInvalidAuthorization(array $cxtoken): bool
     {
-        $code = $cxtoken['csrftoken_data']['error']['code'] ?? null;
+        $code = $cxtoken['csrf_token_data']['error']['code'] ?? null;
 
         return in_array($code, self::INVALID_AUTHORIZATION_ERRORS, true);
     }

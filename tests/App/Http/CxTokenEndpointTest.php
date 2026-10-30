@@ -56,12 +56,12 @@ final class CxTokenEndpointTest extends TestCase
 
         $mockClient = $this->createMock(MediaWikiEditClient::class);
         $mockClient->method('postParams')
-            ->willReturn(json_encode(['csrftoken_data' => ['cxtoken' => 'valid']]));
+            ->willReturn(json_encode(['csrf_token_data' => ['cxtoken' => 'valid']]));
 
         $endpoint = new CxTokenEndpoint(client: $mockClient, accessHelps: $mockAccessHelps);
         $result = $endpoint->handleToken('en', 'Admin');
 
-        $this->assertSame(['csrftoken_data' => ['cxtoken' => 'valid']], $result);
+        $this->assertSame(['csrf_token_data' => ['cxtoken' => 'valid']], $result);
     }
 
     public function testHandleTokenDeletesAccessWhenInvalidAuthorizationError(): void
@@ -76,7 +76,7 @@ final class CxTokenEndpointTest extends TestCase
         $mockClient = $this->createMock(MediaWikiEditClient::class);
         $mockClient->method('postParams')
             ->willReturn(json_encode([
-                'csrftoken_data' => [
+                'csrf_token_data' => [
                     'error' => ['code' => 'mwoauth-invalid-authorization'],
                 ],
             ]));
